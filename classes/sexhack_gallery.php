@@ -15,12 +15,20 @@ if(!class_exists('SexHackVideoGallery')) {
          add_filter("query_vars", array($this, "query_vars"));
          add_action('wp_enqueue_scripts', array( $this, 'add_css' ), 200);
          add_shortcode("sexgallery", array($this, "sexgallery_shortcode"));
-			add_action('init', array($this, "register_sexhack_video_post_type"));
+         add_action('init', array($this, "register_sexhack_video_post_type"));
 			//add_filter('page_template', array($this, 'sexhack_video_template'));
 			add_filter('archive_template', array($this, 'sexhack_video_template'));
 			add_action('pre_get_posts', array($this, 'fix_video_query'), 1, 1);
          sexhack_log('SexHackVideoGallery() Instanced');
 
+      }
+
+
+      public function check_rewrite($rules)
+      {
+         // TODO Check if our rules are present and call flush if not
+         sexhack_log($rules);
+         return $rules;
       }
 
       public function add_css() 
@@ -96,9 +104,18 @@ if(!class_exists('SexHackVideoGallery')) {
     		));
 
     		$projects_structure = '/v/%wooprod%/';
-    		$wp_rewrite->add_rewrite_tag("%wooprod%", '([^/]+)', "post_type=sexhack_video&wooprod=");
-    		$wp_rewrite->add_permastruct('v', $projects_structure, false);
-         //$projects_structure = '/v/%sexhackmodel%/%sexhackvideo%/'; // are we really using /v/ also for this? how we get 2 tags?
+         $rules = $wp_rewrite->wp_rewrite_rules();
+         // XXX This is HORRIBLE. Using a Try/Catch to test an array key is stupid. But apparently php is also 
+         //     stupid and array_key_exists() doesn't work.
+         try {
+            sexhack_log("REWRITE: rules OK: ".'v/([^/]+)/?$ => '.$rules['v/([^/]+)/?$']);
+         } catch(Exception $e) {
+            sexhack_log("REWRITE: Need to add and flush our rules!");
+            $wp_rewrite->add_rewrite_tag("%wooprod%", '([^/]+)', "post_type=sexhack_video&wooprod=");
+            $wp_rewrite->add_permastruct('v', $projects_structure, false);
+            $wp_rewrite->flush_rules();
+
+         }
 		}
 
 

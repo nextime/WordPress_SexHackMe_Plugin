@@ -4,6 +4,7 @@ namespace wp_SexHackMe;
 
 function debug_rewrite_rules($matchonly=false) 
 {
+   $matchonly=true;
    global $wp_rewrite, $wp, $template;
    $i=1;
    if (!empty($wp_rewrite->rules)) {

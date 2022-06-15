@@ -207,8 +207,7 @@ if(!class_exists('SexHackMe')) {
 // DEBUG REWRITE RULES
 if( WP_DEBUG === true ){
    // only matched?
-   $matched = true;
-	add_action("the_post", 'wp_SexHackMe\debug_rewrite_rules', $matched);
+	add_action("the_post", 'wp_SexHackMe\debug_rewrite_rules');
 }
 
 
