@@ -1,0 +1,23 @@
+<?php
+namespace wp_SexHackMe;
+
+if(!class_exists('TemplateClass')) {
+   class TemplateClass
+   {
+      public function __construct()
+      {
+         sexhack_log('TemplateClass() Instanced');
+      }
+   }
+}
+
+
+
+
+$SEXHACK_SECTION = array(
+   'class' => 'TemplateClass', 
+   'description' => 'Describe me', 
+   'name' => 'sexhackme_template_name'
+);
+
+?>

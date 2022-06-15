@@ -1,0 +1,73 @@
+.sexhack_gallery_thumbnail {
+   padding: 10px 10px 10px 10px;
+}
+
+
+@media screen and (max-width: 767px) {
+   .sexhack_gallery_thumbnail { 
+      width:90%;
+      display: block;
+   }
+   
+   .sexhack_gallery_row {
+      display: block;
+   }
+
+	ul.products li.sexhack_thumbli img.sexhack_thumbnail {
+		width:90%;
+	}
+	.sexhack_thumb_cont .sexhack_thumb_hover {
+		width: 90%;
+	}
+
+}
+
+
+@media screen and (min-width: 768px) {
+	
+	.site-main ul.products.columns-4 li.sexhack_thumbli {
+      width: 21%;
+      /* This to solve the different title lenght, combine with right trim and popup full title maybe, 
+         and maybe not here but adding another container.
+         I should also re-check the sexhack class naming...
+		//height: 200px;
+		//overflow: hidden;
+	   */
+   }
+
+   .sexhack_gallery_row {
+      display: table-row;
+   }
+
+   .sexhack_gallery_container {
+      align: left;
+      align-content: top;
+      align-items:top;
+      //border: 2px solid red;
+      display: table;
+   }
+	
+	.sexhack_thumb_cont .sexhack_thumb_hover {
+		object-fit: contain;
+   }
+
+}            
+
+.sexhack_thumb_cont {
+     position: relative;
+     max-width: 100%;
+     display: block;
+}
+.sexhack_thumb_cont .sexhack_thumb_hover {
+     position: absolute;
+     top: 0;
+     right: 0;
+     left: 0;
+     bottom: 0;
+     opacity: 0;
+     transition: opacity .2s;
+}
+.sexhack_thumb_cont:hover .sexhack_thumb_hover {
+     opacity: 1;
+}
+

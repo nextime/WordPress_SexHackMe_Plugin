@@ -1,0 +1,20 @@
+.woocommerce-EditAccountForm .woocommerce-form-row--first {
+  display: none;
+}
+
+.woocommerce-EditAccountForm .woocommerce-form-row--last {
+  display: none;
+}
+
+.woocommerce-EditAccountForm
+.woocommerce-form-row--last + div + p {
+	display: none;
+}
+/*.col-full{ */
+ /* max-width:66%; */
+ /* margin-left: 0;
+  margin-right: 0;
+  padding: 0; */
+/*}*/
+
+

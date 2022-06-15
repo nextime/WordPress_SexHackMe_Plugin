@@ -1,0 +1,38 @@
+@media screen and (min-width: 768px) {
+
+    .storefront-breadcrumb {
+		padding: 0.5em 0em;
+		margin: 0 0 0.7em;
+    }
+
+
+	 .main-navigation ul.menu>li>a, .main-navigation ul.nav-menu>li>a {
+			padding: 0.4em 0.5em;
+    }
+    .site-header {
+       padding-top: 0.3em;
+    }
+
+    .woocommerce-active .site-header .main-navigation {
+         width: 100%;
+     }
+   
+    a:focus, button:focus, .button.alt:focus  {
+      outline-color: transparent;
+   }
+   /* a:focus, button:focus, .button.alt:focus  
+      * , input:focus, 
+       * textarea:focus, 
+       * input[type="button"]:focus, 
+       * input[type="reset"]:focus, 
+       * input[type="submit"]:focus, 
+       * input[type="email"]:focus, 
+       * input[type="tel"]:focus, 
+       * input[type="url"]:focus, 
+       * input[type="password"]:focus, 
+       * input[type="search"]:focus  {
+    outline-color: transparent;
+ } */
+
+}
+
