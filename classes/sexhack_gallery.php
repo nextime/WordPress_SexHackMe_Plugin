@@ -105,17 +105,17 @@ if(!class_exists('SexHackVideoGallery')) {
 
     		$projects_structure = '/v/%wooprod%/';
          $rules = $wp_rewrite->wp_rewrite_rules();
-         // XXX This is HORRIBLE. Using a Try/Catch to test an array key is stupid. But apparently php is also 
-         //     stupid and array_key_exists() doesn't work.
-         try {
+         if(array_key_exists('v/([^/]+)/?$', $rules)) {
             sexhack_log("REWRITE: rules OK: ".'v/([^/]+)/?$ => '.$rules['v/([^/]+)/?$']);
-         } catch(Exception $e) {
+         } else {
             sexhack_log("REWRITE: Need to add and flush our rules!");
             $wp_rewrite->add_rewrite_tag("%wooprod%", '([^/]+)', "post_type=sexhack_video&wooprod=");
             $wp_rewrite->add_permastruct('v', $projects_structure, false);
-            $wp_rewrite->flush_rules();
+            //$wp_rewrite->flush_rules();
+            update_option('need_rewrite_flush', 1);
 
          }
+         //$wp_rewrite->flush_rules();
 		}
 
 
@@ -186,8 +186,10 @@ if(!class_exists('SexHackVideoGallery')) {
       	$prod = wc_get_product($id);
       	$image = get_the_post_thumbnail($id, "medium", array("class" => "sexhack_thumbnail")); //array("class" => "alignleft sexhack_thumbnail"));
 
-      	$gif = $prod->get_attribute("gif_preview");
-			if($gif) $image .= "<img src='$gif' class='alignleft sexhack_thumb_hover' />";
+
+         $gif = $prod->get_attribute("gif_thumbnail");
+         if(!$gif) $gif = $prod->get_attribute("gif_preview");
+			if($gif) $image .= "<img src='$gif' class='alignleft sexhack_thumb_hover' loading='lazy' />";
 
       	$html = '<li class="product type-product sexhack_thumbli">';
 

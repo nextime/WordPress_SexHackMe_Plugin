@@ -61,14 +61,18 @@ get_header(); ?>
                   if($hls_member) echo do_shortcode( "[sexhls url=\"".$hls_member."\" posters=\"".$thumb."\"]" );
                   else if($hls) echo do_shortcode( "[sexhls url=\"".$hls."\" posters=\"".$thumb."\"]" );
                   else if($video_preview) echo '<video src='."'$video_preview'".' controls autoplay muted playsinline loop poster="'.$thumb.'"></video>';
-                  if($hls_premium) echo "Premium versions for subscribers available..";
+                  else echo '<img src="'.$thumb.'" loading="lazy"></img>';
+
+                  if($hls_premium) echo  "<a href='/product-category/subscriptions/'>Premium version for subscribers available...</a>";
                }
                else 
                {
                   if($hls) echo do_shortcode( "[sexhls url=\"".$hls."\" posters=\"".$thumb."\"]" );
                   else if($video_preview) echo '<video src='."'$video_preview'".' controls autoplay muted playsinline loop poster="'.$thumb.'"></video>';
-                  if($hls_premium) echo "Premium version for subscribers available...";
-                  if($hls_member) echo "Members version available...";
+                  else echo '<img src="'.$thumb.'" loading="lazy"></img>';
+
+                  if($hls_premium) echo "<a href='/product-category/subscriptions/'>Premium version for subscribers available...</a>";
+                  if($hls_member) echo "<a href='/register'>Members version available...</a>";
                }
                ?>
                </article>

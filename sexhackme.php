@@ -84,6 +84,8 @@ if(!class_exists('SexHackMe')) {
          $this->instances = array();
          add_action('admin_menu', array($this, 'admin_menu'));
          add_action('admin_init', array($this, 'initialize_plugin'));
+         add_action('init', array($this, 'register_flush'), 10);
+         add_action('init', array($this, 'flush_rewrite'), 900);
          foreach($this->SECTIONS as $section) {
             if(get_option( $section['name'])=="1")
             {
@@ -129,9 +131,25 @@ if(!class_exists('SexHackMe')) {
          if($res=="1") return "checked";
       }
 
+      public function register_flush() {
+          register_setting('sexhackme-settings', 'need_rewrite_flush');
+      }
+
+      public function flush_rewrite()
+      {
+         if( get_option('need_rewrite_flush')) 
+         {
+             sexhack_log("FLUSHING REWRITE RULES");
+             flush_rewrite_rules(false);
+             update_option('need_rewrite_flush', 0);
+         }
+
+      }
+
       public function initialize_plugin() 
       {
          add_settings_section('sexhackme-settings', ' ', array($this, 'settings_section'), 'sexhackme-settings');
+         //register_setting('sexhackme-settings', 'need_rewrite_flush');
          foreach($this->SECTIONS as $section) {
             add_settings_field($section['name'], $section['name'], $section['name'], 
                array($this, 'settings_field'), 'sexhackme-settings', 'sexhackme-settings', $section['name']   );

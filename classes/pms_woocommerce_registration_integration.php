@@ -10,7 +10,7 @@ if(!class_exists('PmsWoocommerceRegistrationIntegration')) {
          sexhack_log('PmsWoocommerceRegistrationIntegration() Instanced');
 
 			// Register new endpoint (URL) for My Account page
-         add_action( 'init', array($this, 'add_subscriptions_endpoint') );
+         add_action( 'init', array($this, 'add_subscriptions_endpoint'), 300 );
 
 			// Add new QUERY vars
          add_filter( 'query_vars', array($this, 'subscriptions_query_vars'), 0 );
@@ -35,7 +35,7 @@ if(!class_exists('PmsWoocommerceRegistrationIntegration')) {
          //										you find a dick
 			//										  pretty much
 			//											everywhere
-			add_action( 'init', array($this, 'gen_random_pwd'));
+			add_action( 'init', array($this, 'gen_random_pwd'), 5); // This need to happen before PMS detect the form at "10" sequence firing
 
 			// Sending email with link to set user password 
 			add_action("pms_register_form_after_create_user", array($this, "send_register_email_reset_password") );
@@ -46,7 +46,10 @@ if(!class_exists('PmsWoocommerceRegistrationIntegration')) {
       // Note: Re-save Permalinks or it will give 404 error
       function add_subscriptions_endpoint() 
       {
+         sexhack_log("SUBSCRIPTION ENDPOINT ADDED");
          add_rewrite_endpoint( 'subscriptions', EP_ROOT | EP_PAGES );
+         //update_option('need_rewrite_flush', 1);
+         //flush_rewrite_rules();
       }
 		
 		// Add new QUERY vars
