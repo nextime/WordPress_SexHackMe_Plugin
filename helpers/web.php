@@ -14,7 +14,7 @@ function sexhack_getURL($url)
 }
 
 
-function trim_text_preview($text, $len=340)
+function trim_text_preview($text, $len=340, $fill=false)
 {
 	$min="10";
 	if($len < $min) $len=$min;
@@ -22,7 +22,15 @@ function trim_text_preview($text, $len=340)
 	{
     	$offset = ($len - 3) - strlen($text);
     	$text = substr($text, 0, strrpos($text, ' ', $offset)) . '...';
-	}  
+   }  
+   if($fill)
+   {
+      $start=strlen($text);
+      while($start < $len+1) {
+         $start++;
+         $text .= "&nbsp";
+      }
+   }
 	return $text;
 }
 

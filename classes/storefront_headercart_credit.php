@@ -10,8 +10,16 @@ if(!class_exists('StorefrontMoveHeaderCart')) {
          add_action( 'init', array($this, 'remove_header_cart' ));
          add_filter('storefront_credit_link', false);
          add_action('wp_enqueue_scripts', array( $this, 'add_css' ), 200);
-
+         //add_action('storefront_footer', array($this, 'disclaimer')); // XXX I don't like positioning this way. Fix in CSS or sobstitute footer theme file?
 			add_action( 'storefront_header', array($this, 'add_header_cart'), 40);
+      }
+
+      public function disclaimer()
+      { ?>
+         <div class="site-info">
+         All pictures and videos are property of the respective models. Please copy them for personal use but do not republish any without permission.
+         </div>
+        <?php
       }
 
       public function add_css()
