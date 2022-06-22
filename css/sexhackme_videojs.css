@@ -1,0 +1,12 @@
+
+.sexhack_videojs {
+   width:90%;
+   max-width: 1024;
+}
+
+.video-js.vjs-2-1:not(.vjs-audio-only-mode) {
+   padding-top: 50%;
+   height: 0;
+   max-width:100%;
+   width:100%;
+}

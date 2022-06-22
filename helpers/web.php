@@ -34,4 +34,24 @@ function trim_text_preview($text, $len=340, $fill=false)
 	return $text;
 }
 
+function html2text($html)
+{
+    // remove comments and any content found in the the comment area (strip_tags only removes the actual tags).
+    $plaintext = preg_replace('#<!--.*?-->#s', '', $html);
+
+    // put a space between list items (strip_tags just removes the tags).
+    $plaintext = preg_replace('#</li>#', ' </li>', $plaintext);
+
+    // remove all script and style tags
+    $plaintext = preg_replace('#<(script|style)\b[^>]*>(.*?)</(script|style)>#is', "", $plaintext);
+
+    // remove br tags (missed by strip_tags)
+    $plaintext = preg_replace('#<br[^>]*?>#', " ", $plaintext);
+
+    // remove all remaining html
+    $plaintext = strip_tags($plaintext);
+
+    return $plaintext;
+}
+
 ?>

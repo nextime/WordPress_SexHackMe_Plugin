@@ -34,10 +34,21 @@ get_header(); ?>
             $hls_premium = $prod->get_attribute("hls_premium");
             $video_preview = $prod->get_attribute("video_preview");
             $gif_preview = $prod->get_attribute("gif_preview");
+         	$vr_premium = $prod->get_attribute("vr_premium");
+         	$vr_member = $prod->get_attribute("vr_members");
+         	$vr_public = $prod->get_attribute("vr_public");
+         	$vr_preview = $prod->get_attribute("vr_preview");
+         	$categories = explode(", ", wp_SexHackMe\html2text( wc_get_product_category_list($id)));
+
             if(($hls) AND wp_SexHackMe\starts_with('/', $hls)) $hls = site_url().$hls;
             if(($hls_member) AND wp_SexHackMe\starts_with('/', $hls_member)) $hls_member = site_url().$hls_member;
             if(($hls_premium) AND wp_SexHackMe\starts_with('/', $hls_premium)) $hls_premium = site_url().$hls_premium;
             if(($video_preview) AND wp_SexHackMe\starts_with('/', $video_preview)) $video_preview = site_url().$video_preview;
+            if(($vr_public) AND wp_SexHackMe\starts_with('/', $vr_public)) $vr_public = site_url().$vr_public;
+            if(($vr_member) AND wp_SexHackMe\starts_with('/', $vr_member)) $vr_member = site_url().$vr_member;
+            if(($vr_premium) AND wp_SexHackMe\starts_with('/', $vr_premium)) $vr_premium = site_url().$vr_premium;
+            if(($vr_preview) AND wp_SexHackMe\starts_with('/', $vr_preview)) $vr_preview = site_url().$vr_preview;
+
             //if (($hls) OR ($hls_member) OR ($hls_premium) OR ($video_preview) OR ($gif_preview)) : ?>
              <article id="post-<?php echo get_the_ID();?>" class="post-<?php echo get_the_ID();?> product type-product">
 					<header class="entry-header">
@@ -53,32 +64,45 @@ get_header(); ?>
                if($sexhack_pms->is_premium()) 
                {
                   if($hls_premium) echo do_shortcode( "[sexhls url=\"".$hls_premium."\" posters=\"".$thumb."\"]" );
+                  else if($vr_premium) echo do_shortcode( "[sexvideo url=\"".$vr_premium."\" posters=\"".$thumb."\"]" );
                   else if($hls_member) echo do_shortcode( "[sexhls url=\"".$hls_member."\" posters=\"".$thumb."\"]" );
+                  else if($vr_member) echo do_shortcode( "[sexvideo url=\"".$vr_member."\" posters=\"".$thumb."\"]" );
                   else if($hls) echo do_shortcode( "[sexhls url=\"".$hls."\" posters=\"".$thumb."\"]" );
+                  else if($vr_public) echo do_shortcode( "[sexvideo url=\"".$vr_public."\" posters=\"".$thumb."\"]" );
                   else if($video_preview) echo '<video src='."'$video_preview'".' controls autoplay muted playsinline loop poster="'.$thumb.'"></video>';
+                  else if($vr_preview) echo do_shortcode( "[sexvideo url=\"".$vr_preview."\" posters=\"".$thumb."\"]" );
                   else if($gif_preview) echo '<img src="'.$gif_preview.'" loading="lazy"></img>';
                   else echo '<img src="'.$thumb.'" loading="lazy"></img>';
 
                }
-               elseif($sexhack_pms->is_member()) 
+               elseif($sexhack_pms->is_member())  // free membership
                {
                   if($hls_member) echo do_shortcode( "[sexhls url=\"".$hls_member."\" posters=\"".$thumb."\"]" );
+                  else if($vr_member) echo do_shortcode( "[sexvideo url=\"".$vr_member."\" posters=\"".$thumb."\"]" );
                   else if($hls) echo do_shortcode( "[sexhls url=\"".$hls."\" posters=\"".$thumb."\"]" );
+                  else if($vr_public) echo do_shortcode( "[sexvideo url=\"".$vr_public."\" posters=\"".$thumb."\"]" );
                   else if($video_preview) echo '<video src='."'$video_preview'".' controls autoplay muted playsinline loop poster="'.$thumb.'"></video>';
+                  else if($vr_preview) echo do_shortcode( "[sexvideo url=\"".$vr_preview."\" posters=\"".$thumb."\"]" );
                   else if($gif_preview) echo '<img src="'.$gif_preview.'" loading="lazy"></img>';
                   else echo '<img src="'.$thumb.'" loading="lazy"></img>';
 
                   if($hls_premium) $endhtml .= "<h3><a href='/product-category/subscriptions/'>Premium full lenght version available here</a></h3>";
+                  if($vr_premium) $endhtml .= "<h3><a href='/product-category/subscriptions/'>VR 3D Premium full lenght version available here</a></h3>";
                }
-               else 
+               else  // public
                {
                   if($hls) echo do_shortcode( "[sexhls url=\"".$hls."\" posters=\"".$thumb."\"]" );
+                  else if($vr_public) echo do_shortcode( "[sexvideo url=\"".$vr_public."\" posters=\"".$thumb."\"]" );
                   else if($video_preview) echo '<video src='."'$video_preview'".' controls autoplay muted playsinline loop poster="'.$thumb.'"></video>';
+                  else if($vr_preview) echo do_shortcode( "[sexvideo url=\"".$vr_preview."\" posters=\"".$thumb."\"]" );
                   else if($gif_preview) echo '<img src="'.$gif_preview.'" loading="lazy"></img>';
                   else echo '<img src="'.$thumb.'" loading="lazy"></img>';
 
                   if($hls_premium) $endhtml .= "<h3><a href='/product-category/subscriptions/'>Premium full lenght version available here</a></h3>";
                   if($hls_member) $endhtml .=  "<h3><a href='/login'>Free members only version available! Sign up or Login to watch</a></h3>";
+                  if($vr_premium) $endhtml .= "<h3><a href='/product-category/subscriptions/'>VR 3D Premium full lenght version available here</a></h3>";
+                  if($vr_member) $endhtml .=  "<h3><a href='/login'>VR 3D Free members only version available! Sign up or Login to watch</a></h3>";
+
                }
                ?>
 

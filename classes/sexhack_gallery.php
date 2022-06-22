@@ -246,7 +246,7 @@ if(!class_exists('SexHackVideoGallery')) {
       		'posts_per_page' => 100,
       		'post_type'      => 'product',
             'post_status'    => 'publish',
-            'product_cat'    => 'Videos',
+            'product_cat'    => 'Videos, VR180, VR360',
       		'order'          => 'ASC',
       		'orderby'        => 'title',
             'tax_query'    => array( array(
@@ -263,6 +263,7 @@ if(!class_exists('SexHackVideoGallery')) {
          if($filter)
          {
             if($filter=="preview") {
+               $queryarr['meta_query'] = array();
                $queryarr['meta_query']['relation'] = 'OR';
                $queryarr['meta_query'][] = array(
                   'value'  =>  'video_preview',
@@ -272,13 +273,23 @@ if(!class_exists('SexHackVideoGallery')) {
                   'value'  =>  'hls_preview',
                   'compare' => 'like'
                );
+               $queryarr['meta_query'][] = array(
+                  'value'  =>  'vr_preview',
+                  'compare' => 'like'
+               );
 
             } else {
-					$queryarr['meta_query'] = array( array(
+               $queryarr['meta_query'] = array();
+               $queryarr['meta_query']['relation'] = 'OR';
+					$queryarr['meta_query'][] = array(
 							'value'     => 'hls_'.$filter,
 							'compare'   => 'like'
-						)
-					);
+               );
+               $queryarr['meta_query'][] = array(
+                     'value'     => 'vr_'.$filter,
+                     'compare'   => 'like'
+               );
+
 				}
          }
 
@@ -321,8 +332,10 @@ if(!class_exists('SexHackVideoGallery')) {
          $vr_member = $prod->get_attribute("vr_members");
          $vr_public = $prod->get_attribute("vr_public");
          $vr_preview = $prod->get_attribute("vr_preview");
+         $categories = explode(", ", html2text( wc_get_product_category_list($id)));
 
 
+         //print_r($categories);
 
          $gif = $prod->get_attribute("gif_thumbnail");
          if(!$gif) $gif = $gif_preview;
@@ -334,13 +347,16 @@ if(!class_exists('SexHackVideoGallery')) {
          $vtags=array();
 
          $downtag ='';
-         if((!$hls) AND (!$hls_member) AND (!$hls_premium) AND ($video_preview)) $vtags[] = '<label class="sexhack_vtag sexhack_preview" style="*LEFT*">preview</label>';
-         if($hls) $vtags[] = '<label class="sexhack_vtag sexhack_public" style="*LEFT*">public</label>';
-         if($hls_member) $vtags[] = '<label class="sexhack_vtag sexhack_members" style="*LEFT*">members</label>';
-         if($hls_premium) $vtags[] = '<label class="sexhack_vtag sexhack_premium" style="*LEFT*">premium</label>';
+         if((!$hls) AND (!$hls_member) AND (!$hls_premium) AND (($video_preview) OR ($vr_preview))) $vtags[] = '<label class="sexhack_vtag sexhack_preview" style="*LEFT*">preview</label>';
+         if(($hls) OR ($vr_public)) $vtags[] = '<label class="sexhack_vtag sexhack_public" style="*LEFT*">public</label>';
+         if(($hls_member) OR ($vr_member))$vtags[] = '<label class="sexhack_vtag sexhack_members" style="*LEFT*">members</label>';
+         if(($hls_premium) OR ($vr_premium))$vtags[] = '<label class="sexhack_vtag sexhack_premium" style="*LEFT*">premium</label>';
 
          if(count($prod->get_downloads()) > 0) $html .= '<label class="sexhack_vtag sexhack_download"">download</label>';
-			if(($vr_premium) OR ($vr_member) OR ($vr_public) OR ($vr_preview)) $html .= '<label class="sexhack_vtag sexhack_VR"">VR/3D</label>';			
+         if(($vr_premium) OR ($vr_member) OR ($vr_public) OR ($vr_preview) 
+            OR ((count($prod->get_downloads()) > 0) 
+            AND (in_array("VR180", $categories) 
+            OR in_array("VR360", $categories)))) $html .= '<label class="sexhack_vtag sexhack_VR"">VR/3D</label>';			
 
          $html .= "<a href=\"$vurl\" class=\"woocommerce-LoopProduct-link woocommerce-loop-product__link\">";
          $html .= "<div class='sexhack_thumb_cont'>".$image."</div>";

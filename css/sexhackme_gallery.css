@@ -36,6 +36,16 @@ ul.products li.sexhack_thumbli {
    background-color:#4a235a;
 }
 
+.sexhack_VR {
+   position: absolute;
+   top:1px;
+   right:-15px;
+   z-index:100;
+   font-size: 14px;
+   border-bottom:-20px;
+   background-color:#9c640c;
+}
+
 .sexhack_public {
    background-color:#145a32;
 }
