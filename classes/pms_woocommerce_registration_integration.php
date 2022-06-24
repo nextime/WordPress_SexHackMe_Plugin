@@ -40,7 +40,19 @@ if(!class_exists('PmsWoocommerceRegistrationIntegration')) {
 			// Sending email with link to set user password 
 			add_action("pms_register_form_after_create_user", array($this, "send_register_email_reset_password") );
 
+
+         // Reorder membership subscription in registration page
+         //add_action( 'pre_get_posts', array($this, 'sexhack_reorder_membership'), 1 );
       }
+
+      /*
+      public function sexhack_reorder_membership($query) {
+         if ( ! is_admin() && in_array ( $query->get('post_type'), array('pms-subscriptions') ) ) {
+            $query->set( 'order' , 'asc' );
+            $query->set( 'orderby', 'price');      
+         }
+      }
+      */
 
       // Register new endpoint (URL) for My Account page
       // Note: Re-save Permalinks or it will give 404 error

@@ -155,8 +155,16 @@ if(!class_exists('SexHackMe')) {
                array($this, 'settings_field'), 'sexhackme-settings', 'sexhackme-settings', $section['name']   );
             register_setting('sexhackme-settings', $section['name']);
 				if(array_key_exists('require-page', $section) && ($section['require-page']))
-				{ 
-					register_setting('sexhackme-settings', $section['name']."-page");
+            { 
+               if(is_array($section['require-page'])) {
+                  foreach($section['require-page'] as $pagereq) {
+                     if(array_key_exists('post_type', $pagereq)) {
+                        if(array_key_exists('option', $pagereq)) register_setting('sexhackme-settings', $pagereq['option']);
+                     }
+                  }
+               } else {
+					   register_setting('sexhackme-settings', $section['name']."-page");
+               }
 				}
          }
       }
@@ -164,7 +172,7 @@ if(!class_exists('SexHackMe')) {
       public function admin_menu() 
       {
          add_menu_page('SexHackMe Settings', 'SexHackMe', 'manage_options', 'sexhackme-settings', 
-            array($this, 'admin_page'), plugin_dir_url(__FILE__) .'/img/admin_icon.png');
+            array($this, 'admin_page'), plugin_dir_url(__FILE__) .'/img/admin_icon.png', 150);
       }
 
       public function admin_page()
@@ -185,19 +193,47 @@ if(!class_exists('SexHackMe')) {
 							<td>
 								<input type="checkbox" name="<?php echo $section['name'];?>" value="1" <?php echo $this->checkbox(get_option( $section['name'] )); ?>/>
 								<br>
- 				        	<?php  if(array_key_exists('require-page', $section) && ($section['require-page']))
-            				{ ?>
-        						<select id="<?php echo $section['name'];?>-page" name="<?php echo $section['name'];?>-page" class="widefat">
+                      <?php  
+                         if(array_key_exists('require-page', $section) && ($section['require-page']))
+                         { 
+                            $reqps = array();
+                            if(is_string($section['require-page'])) 
+                            {
+                               $reqtitle="Select the base plugin module  page";
+                               $reqpages=get_posts(array('post_type'    => $section['require-page'], 'parent' => 0));
+                               $reqps[] = array('title' => $reqtitle, 'pages' => $reqpages, 'option' => $section['name']."-page");
+                            } elseif(is_array($section['require-page'])) {
+                               $i=0;
+                               foreach($section['require-page'] as $rpage) {
+                                  if(array_key_exists('post_type', $rpage)) {
+                                     $reqpsa = array('title' => 'Select Page', 'option' => $section['name']."-page$i", 
+                                        'pages' => get_posts(array('post_type'  => $rpage['post_type'], 'parent' => 0)));
+                                     if(array_key_exists('option', $rpage)) $reqpsa['option'] = $rpage['option'];
+                                     if(array_key_exists('title', $rpage)) $reqpsa['title'] = $rpage['title'];
+                                     $reqps[] = $reqpsa;
+                                  }
+                                  $i++;
+
+                               }
+                            } else {
+                               $reqtitle="Select the base plugin module  page";
+                               $reqpages=get_pages();
+                               $reqps[] = array('title' => $reqtitle, 'pages' => $reqpages, 'option' => $section['name']."-page");
+                            }
+                           foreach($reqps as $reqarr) { 
+                        ?>
+        						<select id="<?php echo $reqarr['option'];?>" name="<?php echo $reqarr['option']; ?>" class="widefat">
             					<option value="-1"><?php esc_html_e( 'Choose...', 'paid-member-subscriptions' ) ?></option>
             					<?php
-									$opt=get_option( $section['name']."-page");
-            					foreach( get_pages() as $page ) {
+									$opt=get_option($reqarr['option']);
+            					foreach( $reqarr['pages'] as $page ) {
                 					echo '<option value="' . esc_attr( $page->ID ) . '"';
 										if ($opt == $page->ID) { echo "selected";}
 										echo '>' . esc_html( $page->post_title ) . ' ( ID: ' . esc_attr( $page->ID ) . ')' . '</option>';
             					}  ?>
         						</select>
-        					<p class="description">Select the base plugin module  page</p>
+                        <p class="description"><?php echo $reqarr['title']; ?></p>
+                        <?php } ?>
 							<?php } ?>
 							</td>
 						</tr>

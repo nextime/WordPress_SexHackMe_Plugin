@@ -28,6 +28,8 @@ get_header(); ?>
 			while ( have_posts() ) :
    			the_post();
 
+            echo do_shortcode("[sexadv adv=".get_option('sexadv_video_top')."]");
+
 				$prod = wc_get_product(get_the_ID());
 				$hls = $prod->get_attribute("hls_public");
             $hls_member = $prod->get_attribute("hls_members");
@@ -115,10 +117,10 @@ get_header(); ?>
             ?>
                <h3><a href="<?php echo get_the_permalink(); ?>">Download the full lenght hi-res version of this video</a><h3>
             <br><hr>
-            <?php
-            
+<?php
+               echo do_shortcode("[sexadv adv=".get_option('sexadv_video_bot')."]");      
 			endwhile;
-
+      
 			/**
 			 * Functions hooked in to storefront_paging_nav action
 			 *
