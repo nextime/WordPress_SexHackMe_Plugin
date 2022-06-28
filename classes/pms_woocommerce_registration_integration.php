@@ -58,10 +58,15 @@ if(!class_exists('PmsWoocommerceRegistrationIntegration')) {
       // Note: Re-save Permalinks or it will give 404 error
       function add_subscriptions_endpoint() 
       {
+         global $wp_rewrite;
          sexhack_log("SUBSCRIPTION ENDPOINT ADDED");
          add_rewrite_endpoint( 'subscriptions', EP_ROOT | EP_PAGES );
-         //update_option('need_rewrite_flush', 1);
-         //flush_rewrite_rules();
+         $rules = $wp_rewrite->wp_rewrite_rules();
+         if(!array_key_exists('(.?.+?)/subscriptions(/(.*))?/?$', $rules)) 
+         {
+            sexhack_log("SUBSCRIPTION RULESS NEEDS REWRITE");
+            update_option('need_rewrite_flush', 1);
+         }
       }
 		
 		// Add new QUERY vars
