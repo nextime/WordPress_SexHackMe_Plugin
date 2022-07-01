@@ -9,12 +9,19 @@ if(!class_exists('SexhackPmsPasswordDataLeak')) {
          sexhack_log('SexhackPmsPasswordDataLeak() Instanced');
          add_filter( 'pms_recover_password_message', array($this, "change_recover_form_message") );
          add_action( 'init', array($this, 'reset_password_form'), 9);
+			add_action( 'login_form_rp', array( $this, 'redirect_password_reset' ) );
+			add_action( 'login_form_resetpass', array( $this, 'redirect_password_reset' ) );
       }
 
       public function change_recover_form_message($string)
       {
          return str_replace("<br/>", "<br/>If valid, ", $string);
       }
+
+		public function redirect_password_reset() 
+		{
+			wp_redirect( home_url( 'password-reset' ) );
+		}
 
       public function reset_password_form() 
       {
@@ -64,6 +71,9 @@ if(!class_exists('SexhackPmsPasswordDataLeak')) {
             //If entered username or email is valid (no errors), email the password reset confirmation link
             if ( count( pms_errors()->get_error_codes() ) == 0 && !$error) {
 
+               
+                send_changepwd_mail($user);
+                /* 
                 if (is_object($user)) {  //user data is set
                     $requestedUserID = $user->ID;
                     $requestedUserLogin = $user->user_login;
@@ -109,7 +119,10 @@ if(!class_exists('SexhackPmsPasswordDataLeak')) {
 
                     if( $sent === true )
                         do_action( 'pms_password_reset_email_sent', $user, $key );
-                }
+                } */
+
+
+
              }
      		 } // isset($_POST[pms_username_email])
 	 		 unset($_POST['pms_username_email']);

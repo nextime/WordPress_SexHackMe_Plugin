@@ -48,6 +48,10 @@ if(!class_exists('SexhackAddUnlockLogin')) {
 			return $string.$html;
 		}
 
+
+
+      // XXX Those 3 functions, hard-coded uri's that are dependent on a shortcode? that's sounds a bad idea, we 
+      //     really need to implement the admin subpages for the plugin so i can setup easily more things!
 		public function add_to_register($string, $args){
 			return $this->unlock_button($string, $args, $this->get_proto().wp_parse_url( home_url(), PHP_URL_HOST )."/register");
 		}

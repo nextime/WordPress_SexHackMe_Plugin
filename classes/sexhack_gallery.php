@@ -154,7 +154,7 @@ if(!class_exists('SexHackVideoGallery')) {
       		if($wooprod) {
          		sexhack_log($_SERVER['REQUEST_URI']." BEFORE ".print_r($query, true));
          		$query->query['post_type'] = 'sexhack_video';
-         		$query->set('name', $wooprod);
+         		$query->set('name', esc_sql($wooprod));
          		$query->set('post_type', 'any');
          		//$query->set('post_type', '');
          		sexhack_log("AFTER ".print_r($query, true));
@@ -202,11 +202,9 @@ if(!class_exists('SexHackVideoGallery')) {
             sexhack_log("REWRITE: Need to add and flush our rules!");
             $wp_rewrite->add_rewrite_tag("%wooprod%", '([^/]+)', "post_type=sexhack_video&wooprod=");
             $wp_rewrite->add_permastruct('v', $projects_structure, false);
-            //$wp_rewrite->flush_rules();
             update_option('need_rewrite_flush', 1);
 
          }
-         //$wp_rewrite->flush_rules();
 		}
 
 
