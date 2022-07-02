@@ -94,8 +94,13 @@ if(!class_exists('PmsWoocommerceRegistrationIntegration')) {
 		}
 
 		public function send_register_email_reset_password($user_data) 
-		{
-			send_changepwd_mail($user_data["user_login"]);
+      {
+         $mailpage = get_option('sexhack_registration_mail_endpoint', false);
+         if($mailpage) {
+            $page = get_page($mailpage);
+            $mailpage = $page->post_name;
+         }
+			send_changepwd_mail($user_data["user_login"], $mailpage);
 		}
 
 		// XXX 8==D
@@ -115,6 +120,9 @@ $SEXHACK_SECTION = array(
    'class' => 'PmsWoocommerceRegistrationIntegration', 
    'description' => 'Integrate woocommerce account page and sexhack modified registration form on pms to send password change link by email', 
    'name' => 'sexhackme_pmswooregistration',
+   'require-page' => array(
+                        array('post_type' => 'page', 'title' => 'Set password mail page', 'option' => 'sexhack_registration_mail_endpoint')
+                     ),
    'slugs' => array('account', 'register', 'login', 'password-reset')
 );
 

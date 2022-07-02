@@ -380,7 +380,7 @@ if(!class_exists('SexHackVideoGallery')) {
 $SEXHACK_SECTION = array(
    'class' => 'SexHackVideoGallery', 
    'description' => 'Create Video galleries for Sexhack Video products', 
-   'require-page' => true,
+   //'require-page' => true,
    'name' => 'sexhackme_videogallery'
 );
 

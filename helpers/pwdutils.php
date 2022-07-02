@@ -50,8 +50,10 @@ function send_changepwd_mail($user_login, $baseurl=false){
     $message .= sprintf(__('Username: %s'), $user_login) . "\r\n\r\n";
     $message .= __('If this was a mistake, just ignore this email and nothing will happen.') . "\r\n\r\n";
     $message .= __('To reset your password, visit the following address:') . "\r\n\r\n";
-    // XXX Seriously? hardcoded?
-    $message .= '<' . network_site_url("/password-reset/?key=$key&loginName=" . rawurlencode($user_login), 'login') . ">\r\n";
+
+    // XXX This is an hardcoded default. Do I really like it that way?
+    if(!$baseurl) $baseurl='password-reset';
+    $message .= '<' . network_site_url("/$baseurl/?key=$key&loginName=" . rawurlencode($user_login), 'login') . ">\r\n";
     //$message .= '<' . network_site_url("wp-login.php?action=rp&key=$key&login=" . rawurlencode($user_login), 'login') . ">\r\n";
 
     

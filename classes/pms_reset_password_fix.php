@@ -71,8 +71,12 @@ if(!class_exists('SexhackPmsPasswordDataLeak')) {
             //If entered username or email is valid (no errors), email the password reset confirmation link
             if ( count( pms_errors()->get_error_codes() ) == 0 && !$error) {
 
-               
-                send_changepwd_mail($user);
+                $mailpage = get_option('sexhack_registration_mail_endpoint', false);
+                if($mailpage) {
+                   $page = get_page($mailpage);
+                   $mailpage = $page->post_name;
+                }
+                send_changepwd_mail($user, $mailpage);
                 /* 
                 if (is_object($user)) {  //user data is set
                     $requestedUserID = $user->ID;
@@ -130,6 +134,12 @@ if(!class_exists('SexhackPmsPasswordDataLeak')) {
    }
 }
 
-$SEXHACK_SECTION = array('class' => 'SexhackPmsPasswordDataLeak', 'description' => 'Fix Pay Member Subscription password-reset data leak', 'name' => 'sexhackme_pms_resetfix');
+$SEXHACK_SECTION = array('class' => 'SexhackPmsPasswordDataLeak', 
+	'description' => 'Fix Pay Member Subscription password-reset data leak', 
+	'name' => 'sexhackme_pms_resetfix',
+   'require-page' => array(
+                           array('post_type' => 'page', 'title' => 'Reset password page', 'option' => 'sexhack_reset_pwd_fix')
+                        )
+);
 
 ?>
