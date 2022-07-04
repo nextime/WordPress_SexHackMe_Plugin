@@ -30,6 +30,18 @@ get_header(); ?>
 
             echo do_shortcode("[sexadv adv=".get_option('sexadv_video_top')."]");
 
+
+				$htmltags = '<span><b>TAGS: </b></span>';
+            $tags = get_the_terms( get_the_ID(), 'product_tag' );
+            if ( ! empty( $tags ) && ! is_wp_error( $tags ) )
+            {
+               foreach($tags as $tag) {
+                  $htmltags.="<span>#".$tag->name . '</span> ';
+               }  
+            }  
+
+
+
 				$prod = wc_get_product(get_the_ID());
 				$hls = $prod->get_attribute("hls_public");
             $hls_member = $prod->get_attribute("hls_members");
@@ -76,6 +88,8 @@ get_header(); ?>
                   else if($gif_preview) echo '<img src="'.$gif_preview.'" loading="lazy"></img>';
                   else echo '<img src="'.$thumb.'" loading="lazy"></img>';
 
+						echo $htmltags;
+
                }
                elseif($sexhack_pms->is_member())  // free membership
                {
@@ -88,6 +102,8 @@ get_header(); ?>
                   else if($gif_preview) echo '<img src="'.$gif_preview.'" loading="lazy"></img>';
                   else echo '<img src="'.$thumb.'" loading="lazy"></img>';
 
+						echo $htmltags;
+
                   if($hls_premium) $endhtml .= "<h3><a href='/product-category/subscriptions/'>Premium full lenght version available here</a></h3>";
                   if($vr_premium) $endhtml .= "<h3><a href='/product-category/subscriptions/'>VR 3D Premium full lenght version available here</a></h3>";
                }
@@ -99,6 +115,8 @@ get_header(); ?>
                   else if($vr_preview) echo do_shortcode( "[sexvideo url=\"".$vr_preview."\" posters=\"".$thumb."\"]" );
                   else if($gif_preview) echo '<img src="'.$gif_preview.'" loading="lazy"></img>';
                   else echo '<img src="'.$thumb.'" loading="lazy"></img>';
+
+						echo $htmltags;
 
                   if($hls_premium) $endhtml .= "<h3><a href='/product-category/subscriptions/'>Premium full lenght version available here</a></h3>";
                   if($hls_member) $endhtml .=  "<h3><a href='/login'>Free members only version available! Sign up or Login to watch</a></h3>";
@@ -114,8 +132,10 @@ get_header(); ?>
 				//	get_template_part( 'content', get_post_format() ); // get_post_format() return empty for us
             //endif;
                echo $endhtml;
+              
             ?>
                <h3><a href="<?php echo get_the_permalink(); ?>">Download the full lenght hi-res version of this video</a><h3>
+
             <br><hr>
 <?php
                echo do_shortcode("[sexadv adv=".get_option('sexadv_video_bot')."]");      

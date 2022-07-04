@@ -375,12 +375,24 @@ if(!class_exists('SexHackVideoGallery')) {
 }
 
 
-
+function gallery_adminpage() 
+{
+?>
+   <div class="wrap">
+                     <h2>SexHackMe Gallery Settings</h2>
+   </div>
+<?php
+}
 
 $SEXHACK_SECTION = array(
    'class' => 'SexHackVideoGallery', 
    'description' => 'Create Video galleries for Sexhack Video products', 
    //'require-page' => true,
+   'adminmenu' => array(
+                     array('title' => 'Gallery', 
+                           'slug' => 'gallery', 
+                           'callback' => 'wp_SexHackMe\gallery_adminpage')
+                     ),
    'name' => 'sexhackme_videogallery'
 );
 

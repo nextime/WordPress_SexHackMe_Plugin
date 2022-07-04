@@ -173,6 +173,27 @@ if(!class_exists('SexHackMe')) {
       {
          add_menu_page('SexHackMe Settings', 'SexHackMe', 'manage_options', 'sexhackme-settings', 
             array($this, 'admin_page'), plugin_dir_url(__FILE__) .'/img/admin_icon.png', 150);
+
+			add_submenu_page( 'sexhackme-settings', 'SexHackMe Settings', 'Modules',
+    				'manage_options', 'sexhackme-settings');
+         foreach($this->SECTIONS as $section) {
+            if(get_option( $section['name'])=="1")
+            {  
+               if (array_key_exists('adminmenu', $section) && is_array($section['adminmenu'])) { 
+                  foreach($section['adminmenu'] as $admsub) {
+                     sexhack_log($admsub);
+                     if(is_array($admsub) 
+						      && array_key_exists('title', $admsub) 
+						      && array_key_exists('callback', $admsub)
+						      && array_key_exists('slug', $admsub)) {
+						         add_submenu_page( 'sexhackme-settings', $admsub['title'], 
+												$admsub['title'], 'manage_options', $admsub['slug'], 
+												$admsub['callback']);
+                     }
+                  }
+               }
+				}
+			}
       }
 
       public function admin_page()
