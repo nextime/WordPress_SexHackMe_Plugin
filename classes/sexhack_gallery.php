@@ -1,5 +1,10 @@
 <?php
+
+
+
 namespace wp_SexHackMe;
+
+$SEXHACK_GALLERY_DEFAULTSLUG = 'v';
 
 if(!class_exists('SexHackVideoGallery')) {
 
@@ -105,6 +110,7 @@ if(!class_exists('SexHackVideoGallery')) {
          add_action('wp_enqueue_scripts', array( $this, 'add_css' ), 200);
          add_shortcode("sexgallery", array($this, "sexgallery_shortcode"));
          add_action('init', array($this, "register_sexhack_video_post_type"));
+         add_action('admin_init', array($this, "register_settings"));
 			//add_filter('page_template', array($this, 'sexhack_video_template'));
 			add_filter('archive_template', array($this, 'sexhack_video_template'));
 
@@ -113,6 +119,25 @@ if(!class_exists('SexHackVideoGallery')) {
 
       }
 
+
+      public function register_settings() 
+      {
+         add_settings_section('sexhackme-gallery-settings', ' ', array($this, 'settings_section'), 'sexhackme-gallery-settings');
+         register_setting('sexhackme-gallery-settings', 'sexhack_gallery_slug');
+         add_settings_field('sexhack_gallery_slug', 'sexhack_gallery_slug', 'sexhack_gallery_slug',
+                           array($this, 'settings_field'), 'sexhackme-gallery-settings', 'sexhackme-gallery-settings', 'sexhack_gallery_slug'   );
+
+      }
+
+      public function settings_section() 
+      { 
+         echo "<h2>SexHackMe Gallery Settings</h2>";
+      }
+
+      public function settings_field($name) 
+      {              
+         echo $name;    
+      }                 
 
       public function check_rewrite($rules)
       {
@@ -166,8 +191,8 @@ if(!class_exists('SexHackVideoGallery')) {
 
       // sets custom post type
       // TODO: the idea is to have custom post type for models profiles and for videos.
-      //       Ideally /v/nomevideo/ finisce sul corrispettivo prodotto woocommerce, 
-      //       /v/modelname/nomevideo/ finisce sul corrispettivo page sexhackme_video quando show_in_menu e' attivo.
+      //       Ideally /$DEFAULTSLUG/nomevideo/ finisce sul corrispettivo prodotto woocommerce, 
+      //       /$DEFAULTSLUG/modelname/nomevideo/ finisce sul corrispettivo page sexhackme_video quando show_in_menu e' attivo.
       //
       //       Devo pero' verificare le varie taxonomy e attributi della pagina, vedere come creare un prodotto in wordpress
       //       per ogni pagina sexhack_video che credo, sincronizzare prodotti e video pagine, gestire prodotti con lo stesso nome
@@ -175,7 +200,11 @@ if(!class_exists('SexHackVideoGallery')) {
 		public function register_sexhack_video_post_type() 
 		{
     		global $wp_rewrite;
-         
+         global $SEXHACK_GALLERY_DEFAULTSLUG;
+
+         $DEFAULTSLUG = get_option('sexhack_gallery_slug', $SEXHACK_GALLERY_DEFAULTSLUG);
+
+
          sexhack_log("REGISTER SEXHACK_VIDEO ");
 
     		register_post_type('sexhack_video', array(
@@ -194,14 +223,14 @@ if(!class_exists('SexHackVideoGallery')) {
        		// there are a lot more available arguments, but the above is plenty for now
     		));
 
-    		$projects_structure = '/v/%wooprod%/';
+    		$projects_structure = '/'.$DEFAULTSLUG.'/%wooprod%/';
          $rules = $wp_rewrite->wp_rewrite_rules();
-         if(array_key_exists('v/([^/]+)/?$', $rules)) {
-            sexhack_log("REWRITE: rules OK: ".'v/([^/]+)/?$ => '.$rules['v/([^/]+)/?$']);
+         if(array_key_exists($DEFAULTSLUG.'/([^/]+)/?$', $rules)) {
+            sexhack_log("REWRITE: rules OK: ".$DEFAULTSLUG.'/([^/]+)/?$ => '.$rules[$DEFAULTSLUG.'/([^/]+)/?$']);
          } else {
             sexhack_log("REWRITE: Need to add and flush our rules!");
             $wp_rewrite->add_rewrite_tag("%wooprod%", '([^/]+)', "post_type=sexhack_video&wooprod=");
-            $wp_rewrite->add_permastruct('v', $projects_structure, false);
+            $wp_rewrite->add_permastruct($DEFAULTSLUG, $projects_structure, false);
             update_option('need_rewrite_flush', 1);
 
          }
@@ -316,7 +345,11 @@ if(!class_exists('SexHackVideoGallery')) {
       }
 
 		public function get_video_thumb()
-		{
+      {
+         global $SEXHACK_GALLERY_DEFAULTSLUG;
+
+         $DEFAULTSLUG = get_option('sexhack_gallery_slug', $SEXHACK_GALLERY_DEFAULTSLUG);
+
       	$id = get_the_ID();
       	$prod = wc_get_product($id);
       	$image = get_the_post_thumbnail($id, "medium", array("class" => "sexhack_thumbnail")); //array("class" => "alignleft sexhack_thumbnail"));
@@ -340,7 +373,7 @@ if(!class_exists('SexHackVideoGallery')) {
 			if($gif) $image .= "<img src='$gif' class='alignleft sexhack_thumb_hover' loading='lazy' />";
 
       	$html = '<li class="product type-product sexhack_thumbli">';
-      	$vurl = str_replace("/product/", "/v/", esc_url( get_the_permalink() ));
+      	$vurl = str_replace("/product/", "/".$DEFAULTSLUG."/", esc_url( get_the_permalink() ));
          $vtitle = esc_html( get_the_title() );
          $vtags=array();
 
@@ -377,9 +410,23 @@ if(!class_exists('SexHackVideoGallery')) {
 
 function gallery_adminpage() 
 {
+   global $SEXHACK_GALLERY_DEFAULTSLUG;
+   $DEFAULTSLUG = $SEXHACK_GALLERY_DEFAULTSLUG;
 ?>
    <div class="wrap">
-                     <h2>SexHackMe Gallery Settings</h2>
+         <?php do_settings_sections( 'sexhackme-gallery-settings' ); ?>
+         <form method="post" action="/wp-admin/options.php">
+         <?php settings_fields( 'sexhackme-gallery-settings' ); ?>
+         <table class="form-table">
+            <tr align="top">
+               <td>
+                  <label>Slug for gallery</label>
+                  <input type="text" name="sexhack_gallery_slug" value="<?php echo get_option( 'sexhack_gallery_slug', "$DEFAULTSLUG" ) ?>" />
+               </td>
+            </tr>
+         </table>
+         <?php submit_button(); ?>
+         </form>
    </div>
 <?php
 }
