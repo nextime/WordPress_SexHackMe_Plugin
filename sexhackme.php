@@ -48,7 +48,33 @@ if(count($slug) > 1) {
    $FIRST_SLUG=explode("#", $FIRST_SLUG)[0];
 }
 
+require_once dirname( __FILE__ ) . '/inc/class-tgm-plugin-activation.php';
 
+add_action( 'tgmpa_register', 'sexhackme_register_required_plugins' );
+
+
+function sexhackme_register_required_plugins() {
+   $plugins = array(
+      array(
+         'name'      => 'WooCommerce',
+         'slug'      => 'woocommerce',
+         'required'  => false,
+			//'is_callable' => 'wpseo_init',
+      )
+	);
+   $config = array(
+      'id'           => 'sexhackme',                 // Unique ID for hashing notices for multiple instances of TGMPA.
+      'default_path' => '',                      // Default absolute path to bundled plugins.
+      'menu'         => 'tgmpa-install-plugins', // Menu slug.
+      'parent_slug'  => 'plugins.php',            // Parent menu slug.
+      'capability'   => 'manage_options',    // Capability needed to view plugin install page, should be a capability associated with the parent menu used.
+      'has_notices'  => true,                    // Show admin notices or not.
+      'dismissable'  => true,                    // If false, a user cannot dismiss the nag message.
+      'dismiss_msg'  => '',                      // If 'dismissable' is false, this message will be output at top of nag.
+      'is_automatic' => false,                   // Automatically activate plugins after installation or not.
+      'message'      => '',                      // Message to output right before the plugins table.
+	);
+}
 
 sexhack_log("FIRST_SLUG:".$FIRST_SLUG." REQUEST:".$_SERVER['REQUEST_URI']." QUERY:".$_SERVER['QUERY_STRING'] );
 
