@@ -50,7 +50,7 @@ if(count($slug) > 1) {
 
 require_once dirname( __FILE__ ) . '/inc/class-tgm-plugin-activation.php';
 
-add_action( 'tgmpa_register', 'sexhackme_register_required_plugins' );
+add_action( 'tgmpa_register', 'wp_SexHackMe\sexhackme_register_required_plugins' );
 
 
 function sexhackme_register_required_plugins() {
@@ -146,11 +146,13 @@ if(!class_exists('SexHackMe')) {
       public function settings_section() {
          echo "<h3>Enable following functionalities:</h3>";
       }
-
+      
+      /*
       public function settings_field($name) 
       {
          echo $name;
       }
+      */
 
       public function checkbox($res) 
       {
@@ -177,8 +179,8 @@ if(!class_exists('SexHackMe')) {
          add_settings_section('sexhackme-settings', ' ', array($this, 'settings_section'), 'sexhackme-settings');
          //register_setting('sexhackme-settings', 'need_rewrite_flush');
          foreach($this->SECTIONS as $section) {
-            add_settings_field($section['name'], $section['name'], $section['name'], 
-               array($this, 'settings_field'), 'sexhackme-settings', 'sexhackme-settings', $section['name']   );
+            //add_settings_field($section['name'], $section['name'], $section['name'], 
+            //   array($this, 'settings_field'), 'sexhackme-settings', 'sexhackme-settings', $section['name']   );
             register_setting('sexhackme-settings', $section['name']);
 				if(array_key_exists('require-page', $section) && ($section['require-page']))
             { 

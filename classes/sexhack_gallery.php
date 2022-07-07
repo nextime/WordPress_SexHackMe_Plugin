@@ -124,8 +124,8 @@ if(!class_exists('SexHackVideoGallery')) {
       {
          add_settings_section('sexhackme-gallery-settings', ' ', array($this, 'settings_section'), 'sexhackme-gallery-settings');
          register_setting('sexhackme-gallery-settings', 'sexhack_gallery_slug');
-         add_settings_field('sexhack_gallery_slug', 'sexhack_gallery_slug', 'sexhack_gallery_slug',
-                           array($this, 'settings_field'), 'sexhackme-gallery-settings', 'sexhackme-gallery-settings', 'sexhack_gallery_slug'   );
+         //add_settings_field('sexhack_gallery_slug', 'sexhack_gallery_slug', 'sexhack_gallery_slug',
+         //                  array($this, 'settings_field'), 'sexhackme-gallery-settings', 'sexhackme-gallery-settings' );
 
       }
 
@@ -134,10 +134,12 @@ if(!class_exists('SexHackVideoGallery')) {
          echo "<h2>SexHackMe Gallery Settings</h2>";
       }
 
+      /*
       public function settings_field($name) 
       {              
          echo $name;    
-      }                 
+      } 
+      */      
 
       public function check_rewrite($rules)
       {

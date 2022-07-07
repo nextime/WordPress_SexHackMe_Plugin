@@ -25,7 +25,7 @@ if(!class_exists('SexhackAdvert')) {
          echo $args['before_widget'];
          $id=$instance['advid'];
          if ( ! empty($id)) 
-           echo $args['before_advid'] . do_shortcode('[sexadv adv='.$id.']'). $args['after_advid'];
+            echo /*$args['before_advid'] . */ do_shortcode('[sexadv adv='.$id.']'); //. $args['after_advid'];
 			echo $args['after_widget'];
 	  }
 
