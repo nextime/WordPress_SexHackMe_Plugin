@@ -161,13 +161,15 @@ if(!class_exists('SexHackVideoGallery')) {
       }
 
 		public function sexhack_video_template($template) 
-		{
+      {
+         $template='video.php';
+         if(isset($GET['SEXHACKDEBUG'])) $template='newvideo.php';
    		$is_sexhack_video = get_query_var('wooprod', false);
    		if($is_sexhack_video ) {
       		set_query_var( 'post_type', 'sexhack_video' );
-      		if ( file_exists( plugin_dir_path(__DIR__) . '/template/video.php')) {
-         		sexhack_log("NEW TEMPLATE!: ".plugin_dir_path(__DIR__) . '/template/video.php');
-         		return plugin_dir_path(__DIR__) . '/template/video.php';
+      		if ( file_exists( plugin_dir_path(__DIR__) . '/template/'.$template)) {
+         		sexhack_log("NEW TEMPLATE!: ".plugin_dir_path(__DIR__) . '/template/'.$template);
+         		return plugin_dir_path(__DIR__) . '/template/'.$template;
       		}
     		}
     		return $template;
