@@ -82,28 +82,28 @@ if(!class_exists('PmsWoocommerceRegistrationIntegration')) {
          add_filter( 'query_vars', array($this, 'subscriptions_query_vars'), 0 );
 
 			//  Insert the new endpoint into the My Account menu
-			add_filter( 'woocommerce_account_menu_items', array($this, 'add_subscriptions_link_my_account') );
+         add_filter( 'woocommerce_account_menu_items', array($this, 'add_subscriptions_link_my_account') );
 
-			/* Add content to the new tab
-			 *  NOTE: add_action must follow 'woocommerce_account_{your-endpoint-slug}_endpoint' format */
-			add_action( 'woocommerce_account_subscriptions_endpoint', array($this, 'subscriptions_content'), 50, 6 );
+         /* Add content to the new tab
+          *  NOTE: add_action must follow 'woocommerce_account_{your-endpoint-slug}_endpoint' format */
+         add_action( 'woocommerce_account_subscriptions_endpoint', array($this, 'subscriptions_content'), 50, 6 );
 
-			/* Inject random generate pass as we don't send it from the registration form */
-			// XXX BUG! we should initialize this when is the right page and the right POST, 
-			//          don't be a dick. Don't do it on every fucking page. 
-			//			if you look hard enought       like really really hard...
-			//			    you find a dick						pretty much 
-			//                             everywhere
-			//									  if you look hard 
-			//											enought
-			//										 like really
-			//										 really hard
+         /* Inject random generate pass as we don't send it from the registration form */
+         // XXX BUG! we should initialize this when is the right page and the right POST, 
+         //          don't be a dick. Don't do it on every fucking page. 
+         //			if you look hard enought       like really really hard...
+         //			    you find a dick						pretty much 
+         //                             everywhere
+         //									  if you look hard 
+         //											enought
+         //										 like really
+         //										 really hard
          //										you find a dick
-			//										  pretty much
-			//											everywhere
-			add_action( 'init', array($this, 'gen_random_pwd'), 5); // This need to happen before PMS detect the form at "10" sequence firing
+         //										  pretty much
+         //											everywhere
+         add_action( 'init', array($this, 'gen_random_pwd'), 5); // This need to happen before PMS detect the form at "10" sequence firing
 
-			// Sending email with link to set user password 
+         // Sending email with link to set user password 
          add_action("pms_register_form_after_create_user", array($this, "send_register_email_reset_password") );
 
 
