@@ -81,8 +81,8 @@ function send_changepwd_mail($user_login, $baseurl=false){
     if ( false === ( $activation_keys = get_option( 'pms_recover_password_activation_keys' ) ) ) {
          $activation_keys = array();
     }
-    $activation_keys[$user->ID]['key'] = $key;
-    $activation_keys[$user->ID]['time'] = time();
+    $activation_keys[$user_data->ID]['key'] = $key;
+    $activation_keys[$user_data->ID]['time'] = time();
     update_option( 'pms_recover_password_activation_keys', $activation_keys );
 
     if ( $message && !wp_mail($user_email, $title, $message) )

@@ -62,12 +62,55 @@ ul.products li.sexhack_thumbli {
    background-color: #283747;
 }
 
+
+.sexhack-videonotify {
+   margin:  0 0 0 0; 
+   text-align: center;
+	font-weight: bold;
+	padding: 10% 0;
+}
+
+.sexhack-videonotify a {
+	font-weight: bold;
+}
+.sexhack-video-container {
+   border: solid 1px white;
+   border-top: solid 0px;
+	border-radius: 0px 0px 8px 8px;
+
+}
+
+.sexhack_videopreview {
+   width: 100%;
+}
+
+.sexhack-tabs {
+	margin-left: 10px;
+}
+
+.sexhack_tab_button {
+	border-radius: 0 0 4px 4px;
+}
+
+.sexhack_toggled_button {
+	background-color: black;
+	color: white;
+	border-bottom: 1px solid white;
+	border-left: 1px solid white;
+	border-right: 1px solid white;
+	outline: 2px solid black;
+}
+
 @media screen and (max-width: 767px) {
    .sexhack_gallery_thumbnail { 
       width:90%;
       display: block;
    }
    
+	.sexhack-video-container {
+		min-height: 100px;
+	}
+
    .sexhack_gallery_row {
       display: block;
    }
@@ -94,6 +137,10 @@ ul.products li.sexhack_thumbli {
       height: fit-content;
 		//overflow: hidden;
    }
+
+	.sexhack-video-container {
+		min-height: 200px;
+	}
 
    .sexhack_gallery_row {
       display: table-row;

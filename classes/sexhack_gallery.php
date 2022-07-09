@@ -1,7 +1,6 @@
 <?php
 
 
-
 namespace wp_SexHackMe;
 
 $SEXHACK_GALLERY_DEFAULTSLUG = 'v';
@@ -156,14 +155,15 @@ if(!class_exists('SexHackVideoGallery')) {
 
       public function query_vars($vars)
       {
-			$vars[] = 'wooprod';
+         $vars[] = 'wooprod';
+         $vars[] = 'videoaccess';
          return $vars;
       }
 
 		public function sexhack_video_template($template) 
       {
          $template='video.php';
-         if(isset($GET['SEXHACKDEBUG'])) $template='newvideo.php';
+         if(isset($_GET['SEXHACKDEBUG'])) $template='newvideo.php';
    		$is_sexhack_video = get_query_var('wooprod', false);
    		if($is_sexhack_video ) {
       		set_query_var( 'post_type', 'sexhack_video' );
@@ -227,14 +227,22 @@ if(!class_exists('SexHackVideoGallery')) {
        		// there are a lot more available arguments, but the above is plenty for now
     		));
 
-    		$projects_structure = '/'.$DEFAULTSLUG.'/%wooprod%/';
+         $projects_structure = '/'.$DEFAULTSLUG.'/%wooprod%/';
          $rules = $wp_rewrite->wp_rewrite_rules();
          if(array_key_exists($DEFAULTSLUG.'/([^/]+)/?$', $rules)) {
             sexhack_log("REWRITE: rules OK: ".$DEFAULTSLUG.'/([^/]+)/?$ => '.$rules[$DEFAULTSLUG.'/([^/]+)/?$']);
          } else {
             sexhack_log("REWRITE: Need to add and flush our rules!");
             $wp_rewrite->add_rewrite_tag("%wooprod%", '([^/]+)', "post_type=sexhack_video&wooprod=");
+            $wp_rewrite->add_rewrite_tag("%videoaccess%", '([^/]+)', "videoaccess=");
             $wp_rewrite->add_permastruct($DEFAULTSLUG, $projects_structure, false);
+            $wp_rewrite->add_permastruct($DEFAULTSLUG, $projects_structure."%videoaccess%/", false);
+            //$wp_rewrite->add_permastruct($DEFAULTSLUG.'public', $projects_structure.'public/', false);
+            //$wp_rewrite->add_permastruct($DEFAULTSLUG.'members', $projects_structure.'members/', false);
+            //$wp_rewrite->add_permastruct($DEFAULTSLUG.'subscribers', $projects_structure.'subscribers/', false);
+            //$wp_rewrite->add_permastruct($DEFAULTSLUG.'vrpub', $projects_structure.'vrpub/', false);
+            //$wp_rewrite->add_permastruct($DEFAULTSLUG.'vrmem', $projects_structure.'vrmem/', false);
+            //$wp_rewrite->add_permastruct($DEFAULTSLUG.'vrsub', $projects_structure.'vrsub/', false);
             update_option('need_rewrite_flush', 1);
 
          }
