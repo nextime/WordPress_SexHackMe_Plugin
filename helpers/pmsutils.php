@@ -27,32 +27,84 @@ class SexHackPMSHelper
 
 	public function __construct()
 	{
-		$this->plans = $this->get_pms_plantype();
+      $this->plans = false;
 	}
 
-	public function get_pms_plantype()
+	private function set_pms_plans()
 	{
     	$plans = array(
        	'member' => array(),
-       	'premium'=> array()
-    	);
+         'premium'=> array(),
+         'byid' => array()
+      );
+      
     	$splans=pms_get_subscription_plans(true);
     	foreach($splans as $splan)
     	{
        	if(intval($splan->price)==0) $plans['member'][] = $splan->id;
-       	else $plans['premium'][] = $splan->id;
-    	}
+         else $plans['premium'][] = $splan->id;
+
+         $plans['byid'][$splan->id] = $splan;
+      }
+      $this->plans = $plans;
 	 	return $plans;
 	}
 
+
+   public function refresh_plans()
+   {
+      $this->plans = set_pms_plans();
+      return $this->plans;
+   }
+
+
+   // XXX Here we just return the first "member" (free) plan
+   //     if any in our array.
+   //
+   //     I should probably make it configurable with an option?
+   //     And should not be limited to the free ones?
+   public function get_default_plan()
+   {
+      if(!$this->plans) $this->set_pms_plans();
+      if(count($this->plans['member']) > 0)
+      {
+         return $this->plans['byid'][$this->plans['member'][0]];
+      }
+      return false;
+   }
+
+   public function get_member_plans()
+   {
+      if(!$this->plans) $this->set_pms_plans(); 
+      return $this->plans['member'];
+   }
+
+   public function get_premium_plans()
+   {
+      if(!$this->plans) $this->set_pms_plans();
+      return $this->plans['premium'];
+   }
+
+   public function get_plans($pid=false)
+   {
+      if(!$this->plans) $this->set_pms_plans();
+      if($pid)
+      { 
+         if(array_key_exists($pid, $this->plans['byid'])) return $this->plans['byid'][$pid];
+         return false;
+      }
+      return $this->plans['byid'];
+   }
+
+
 	public function is_member($uid='')
 	{
-		return pms_is_member( $uid, $this->plans['member'] );
+		return pms_is_member( $uid, $this->get_member_plans() );
 	}
 
 	public function is_premium($uid='')
 	{
-		return pms_is_member( $uid, $this->plans['premium'] );
+		return pms_is_member( $uid, $this->get_premium_plans() );
 	}
 }
 

@@ -29,16 +29,43 @@ if(!class_exists('SexhackAddUnlockLogin')) {
          add_filter("login_form_bottom", array($this, "add_to_login"), 10, 2);
 			add_action("woocommerce_after_order_notes", array($this, "add_to_checkout"));
 			add_filter("pms_register_shortcode_content", array($this, "add_to_register"), 10, 2);
+         add_filter("unlock_authenticate_user", array($this, "fix_unlock_user"), 11, 1);
          sexhack_log('SexhackAddUnlockLogin() Instanced');
       }
 
-		public function get_proto(){
-			if(is_ssl()) {
-				return 'https://';
-			} else {
-				return 'http://';
-			}
+      public function get_proto(){
+         return get_proto();
 		}
+
+      public function fix_unlock_user($user)
+      {
+         global $sexhack_pms;
+   
+
+         if(is_object($user) && is_valid_eth_address($user->user_login))
+         {
+				
+            if(!($sexhack_pms->is_member($user->ID)) && !($sexhack_pms->is_premium($user->ID)))
+            {
+					$subscription_plan = $sexhack_pms->get_default_plan();
+					if($subscription_plan) 
+					{
+               	$data = array(
+                  	'user_id'              => $user->ID,
+                  	'subscription_plan_id' => $subscription_plan->id,
+                  	'start_date'           => date( 'Y-m-d H:i:s' ),
+                  	'expiration_date'      => $subscription_plan->get_expiration_date(),
+                  	'status'               => 'active',
+
+
+               	); 
+               	$member_subscription = new \PMS_Member_Subscription();
+               	$inserted            = $member_subscription->insert( $data );
+					}
+            }
+         }
+			return $user;
+      }
 
 		public function unlock_get_login_url($redirect_url=false) {
     		$UNLOCK_BASE_URL = 'https://app.unlock-protocol.com/checkout';

@@ -28,6 +28,8 @@ if(!class_exists('WoocommerceEmailCheckout')) {
       {
          sexhack_log('WoocommerceEmailCheckout() Instanced');
 			add_filter( 'woocommerce_checkout_fields' , array($this,'simplify_checkout_virtual') );
+			add_filter( 'woocommerce_login_redirect', array($this, 'fix_woocommerce_user'), 99, 2);
+
       }
 
 		public function simplify_checkout_virtual( $fields ) {
@@ -54,7 +56,38 @@ if(!class_exists('WoocommerceEmailCheckout')) {
       	}
      
       	return $fields;
-	   }
+      }
+
+    	public function fix_woocommerce_user($redirect, $user)
+     	{
+       	global $sexhack_pms;
+
+
+         if(is_object($user) && is_checkout())
+         {
+
+            if(!($sexhack_pms->is_member($user->ID)) && !($sexhack_pms->is_premium($user->ID)))
+            {
+               $subscription_plan = $sexhack_pms->get_default_plan();
+               if($subscription_plan)
+               {
+                  $data = array(
+                     'user_id'              => $user->ID,
+                     'subscription_plan_id' => $subscription_plan->id,
+                     'start_date'           => date( 'Y-m-d H:i:s' ),
+                     'expiration_date'      => $subscription_plan->get_expiration_date(),
+                     'status'               => 'active',
+
+
+                  );
+                  $member_subscription = new \PMS_Member_Subscription();
+                  $inserted            = $member_subscription->insert( $data );
+               }
+            }
+         }
+         return $redirect;
+      }
+
    }
 }
 

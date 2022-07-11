@@ -1,0 +1,18 @@
+This is NOT a proper TODO list.
+
+It's just a quick dirty list of things i want to 
+remember to do, mostly little refinery.
+
+---------------------------------------
+
+
+ * Look at exporters/importers of user data: https://rudrastyh.com/wordpress/personal-data-exporters-and-erasers.html
+ * reduce duplication of code, database queries.
+
+-------------------------------------
+
+SOON OR LATER this plugin will be re-written to make some order and re-group
+action, filters and so on with a better organizations of classes, hooks etc,
+and then the initialization will be re-done from scratch removing the "sub plugin selection"
+while we will remove dependencies from woocommerce, pms and the rest.
+

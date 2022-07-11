@@ -78,4 +78,32 @@ function do_dump_rewrite() {
 	add_action( 'parse_request', 'wp_SexHackMe\sarca' );
 }
 
+
+function get_proto(){
+    if(is_ssl()) {
+        return 'https://';
+    } else {
+        return 'http://';
+    }
+}
+
+
+function user_has_premium_access($uid='')
+{
+   global $sexhack_pms;
+
+   return $sexhack_pms->is_premium($uid) AND is_user_logged_in();
+}
+
+function user_has_member_access($uid='')
+{
+   global $sexhack_pms;
+   
+   if($uid) return $sexhack_pms->is_member($uid) OR $sexhack_pms->is_premium($uid);
+   return is_user_logged_in();
+
+}
+
+
+
 ?>
