@@ -27,16 +27,9 @@ if(!class_exists('SexhackHlsPlayer')) {
       public function __construct()
       {
          sexhack_log('SexhackHlsPlayer() Instanced');
-         add_action('wp_enqueue_scripts', array( $this, 'add_js' ));
          add_shortcode("sexhls", array( $this, "sexhls_shortcode"));
       }
 
-      public function add_js()
-      {
-         wp_enqueue_script('sexhls_baseplayer', plugin_dir_url(__DIR__).'js/hls.js');
-         wp_enqueue_script('sexhls_player_controls', plugin_dir_url(__DIR__).'js/sexhls.js');
-         wp_enqueue_script('sexhls_mousetrap', plugin_dir_url(__DIR__).'js/mousetrap.min.js');
-      }
 
       public function addPlayer($vurl, $posters="")
       {

@@ -27,28 +27,7 @@ if(!class_exists('SexhackVideoJSPlayer')) {
       public function __construct()
       {
          sexhack_log('SexhackVideoJSPlayer() Instanced');
-         add_action('wp_enqueue_scripts', array( $this, 'add_js' ));
-         add_action('wp_enqueue_scripts', array( $this, 'add_css' ));
          add_shortcode("sexvideo", array( $this, "sexvideo_shortcode"));
-      }
-
-      public function add_js()
-      {
-         wp_enqueue_script('sexvideo_baseplayer', plugin_dir_url(__DIR__).'js/video.min.js');
-			//wp_enqueue_script('sexvideo_vrplayer', plugin_dir_url(__DIR__).'js/videojs-vr.js');
-			wp_enqueue_script('sexvideo_xrplayer', plugin_dir_url(__DIR__).'js/videojs-xr.min.js');
-         //wp_enqueue_script('sexvideo_player_controls', plugin_dir_url(__DIR__).'js/sexvideo.js');
-			//wp_enqueue_script('sexvideo_vrplayer', plugin_dir_url(__DIR__).'js/deovr.js');
-      }
-
-      public function add_css()
-      {  
-		   wp_enqueue_style ('videojs', plugin_dir_url(__DIR__).'css/video-js.min.css');
-         wp_enqueue_style ('sexhack_videojs', plugin_dir_url(__DIR__).'css/sexhackme_videojs.css');
-         //wp_enqueue_style ('videojs-vr', plugin_dir_url(__DIR__).'css/videojs-vr.css');
-			wp_enqueue_style ('videojs-xr', plugin_dir_url(__DIR__).'css/videojs-xr.css');
-         //wp_enqueue_style ('videojs_forest', plugin_dir_url(__DIR__).'css/videojs_forest.css');
-			//wp_enqueue_style ('videojs', plugin_dir_url(__DIR__).'css/deovr.css');
       }
 
       public function addPlayer($vurl, $posters="", $projection="180_LR")

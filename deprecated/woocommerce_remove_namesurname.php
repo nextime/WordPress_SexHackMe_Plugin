@@ -28,13 +28,7 @@ if(!class_exists('WoocommerceAccountRemoveNameSurname')) {
       {
          add_filter('woocommerce_save_account_details_required_fields', array($this, 'ts_hide_first_last_name'));
          add_action( 'woocommerce_edit_account_form_start', array($this, 'add_username_to_edit_account_form'));
-         add_action('wp_enqueue_scripts', array( $this, 'add_css' ), 200);
          sexhack_log('WoocommerceAccountRemoveNameSurname() Instanced');
-      }
-
-      public function add_css()
-      {
-         wp_enqueue_style ('sexhackme_checkout', plugin_dir_url(__DIR__).'css/sexhackme_checkout.css');
       }
 
 		// Add the custom field "username"

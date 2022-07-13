@@ -28,13 +28,6 @@ if(!class_exists('XFrameByPass')) {
       {
          sexhack_log('XFrameByPass() Instanced');
          add_shortcode( 'xfbp', array( $this, 'xfbp_shortcode_fn' ));
-         add_action('wp_enqueue_scripts', array( $this, 'xfbp_js' ));
-      }
-
-      public function xfbp_js()
-      {
-         wp_enqueue_script('xfbp_poly', plugin_dir_url(__DIR__).'js/custom-elements-builtin.js');
-         wp_enqueue_script('xfbp_js', plugin_dir_url(__DIR__).'js/x-frame-bypass.js');
       }
 
       public function xfbp_shortcode_fn($attributes, $content)

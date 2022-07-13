@@ -79,7 +79,8 @@ if(!class_exists('SexHackMe_Plugin')) {
        * Method that gets executed on plugin activation
        *
        */
-      public function install( $network_activate = false ) {
+      public function install( $network_activate = false ) 
+      {
 
           // Handle multi-site installation
           if( function_exists( 'is_multisite' ) && is_multisite() && $network_activate ) {
@@ -122,7 +123,8 @@ if(!class_exists('SexHackMe_Plugin')) {
        * Method that gets executed on plugin deactivation
        *
        */
-      public function uninstall() {
+      public function uninstall() 
+      {
 
          // Clear cron job
          //$this->clear_cron_job();
@@ -134,7 +136,8 @@ if(!class_exists('SexHackMe_Plugin')) {
        * Method that checks if the current version differs from the one saved in the db
        *
        */
-      public function update_check() {
+      public function update_check() 
+      {
 
          $db_version = get_option( 'sh_version', '' );
 
@@ -153,7 +156,8 @@ if(!class_exists('SexHackMe_Plugin')) {
        * Function that schedules a hook to be executed daily (cron job)
        *
        */
-      public function cron_job() {
+      public function cron_job() 
+      {
 
          // Process payments for custom member subscriptions
          //if( !wp_next_scheduled( 'sh_cron_process_member_subscriptions_payments' ) )
@@ -165,7 +169,8 @@ if(!class_exists('SexHackMe_Plugin')) {
        * Function that cleans the scheduler on plugin deactivation:
        *
        */
-      public function clear_cron_job() {
+      public function clear_cron_job() 
+      {
 
          //wp_clear_scheduled_hook( 'pms_cron_process_member_subscriptions_payments' );
 
@@ -176,7 +181,8 @@ if(!class_exists('SexHackMe_Plugin')) {
        * Add the default settings if they do not exist
        *
        */
-      public function add_default_settings() {
+      public function add_default_settings() 
+      {
 			$already_installed = get_option( 'sh_already_installed' );
 
 
@@ -191,7 +197,8 @@ if(!class_exists('SexHackMe_Plugin')) {
        * Function to include the files needed
        *
        */
-      public function include_dependencies() {
+      public function include_dependencies() 
+      {
 	
 			/*
          if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/' ) )
@@ -233,7 +240,8 @@ if(!class_exists('SexHackMe_Plugin')) {
        * Registers custom meta tables with WP's $wpdb object
        *
        */
-      public function register_custom_meta_tables() {
+      public function register_custom_meta_tables() 
+      {
 
           global $wpdb;
 
@@ -247,7 +255,8 @@ if(!class_exists('SexHackMe_Plugin')) {
        * Initialize the plugin
        *
        */
-      public function init() {
+      public function init() 
+      {
 
 			// Check plugin dependencies
 			add_action( 'tgmpa_register', array($this, 'plugin_dependencies' ));
@@ -257,12 +266,14 @@ if(!class_exists('SexHackMe_Plugin')) {
          add_action('admin_init', array($this, 'initialize_plugin'));
 
 
-
+         // Check if we need to flush rewrite rules
          add_action('init', array($this, 'register_flush'), 10);
          add_action('init', array($this, 'flush_rewrite'), 900);
 
-         // Enqueue scripts on the front end side
-         //add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_front_end_scripts' ) );
+         // Enqueue scripts on the front end side. Priority 200 because of WooCommerce.
+         add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_front_end_scripts' ), 200 );
+
+
 
          // Enqueue scripts on the admin side
          //if( is_admin() )
@@ -293,7 +304,8 @@ if(!class_exists('SexHackMe_Plugin')) {
 
       }
 
-		public function plugin_dependencies() {
+      public function plugin_dependencies() 
+      {
    		$plugins = array(
       		array(
          		'name'      => 'WooCommerce',
@@ -317,7 +329,8 @@ if(!class_exists('SexHackMe_Plugin')) {
 		}
 
 
-      public function register_flush() {
+      public function register_flush() 
+      {
           register_setting('sexhackme-settings', 'need_rewrite_flush');
       }
 
@@ -332,7 +345,37 @@ if(!class_exists('SexHackMe_Plugin')) {
 
       }
 
+      public function enqueue_front_end_scripts()
+      {
+         // HLS Player
+         wp_enqueue_script('sexhls_baseplayer', SH_PLUGIN_DIR_URL.'js/hls.js');
+         wp_enqueue_script('sexhls_player_controls', SH_PLUGIN_DIR_URL.'js/sexhls.js');
+         wp_enqueue_script('sexhls_mousetrap', SH_PLUGIN_DIR_URL.'js/mousetrap.min.js');
 
+
+         // VideoJS Player (for 3D)
+         wp_enqueue_script('sexvideo_baseplayer', SH_PLUGIN_DIR_URL.'js/video.min.js');
+         wp_enqueue_script('sexvideo_xrplayer', SH_PLUGIN_DIR_URL.'js/videojs-xr.min.js');
+
+         wp_enqueue_style ('videojs', SH_PLUGIN_DIR_URL.'css/video-js.min.css');
+         wp_enqueue_style ('sexhack_videojs', SH_PLUGIN_DIR_URL.'css/sexhackme_videojs.css');
+         wp_enqueue_style ('videojs-xr', SH_PLUGIN_DIR_URL.'css/videojs-xr.css');
+
+         // Sexhack Video Gallery
+         wp_enqueue_style ('sexhackme_gallery', SH_PLUGIN_DIR_URL.'css/sexhackme_gallery.css');
+
+         // Sexhack Fix Header
+         wp_enqueue_style ('sexhackme_header', SH_PLUGIN_DIR_URL.'css/sexhackme_header.css');
+
+         // Fix Woocommerce Checkout
+         wp_enqueue_style ('sexhackme_checkout', SH_PLUGIN_DIR_URL.'css/sexhackme_checkout.css');
+
+         // XFrame Bypass
+         wp_enqueue_script('xfbp_poly', SH_PLUGIN_DIR_URL.'js/custom-elements-builtin.js');
+         wp_enqueue_script('xfbp_js', SH_PLUGIN_DIR_URL.'js/x-frame-bypass.js');
+
+
+      }
 
 		/* FROM HERE IS THE DEPRECATED PART */
 

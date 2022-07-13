@@ -125,7 +125,6 @@ if(!class_exists('SexHackVideoGallery')) {
 
          // Register Query Vars
          add_filter("query_vars", array($this, "query_vars"));
-         add_action('wp_enqueue_scripts', array( $this, 'add_css' ), 200);
          add_shortcode("sexgallery", array($this, "sexgallery_shortcode"));
          add_action('init', array($this, "register_sexhack_video_post_type"));
          //add_action('add_meta_boxes', array($this, "sexhack_video_metaboxes"));
@@ -167,11 +166,6 @@ if(!class_exists('SexHackVideoGallery')) {
          //      (double check if already done in the $this->register_sexhack_video_post_type and it's enough)
          sexhack_log($rules);
          return $rules;
-      }
-
-      public function add_css() 
-      {
-         wp_enqueue_style ('sexhackme_gallery', plugin_dir_url(__DIR__).'css/sexhackme_gallery.css');
       }
 
       public function query_vars($vars)
