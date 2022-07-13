@@ -128,9 +128,11 @@ if(!class_exists('SexHackVideoGallery')) {
          add_action('wp_enqueue_scripts', array( $this, 'add_css' ), 200);
          add_shortcode("sexgallery", array($this, "sexgallery_shortcode"));
          add_action('init', array($this, "register_sexhack_video_post_type"));
+         //add_action('add_meta_boxes', array($this, "sexhack_video_metaboxes"));
          add_action('admin_init', array($this, "register_settings"));
 			//add_filter('page_template', array($this, 'sexhack_video_template'));
 			add_filter('archive_template', array($this, 'sexhack_video_template'));
+			add_action('save_post', array($this, 'save_sexhack_video_meta_box_data' ));
 
 			add_action('pre_get_posts', array($this, 'fix_video_query'), 1, 1);
          sexhack_log('SexHackVideoGallery() Instanced');
@@ -231,19 +233,32 @@ if(!class_exists('SexHackVideoGallery')) {
          sexhack_log("REGISTER SEXHACK_VIDEO ");
 
     		register_post_type('sexhack_video', array(
-       		'label' => 'Sexhack.me Video','description' => '',
+             'labels'        => array(
+                'name'                  => 'Videos',
+                'singular_name'         => 'Video',
+                'add_new'               => 'Add New',
+                'add_new_item'          => 'Add New Video',
+                'edit_item'             => 'Edit Video',
+                'not_found'             => 'There are no videos yet',
+                'not_found_in_trash'    => 'Nothing found in Trash',
+                'search_items'          => 'Search videos',
+               ),
+            'description' => 'Videos for SexHack.me gallery',
        		'public' => true,
+				'register_meta_box_cb' => array($this, 'sexhack_video_metaboxes'),
        		'show_ui' => true,
-       		'show_in_menu' => false, // Visibility in admin menu.
-       		'capability_type' => 'post',
-       		'hierarchical' => false,
+       		'show_in_menu' => true,
+				'show_in_rest' => true,
+				'menu_position' => 32,
+       		'capability_type' => 'post', // XXX We should create our own cap type?
+				// 'capabilities' => array(), // Or just select specific capabilities here
+       		'hierarchical' => true,
        		'publicly_queryable' => true,
        		'rewrite' => false,
        		'query_var' => true,
        		'has_archive' => true,
-       		'supports' => array('title','editor','excerpt','trackbacks','custom-fields','comments','revisions','thumbnail','author','page-attributes'),
-       		'taxonomies' => array('category','post_tag'),
-       		// there are a lot more available arguments, but the above is plenty for now
+       		'supports' => array('title'), // 'thumbnail', 'editor','excerpt','trackbacks','custom-fields','comments','revisions','author','page-attributes'),
+       		'taxonomies' => array('category','post_tag'), // XXX Shouldn't we have a "video_type" taxonomy for VR or flat?
     		));
 
          $projects_structure = '/'.$DEFAULTSLUG.'/%wooprod%/';
@@ -256,17 +271,79 @@ if(!class_exists('SexHackVideoGallery')) {
             $wp_rewrite->add_rewrite_tag("%videoaccess%", '([^/]+)', "videoaccess=");
             $wp_rewrite->add_permastruct($DEFAULTSLUG, $projects_structure, false);
             $wp_rewrite->add_permastruct($DEFAULTSLUG, $projects_structure."%videoaccess%/", false);
-            //$wp_rewrite->add_permastruct($DEFAULTSLUG.'public', $projects_structure.'public/', false);
-            //$wp_rewrite->add_permastruct($DEFAULTSLUG.'members', $projects_structure.'members/', false);
-            //$wp_rewrite->add_permastruct($DEFAULTSLUG.'subscribers', $projects_structure.'subscribers/', false);
-            //$wp_rewrite->add_permastruct($DEFAULTSLUG.'vrpub', $projects_structure.'vrpub/', false);
-            //$wp_rewrite->add_permastruct($DEFAULTSLUG.'vrmem', $projects_structure.'vrmem/', false);
-            //$wp_rewrite->add_permastruct($DEFAULTSLUG.'vrsub', $projects_structure.'vrsub/', false);
             update_option('need_rewrite_flush', 1);
 
          }
 		}
 
+
+      public function sexhack_video_metaboxes($post=false)
+      {
+			add_meta_box( 'sh-mbox-videodescription', 'Video Description', array($this, 'load_metabox_videodescription'), 'sexhack_video', 'normal','default');
+         add_meta_box( 'sh-mbox-video', 'Video locations', array( $this, 'load_metabox_videolocations' ), 'sexhack_video', 'normal', 'default' );
+         //remove_meta_box( 'postimagediv', 'sexhack_video', 'side' );
+         add_meta_box('postimagediv', 'Video Thumbnail', 'post_thumbnail_meta_box', 'sexhack_video', 'side', 'default');
+      }
+
+		public function load_metabox_videodescription($post)
+		{
+			wp_nonce_field('video_description_nonce','sh_video_description_nonce');
+			$value = get_post_meta( $post->ID, 'video_description', true );
+         echo '<textarea style="width:100%" id="video_description" name="video_description">' . esc_attr( $value ) . '</textarea>';
+
+		}
+
+		public function save_sexhack_video_meta_box_data( $post_id ) {
+
+
+    		// Verify that the nonce is set and valid.
+    		if (!isset( $_POST['sh_video_description_nonce']) 
+				|| !wp_verify_nonce( $_POST['sh_video_description_nonce'], 'video_description_nonce' ) ) {
+        		return;
+    		}
+
+    		// If this is an autosave, our form has not been submitted, so we don't want to do anything.
+    		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+        		return;
+    		}
+
+    		// Check the user's permissions.
+    		if ( isset( $_POST['post_type'] ) && 'page' == $_POST['post_type'] ) {
+
+        		if ( ! current_user_can( 'edit_page', $post_id ) ) {
+            	return;
+        		}
+
+    		}
+   		 else {
+        		if ( ! current_user_can( 'edit_post', $post_id ) ) {
+            	return;
+        		}
+    		}
+
+    		/* OK, it's safe for us to save the data now. */
+
+    		// Make sure that it is set.
+    		if ( ! isset( $_POST['video_description'] ) ) {
+        		return;
+    		}
+
+    		// Sanitize user input.
+    		$my_data = sanitize_text_field( $_POST['video_description'] );
+
+    		// Update the meta field in the database.
+    		update_post_meta( $post_id, 'video_description', $my_data );
+		}
+
+
+      public function load_metabox_videolocations($post) //($object, $box)
+      {
+    		wp_nonce_field( 'global_notice_nonce', 'global_notice_nonce' );
+
+    		$value = get_post_meta( $post->ID, '_global_notice', true );
+
+    		echo '<textarea style="width:100%" id="global_notice" name="global_notice">' . esc_attr( $value ) . '</textarea>';
+      }
 
       public function getProducts($vcat=false) {
    

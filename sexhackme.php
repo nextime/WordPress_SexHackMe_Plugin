@@ -5,15 +5,9 @@
  * Description: Cumulative plugin for https://www.sexhack.me modifications to wordpress, woocommerce and storefront theme
  * Version: 0.1
  * Author: Franco Lanza
- */
-
-/**
- * include all files from folder sites
- * Array for every classfile, format: array('description' => "<text>", 'name' => "<text>", "class" => "<classname>");
- * it MUST be present on every subclass!!!
- */
-
-/**
+ *
+ * ----------------------
+ *
  * Copyright: 2022 (c)Franco (nextime) Lanza <franco@nexlab.it>
  * License: GNU/GPL version 3.0
  *
@@ -39,118 +33,329 @@ namespace wp_SexHackMe;
 //           look at https://woocommerce.com/document/create-a-plugin/#section-1
 
 
-$SEXHACK_SECTIONS = array();
-$SEXHACK_ERRORS = array();
-
-$GLOBAL_NOSLUGS=array(
-                  'wp-cron.php',
-                  'wp-content',
-                  'xmlrpc.php'
-                );
-
-if(!function_exists('sexhack_log')){
-  function sexhack_log( $message ) {
-    if( WP_DEBUG === true ){
-      if( is_array( $message ) || is_object( $message ) ){
-        error_log( "SexHackMe: ".print_r( $message, true ) );
-      } else {
-        error_log( "SexHackMe: ".$message );
-      }
-    }
-  }
-}
-
-$FIRST_SLUG = "/";
-$slug = explode("/", $_SERVER['REQUEST_URI']);
-if(count($slug) > 1) {
-   $FIRST_SLUG=explode("?", $slug[1])[0];
-   $FIRST_SLUG=explode("#", $FIRST_SLUG)[0];
-}
-
-require_once dirname( __FILE__ ) . '/inc/class-tgm-plugin-activation.php';
-
-add_action( 'tgmpa_register', 'wp_SexHackMe\sexhackme_register_required_plugins' );
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 
-function sexhackme_register_required_plugins() {
-   $plugins = array(
-      array(
-         'name'      => 'WooCommerce',
-         'slug'      => 'woocommerce',
-         'required'  => false,
-			//'is_callable' => 'wpseo_init',
-      )
-	);
-   $config = array(
-      'id'           => 'sexhackme',                 // Unique ID for hashing notices for multiple instances of TGMPA.
-      'default_path' => '',                      // Default absolute path to bundled plugins.
-      'menu'         => 'tgmpa-install-plugins', // Menu slug.
-      'parent_slug'  => 'plugins.php',            // Parent menu slug.
-      'capability'   => 'manage_options',    // Capability needed to view plugin install page, should be a capability associated with the parent menu used.
-      'has_notices'  => true,                    // Show admin notices or not.
-      'dismissable'  => true,                    // If false, a user cannot dismiss the nag message.
-      'dismiss_msg'  => '',                      // If 'dismissable' is false, this message will be output at top of nag.
-      'is_automatic' => false,                   // Automatically activate plugins after installation or not.
-      'message'      => '',                      // Message to output right before the plugins table.
-	);
-}
+if(!class_exists('SexHackMe_Plugin')) {
 
-sexhack_log("FIRST_SLUG:".$FIRST_SLUG." REQUEST:".$_SERVER['REQUEST_URI']." QUERY:".$_SERVER['QUERY_STRING'] );
-
-foreach( glob(dirname(__FILE__) . '/helpers/*.php') as $helper_path ) {
-   sexhack_log('Loading '.$helper_path);
-   require_once($helper_path);
-}
-
-
-if(!class_exists('SexHackMe')) {
-   foreach( glob(dirname(__FILE__) . '/classes/*.php') as $class_path ) {
-      $SEXHACK_SECTION = false;
-      try {
-         include_once($class_path);
-      } catch(\Throwable $e) {
-         sexhack_log($e);
-      }
-		//sexhack_log("Class_path:" . $class_path);
-      //sexhack_log("Section:" . $SEXHACK_SECTION["name"]);
-      if(is_array($SEXHACK_SECTION)) { $SEXHACK_SECTIONS[] = $SEXHACK_SECTION; }
-      else { $SEXHACK_ERRORS[] = basename("/classes/".$class_path); }
-   }
-
-
-   class SexHackMe
+   class SexHackMe_Plugin
    {
-      public function __construct($SECTIONS)
+
+      public $prefix;
+
+      public function __construct()
       {
-         global $FIRST_SLUG;
-         //$FIRST_SLUG = \wp_SexHackMe\$FIRST_SLUG;
-         sexhack_log("SexHackMe Instanciated");
-         $this->SECTIONS = $SECTIONS;
-         $this->instances = array();
+
+          define( 'SH_VERSION', '0.0.1' );
+          define( 'SH_PLUGIN_DIR_PATH', plugin_dir_path( __FILE__ ) );
+          define( 'SH_PLUGIN_DIR_URL', plugin_dir_url( __FILE__ ) );
+          define( 'SH_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
+
+          // The prefix of the plugin
+          $this->prefix = 'sh_';
+
+          // Install needed components on plugin activation
+          register_activation_hook( __FILE__, array( $this, 'install' ) );
+
+          register_deactivation_hook(__FILE__, array($this, 'uninstall') );
+
+          //add_action( 'plugins_loaded', array( $this, 'register_custom_meta_tables' ) );
+
+          // Check if this is a newer version
+          add_action( 'plugins_loaded', array( $this, 'update_check' ) );
+
+          // Include dependencies
+          $this->include_dependencies();
+
+          // Initialize the components
+          $this->init();
+
+
+      }
+
+
+      /*
+       * Method that gets executed on plugin activation
+       *
+       */
+      public function install( $network_activate = false ) {
+
+          // Handle multi-site installation
+          if( function_exists( 'is_multisite' ) && is_multisite() && $network_activate ) {
+
+              global $wpdb;
+
+              $blog_ids = $wpdb->get_col( "SELECT blog_id FROM $wpdb->blogs" );
+
+              foreach( $blog_ids as $blog_id ) {
+
+                 switch_to_blog( $blog_id );
+
+                 // Create needed tables
+                 //$this->create_tables();
+
+                 // Add default settings
+                 //$this->add_default_settings();
+
+                 restore_current_blog();
+
+              }
+
+           // Handle single site installation
+           } else {
+
+              // Create needed tables
+              //$this->create_tables();
+
+              // Add default settings
+              //$this->add_default_settings();
+
+           }
+
+          // Add a cron job to be executed daily
+          //$this->cron_job();
+		}
+
+
+      /*
+       * Method that gets executed on plugin deactivation
+       *
+       */
+      public function uninstall() {
+
+         // Clear cron job
+         //$this->clear_cron_job();
+
+      }
+
+
+      /*
+       * Method that checks if the current version differs from the one saved in the db
+       *
+       */
+      public function update_check() {
+
+         $db_version = get_option( 'sh_version', '' );
+
+         if( SH_VERSION != $db_version ) {
+
+             //$this->create_tables();
+
+             do_action('sh_update_check');
+
+             update_option( 'sh_version', SH_VERSION );
+         }
+
+      }
+
+      /*
+       * Function that schedules a hook to be executed daily (cron job)
+       *
+       */
+      public function cron_job() {
+
+         // Process payments for custom member subscriptions
+         //if( !wp_next_scheduled( 'sh_cron_process_member_subscriptions_payments' ) )
+         //    wp_schedule_event( time(), 'daily', 'sh_cron_process_member_subscriptions_payments' );
+      }
+
+
+      /*
+       * Function that cleans the scheduler on plugin deactivation:
+       *
+       */
+      public function clear_cron_job() {
+
+         //wp_clear_scheduled_hook( 'pms_cron_process_member_subscriptions_payments' );
+
+      }
+
+
+      /*
+       * Add the default settings if they do not exist
+       *
+       */
+      public function add_default_settings() {
+			$already_installed = get_option( 'sh_already_installed' );
+
+
+
+         if ( !$already_installed )
+            update_option( 'sh_already_installed', 'yes', false );
+
+		}
+
+
+	   /*
+       * Function to include the files needed
+       *
+       */
+      public function include_dependencies() {
+	
+			/*
+         if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/' ) )
+            include_once( SH_PLUGIN_DIR_PATH . 'includes/' );
+			*/		
+
+			/* Manage Plugin Dependencies */
+         if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-tgm-plugin-activation.php' ) )
+				include_once( SH_PLUGIN_DIR_PATH . 'includes/class-tgm-plugin-activation.php' );
+
+         /* Utils  */
+         if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/functions-utils.php' ) )
+            include_once( SH_PLUGIN_DIR_PATH . 'includes/functions-utils.php' );
+
+			/* Cryptocurrencies utils */
+         if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/functions-crypto.php' ) )
+            include_once( SH_PLUGIN_DIR_PATH . 'includes/functions-crypto.php' );
+
+			/* Paid Member Subscription utils */
+         if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/functions-paid-member-subscriptions-integration.php' ) )
+            include_once( SH_PLUGIN_DIR_PATH . 'includes/functions-paid-member-subscriptions-integration.php' );
+
+
+			/* Testing code */
+         foreach( glob(dirname(__FILE__) . '/testing/*.php') as $class_path ) {
+            try {
+               include_once($class_path);
+            } catch(\Throwable $e) {
+               sexhack_log($e);
+            }
+			}
+	
+
+
+		}
+
+
+      /**
+       * Registers custom meta tables with WP's $wpdb object
+       *
+       */
+      public function register_custom_meta_tables() {
+
+          global $wpdb;
+
+          $wpdb->member_subscriptionmeta = $wpdb->prefix . $this->prefix . 'member_subscriptionmeta';
+
+      }
+
+
+
+      /*
+       * Initialize the plugin
+       *
+       */
+      public function init() {
+
+			// Check plugin dependencies
+			add_action( 'tgmpa_register', array($this, 'plugin_dependencies' ));
+
+         // Set the main menu page
          add_action('admin_menu', array($this, 'admin_menu'));
          add_action('admin_init', array($this, 'initialize_plugin'));
+
+
+
          add_action('init', array($this, 'register_flush'), 10);
          add_action('init', array($this, 'flush_rewrite'), 900);
-         foreach($this->SECTIONS as $section) {
-            if(get_option( $section['name'])=="1")
-            {
-               if (array_key_exists('noslugs', $section) && in_array($FIRST_SLUG, $section['noslugs'])) {
-                  sexhack_log("NOSLUGS for ".$section['name']);
-                  continue;
-               }
-               else {
-                  if (array_key_exists('slugs', $section)) {
-                     if(in_array($FIRST_SLUG, $section['slugs'])) {
-                        sexhack_log("SLUGS for ".$section['name']);
-                        $this->instance_subclass($section);
-                     }
-                  } 
-                  else {
-                     $this->instance_subclass($section);
-                  }
-               }
-            }
 
+         // Enqueue scripts on the front end side
+         //add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_front_end_scripts' ) );
+
+         // Enqueue scripts on the admin side
+         //if( is_admin() )
+         //    add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ) );
+
+         // Initialize shortcodes
+         //add_action( 'init', array( 'PMS_Shortcodes', 'init' ) );
+         //add_action( 'init', array( $this, 'init_dependencies' ), 1 );
+
+         //Show row meta on the plugin screen (used to add links like Documentation, Support etc.).
+         //add_filter( 'plugin_row_meta', array( $this, 'plugin_row_meta' ), 10, 2 );
+
+         // Hook to be executed on a specific interval, by the cron job (wp_schedule_event); used to check if a subscription has expired
+         //add_action('pms_check_subscription_status','pms_member_check_expired_subscriptions');
+
+         // Hook to be executed on a daily interval, by the cron job (wp_schedule_event); used to remove the user activation key from the db (make it expire) every 24 hours
+         //add_action('pms_remove_activation_key','pms_remove_expired_activation_key');
+
+         // Add new actions besides the activate/deactivate ones from the Plugins page
+         //add_filter( 'plugin_action_links_' . plugin_basename(__FILE__), array( $this, 'add_plugin_action_links' ) );
+			
+
+         sexhack_log("SexHackMe PLUGIN Loaded!");
+
+			// Initialize the deprecated plugin parts 
+			// XXX To be removed soon!
+			$this->deprecated();
+
+      }
+
+		public function plugin_dependencies() {
+   		$plugins = array(
+      		array(
+         		'name'      => 'WooCommerce',
+         		'slug'      => 'woocommerce',
+         		'required'  => false,
+         		//'is_callable' => 'wpseo_init',
+      		)
+   		);
+   		$config = array(
+		      'id'           => 'sexhackme',                 // Unique ID for hashing notices for multiple instances of TGMPA.
+		      'default_path' => '',                      // Default absolute path to bundled plugins.
+		      'menu'         => 'tgmpa-install-plugins', // Menu slug.
+		      'parent_slug'  => 'plugins.php',            // Parent menu slug.
+		      'capability'   => 'manage_options',    // Capability needed to view plugin install page, should be a capability associated with the parent menu used.
+		      'has_notices'  => true,                    // Show admin notices or not.
+		      'dismissable'  => true,                    // If false, a user cannot dismiss the nag message.
+  	   		'dismiss_msg'  => '',                      // If 'dismissable' is false, this message will be output at top of nag.
+      		'is_automatic' => false,                   // Automatically activate plugins after installation or not.
+      		'message'      => '',                      // Message to output right before the plugins table.
+   		);
+		}
+
+
+      public function register_flush() {
+          register_setting('sexhackme-settings', 'need_rewrite_flush');
+      }
+
+      public function flush_rewrite()
+      {
+         if( get_option('need_rewrite_flush'))
+         {
+             sexhack_log("FLUSHING REWRITE RULES");
+             flush_rewrite_rules(false);
+             update_option('need_rewrite_flush', 0);
+         }
+
+      }
+
+
+
+		/* FROM HERE IS THE DEPRECATED PART */
+
+      public function deprecated()
+      {
+
+
+			$SECTIONS = array();
+   		foreach( glob(dirname(__FILE__) . '/deprecated/*.php') as $class_path ) {
+            sexhack_log($class_path);
+      		$SEXHACK_SECTION = false;
+      		try {
+         		include_once($class_path);
+      		} catch(\Throwable $e) {
+         		sexhack_log($e);
+      		}
+      		if(is_array($SEXHACK_SECTION)) $SECTIONS[] = $SEXHACK_SECTION; 
+   		}
+         $this->SECTIONS = $SECTIONS;
+         $this->instances = array();
+         foreach($SECTIONS as $section) {
+            sexhack_log("Loading ".$section['name']);
+            $this->instance_subclass($section);
          }
 
       }
@@ -166,40 +371,16 @@ if(!class_exists('SexHackMe')) {
          echo "<h3>Enable following functionalities:</h3>";
       }
       
-      /*
-      public function settings_field($name) 
-      {
-         echo $name;
-      }
-      */
-
       public function checkbox($res) 
       {
          if($res=="1") return "checked";
       }
 
-      public function register_flush() {
-          register_setting('sexhackme-settings', 'need_rewrite_flush');
-      }
-
-      public function flush_rewrite()
-      {
-         if( get_option('need_rewrite_flush')) 
-         {
-             sexhack_log("FLUSHING REWRITE RULES");
-             flush_rewrite_rules(false);
-             update_option('need_rewrite_flush', 0);
-         }
-
-      }
 
       public function initialize_plugin() 
       {
          add_settings_section('sexhackme-settings', ' ', array($this, 'settings_section'), 'sexhackme-settings');
-         //register_setting('sexhackme-settings', 'need_rewrite_flush');
          foreach($this->SECTIONS as $section) {
-            //add_settings_field($section['name'], $section['name'], $section['name'], 
-            //   array($this, 'settings_field'), 'sexhackme-settings', 'sexhackme-settings', $section['name']   );
             register_setting('sexhackme-settings', $section['name']);
 				if(array_key_exists('require-page', $section) && ($section['require-page']))
             { 
@@ -219,7 +400,7 @@ if(!class_exists('SexHackMe')) {
       public function admin_menu() 
       {
          add_menu_page('SexHackMe Settings', 'SexHackMe', 'manage_options', 'sexhackme-settings', 
-            array($this, 'admin_page'), plugin_dir_url(__FILE__) .'/img/admin_icon.png', 150);
+            array($this, 'admin_page'), plugin_dir_url(__FILE__) .'/img/admin_icon.png', 31);
 
 			add_submenu_page( 'sexhackme-settings', 'SexHackMe Settings', 'Modules',
     				'manage_options', 'sexhackme-settings');
@@ -245,12 +426,9 @@ if(!class_exists('SexHackMe')) {
 
       public function admin_page()
       {
-         global $SEXHACK_ERRORS;
          ?>
             <div class="wrap">
                <h2>SexHackMe Plugin Settings</h2>
-               <?php if(!empty($SEXHACK_ERRORS)) { 
-                  foreach($SEXHACK_ERRORS as $serr) { ?><h3 style="color: red;">Error loading <?php echo $serr ?>!</h3><?php }} ?>
                <form method="post" action="/wp-admin/options.php">
                <?php settings_fields( 'sexhackme-settings' ); ?>
                <?php do_settings_sections( 'sexhackme-settings' ); ?>
@@ -314,14 +492,8 @@ if(!class_exists('SexHackMe')) {
       }
    }
 
-   function sexhackme_plugin_run($SECTIONS, $SLUG)
-   {
-      sexhack_log("Running SexHackMe Plugins (".$SLUG.")");
-      $SexHackMe = new SexHackMe($SECTIONS);
-   }
-
-   if(!in_array($FIRST_SLUG, $GLOBAL_NOSLUGS)) sexhackme_plugin_run($SEXHACK_SECTIONS, $FIRST_SLUG);
-   else sexhack_log("NOSLUGS DETECTED: NOT RUNNING( ".$FIRST_SLUG." - ".$_SERVER['REQUEST_URI'].$_SERVER['QUERY_STRING'].")");
+   // Let's run the plugin!
+   new SexHackMe_Plugin;
 }
 
 
@@ -329,7 +501,7 @@ if(!class_exists('SexHackMe')) {
 // DEBUG REWRITE RULES
 if( WP_DEBUG === true ){
    // only matched?
-	add_action("the_post", 'wp_SexHackMe\debug_rewrite_rules');
+	//add_action("the_post", 'wp_SexHackMe\debug_rewrite_rules');
 }
 
 

@@ -21,6 +21,105 @@
 
 namespace wp_SexHackMe;
 
+
+
+if(!function_exists('sexhack_log')){
+  function sexhack_log( $message, $dumps=false) {
+    if( WP_DEBUG === true ){
+      if( is_array( $message ) || is_object( $message ) ){
+        error_log( "SexHackMe: ".print_r( $message, true ) );
+      } else {
+        if($dumps) error_log( "SexHackMe: ".$message." ".str_replace("\n", "", print_r($dumps, TRUE)) );
+        else error_log( "SexHackMe: ".$message );
+      }
+    }
+  }
+}
+
+
+function debug_rewrite_rules($matchonly=false) 
+{
+   $matchonly=true;
+   global $wp_rewrite, $wp, $template;
+   $i=1;
+   if (!empty($wp_rewrite->rules)) {
+      foreach($wp_rewrite->rules as $name => $value) {
+         if($name==$wp->matched_rule) {
+            sexhack_log("MATCHED REWRITE RULE $i!!! NAME: ".$name." , VALUE: ".$value." , REQUEST: ".$wp->request." , MATCHED: ".$wp->matched_query." , TEMPLATE:".$template);
+         } else {
+            if(!$matchonly) 
+               sexhack_log("REWRITE $i: $name -> $value ");
+         }
+         $i++;
+      }
+   }
+}
+
+
+function starts_with ($startString, $string)
+{
+    $len = strlen($startString);
+    return (substr($string, 0, $len) === $startString);
+}
+
+function dump_rewrite( &$wp ) {
+    global $wp_rewrite;
+
+	 ini_set( 'error_reporting', -1 );
+	 ini_set( 'display_errors', 'On' );
+    echo '<h2>rewrite rules</h2>';
+    echo var_export( $wp_rewrite->wp_rewrite_rules(), true );
+
+    echo '<h2>permalink structure</h2>';
+    echo var_export( $wp_rewrite->permalink_structure, true );
+
+    echo '<h2>page permastruct</h2>';
+    echo var_export( $wp_rewrite->get_page_permastruct(), true );
+
+    echo '<h2>matched rule and query</h2>';
+    echo var_export( $wp->matched_rule, true );
+
+    echo '<h2>matched query</h2>';
+    echo var_export( $wp->matched_query, true );
+
+    echo '<h2>request</h2>';
+    echo var_export( $wp->request, true );
+
+    global $wp_the_query;
+    echo '<h2>the query</h2>';
+    echo var_export( $wp_the_query, true );
+}
+
+function do_dump_rewrite() {
+	add_action( 'parse_request', 'wp_SexHackMe\sarca' );
+}
+
+
+function get_proto(){
+    if(is_ssl()) {
+        return 'https://';
+    } else {
+        return 'http://';
+    }
+}
+
+
+function user_has_premium_access($uid='')
+{
+   global $sexhack_pms;
+
+   return $sexhack_pms->is_premium($uid) AND is_user_logged_in();
+}
+
+function user_has_member_access($uid='')
+{
+   global $sexhack_pms;
+   
+   if($uid) return $sexhack_pms->is_member($uid) OR $sexhack_pms->is_premium($uid);
+   return is_user_logged_in();
+
+}
+
 function send_changepwd_mail($user_login, $baseurl=false){
 	
     global $wpdb, $wp_hasher;
@@ -108,6 +207,58 @@ function send_changepwd_mail($user_login, $baseurl=false){
         wp_die( __('The e-mail could not be sent.') . "<br />\n" . __('Possible reason: your host may have disabled the mail() function...') );
 
 	
+}
+
+function sexhack_getURL($url)
+{
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch,CURLOPT_USERAGENT,'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36');
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    $out = curl_exec($ch);
+    curl_close($ch);
+    return $out;
+}
+
+
+function trim_text_preview($text, $len=340, $fill=false)
+{
+	$min="10";
+	if($len < $min) $len=$min;
+	if (strlen($text) > $len)
+	{
+    	$offset = ($len - 3) - strlen($text);
+    	$text = substr($text, 0, strrpos($text, ' ', $offset)) . '...';
+   }  
+   if($fill)
+   {
+      $start=strlen($text);
+      while($start < $len+1) {
+         $start++;
+         $text .= "&nbsp";
+      }
+   }
+	return $text;
+}
+
+function html2text($html)
+{
+    // remove comments and any content found in the the comment area (strip_tags only removes the actual tags).
+    $plaintext = preg_replace('#<!--.*?-->#s', '', $html);
+
+    // put a space between list items (strip_tags just removes the tags).
+    $plaintext = preg_replace('#</li>#', ' </li>', $plaintext);
+
+    // remove all script and style tags
+    $plaintext = preg_replace('#<(script|style)\b[^>]*>(.*?)</(script|style)>#is', "", $plaintext);
+
+    // remove br tags (missed by strip_tags)
+    $plaintext = preg_replace('#<br[^>]*?>#', " ", $plaintext);
+
+    // remove all remaining html
+    $plaintext = strip_tags($plaintext);
+
+    return $plaintext;
 }
 
 ?>

@@ -11,7 +11,7 @@ remember to do, mostly little refinery.
 
 -------------------------------------
 
-SOON OR LATER this plugin will be re-written to make some order and re-group
+SOON this plugin will be re-written to make some order and re-group
 action, filters and so on with a better organizations of classes, hooks etc,
 and then the initialization will be re-done from scratch removing the "sub plugin selection"
 while we will remove dependencies from woocommerce, pms and the rest.
