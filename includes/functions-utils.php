@@ -132,6 +132,13 @@ function user_has_premium_access($uid='')
    return $sexhack_pms->is_premium($uid) AND is_user_logged_in();
 }
 
+function user_is_premium($uid='')
+{
+   global $sexhack_pms;
+
+   return $sexhack_pms->is_premium($uid);
+}
+
 function user_has_member_access($uid='')
 {
    global $sexhack_pms;
@@ -139,6 +146,13 @@ function user_has_member_access($uid='')
    if($uid) return $sexhack_pms->is_member($uid) OR $sexhack_pms->is_premium($uid);
    return is_user_logged_in();
 
+}
+
+function user_is_member($uid='')
+{
+   global $sexhack_pms;
+
+   return $sexhack_pms->is_member($uid);
 }
 
 function send_changepwd_mail($user_login, $baseurl=false){

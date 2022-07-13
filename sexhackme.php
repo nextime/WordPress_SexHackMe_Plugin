@@ -218,8 +218,8 @@ if(!class_exists('SexHackMe_Plugin')) {
             include_once( SH_PLUGIN_DIR_PATH . 'includes/functions-crypto.php' );
 
 			/* Paid Member Subscription utils */
-         if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/functions-paid-member-subscriptions-integration.php' ) )
-            include_once( SH_PLUGIN_DIR_PATH . 'includes/functions-paid-member-subscriptions-integration.php' );
+         if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-paid-member-subscriptions-integration.php' ) )
+            include_once( SH_PLUGIN_DIR_PATH . 'includes/class-paid-member-subscriptions-integration.php' );
 
          /* Video Players */
          if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-video-players.php' ) )
