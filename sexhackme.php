@@ -3,7 +3,7 @@
  * Plugin Name: SexHackMe
  * Plugin URI: https://www.sexhack.me/SexHackMe_Wordpress
  * Description: Cumulative plugin for https://www.sexhack.me modifications to wordpress, woocommerce and storefront theme
- * Version: 0.1
+ * Version: 0.0.1
  * Author: Franco Lanza
  *
  * ----------------------
@@ -221,6 +221,20 @@ if(!class_exists('SexHackMe_Plugin')) {
          if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/functions-paid-member-subscriptions-integration.php' ) )
             include_once( SH_PLUGIN_DIR_PATH . 'includes/functions-paid-member-subscriptions-integration.php' );
 
+         /* Video Players */
+         if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-video-players.php' ) )
+            include_once( SH_PLUGIN_DIR_PATH . 'includes/class-video-players.php' );
+
+
+         /* Shortcodes */
+         if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-shortcodes.php' ) )
+            include_once SH_PLUGIN_DIR_PATH . 'includes/class-shortcodes.php';
+
+
+
+         /* Hook to include needed files */
+         do_action( 'pms_include_files' );
+
 
 			/* Testing code */
          foreach( glob(dirname(__FILE__) . '/testing/*.php') as $class_path ) {
@@ -230,8 +244,6 @@ if(!class_exists('SexHackMe_Plugin')) {
                sexhack_log($e);
             }
 			}
-	
-
 
 		}
 
@@ -280,11 +292,11 @@ if(!class_exists('SexHackMe_Plugin')) {
          //    add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ) );
 
          // Initialize shortcodes
-         //add_action( 'init', array( 'PMS_Shortcodes', 'init' ) );
+         add_action( 'init', array( 'wp_SexHackMe\SH_Shortcodes', 'init' ) );
          //add_action( 'init', array( $this, 'init_dependencies' ), 1 );
 
          //Show row meta on the plugin screen (used to add links like Documentation, Support etc.).
-         //add_filter( 'plugin_row_meta', array( $this, 'plugin_row_meta' ), 10, 2 );
+         add_filter( 'plugin_row_meta', array( $this, 'plugin_row_meta' ), 10, 2 );
 
          // Hook to be executed on a specific interval, by the cron job (wp_schedule_event); used to check if a subscription has expired
          //add_action('pms_check_subscription_status','pms_member_check_expired_subscriptions');
@@ -293,7 +305,7 @@ if(!class_exists('SexHackMe_Plugin')) {
          //add_action('pms_remove_activation_key','pms_remove_expired_activation_key');
 
          // Add new actions besides the activate/deactivate ones from the Plugins page
-         //add_filter( 'plugin_action_links_' . plugin_basename(__FILE__), array( $this, 'add_plugin_action_links' ) );
+         add_filter( 'plugin_action_links_' . plugin_basename(__FILE__), array( $this, 'add_plugin_action_links' ) );
 			
 
          sexhack_log("SexHackMe PLUGIN Loaded!");
@@ -304,6 +316,7 @@ if(!class_exists('SexHackMe_Plugin')) {
 
       }
 
+      // XXX There are so many dependencies to add here...
       public function plugin_dependencies() 
       {
    		$plugins = array(
@@ -315,11 +328,11 @@ if(!class_exists('SexHackMe_Plugin')) {
       		)
    		);
    		$config = array(
-		      'id'           => 'sexhackme',                 // Unique ID for hashing notices for multiple instances of TGMPA.
+		      'id'           => 'sexhackme',             // Unique ID for hashing notices for multiple instances of TGMPA.
 		      'default_path' => '',                      // Default absolute path to bundled plugins.
 		      'menu'         => 'tgmpa-install-plugins', // Menu slug.
-		      'parent_slug'  => 'plugins.php',            // Parent menu slug.
-		      'capability'   => 'manage_options',    // Capability needed to view plugin install page, should be a capability associated with the parent menu used.
+		      'parent_slug'  => 'plugins.php',           // Parent menu slug.
+		      'capability'   => 'manage_options',        // Capability needed to view plugin install page, should be a capability associated with the parent menu used.
 		      'has_notices'  => true,                    // Show admin notices or not.
 		      'dismissable'  => true,                    // If false, a user cannot dismiss the nag message.
   	   		'dismiss_msg'  => '',                      // If 'dismissable' is false, this message will be output at top of nag.
@@ -348,34 +361,86 @@ if(!class_exists('SexHackMe_Plugin')) {
       public function enqueue_front_end_scripts()
       {
          // HLS Player
-         wp_enqueue_script('sexhls_baseplayer', SH_PLUGIN_DIR_URL.'js/hls.js');
-         wp_enqueue_script('sexhls_player_controls', SH_PLUGIN_DIR_URL.'js/sexhls.js');
-         wp_enqueue_script('sexhls_mousetrap', SH_PLUGIN_DIR_URL.'js/mousetrap.min.js');
+         wp_enqueue_script('sexhls_baseplayer', SH_PLUGIN_DIR_URL.'js/hls.js', array(), SH_VERSION);
+         wp_enqueue_script('sexhls_player_controls', SH_PLUGIN_DIR_URL.'js/sexhls.js', array('sexhls_baseplayer'), SH_VERSION);
+         wp_enqueue_script('sexhls_mousetrap', SH_PLUGIN_DIR_URL.'js/mousetrap.min.js', array('sexhls_baseplayer'), SH_VERSION);
 
 
          // VideoJS Player (for 3D)
-         wp_enqueue_script('sexvideo_baseplayer', SH_PLUGIN_DIR_URL.'js/video.min.js');
-         wp_enqueue_script('sexvideo_xrplayer', SH_PLUGIN_DIR_URL.'js/videojs-xr.min.js');
+         wp_enqueue_script('sexvideo_baseplayer', SH_PLUGIN_DIR_URL.'js/video.min.js', array(), SH_VERSION);
+         wp_enqueue_script('sexvideo_xrplayer', SH_PLUGIN_DIR_URL.'js/videojs-xr.min.js', array('sexvideo_baseplayer'), SH_VERSION);
 
-         wp_enqueue_style ('videojs', SH_PLUGIN_DIR_URL.'css/video-js.min.css');
-         wp_enqueue_style ('sexhack_videojs', SH_PLUGIN_DIR_URL.'css/sexhackme_videojs.css');
-         wp_enqueue_style ('videojs-xr', SH_PLUGIN_DIR_URL.'css/videojs-xr.css');
+         wp_enqueue_style ('videojs', SH_PLUGIN_DIR_URL.'css/video-js.min.css', array(), SH_VERSION);
+         wp_enqueue_style ('sexhack_videojs', SH_PLUGIN_DIR_URL.'css/sexhackme_videojs.css', array(), SH_VERSION);
+         wp_enqueue_style ('videojs-xr', SH_PLUGIN_DIR_URL.'css/videojs-xr.css', array('videojs'), SH_VERSION);
 
          // Sexhack Video Gallery
-         wp_enqueue_style ('sexhackme_gallery', SH_PLUGIN_DIR_URL.'css/sexhackme_gallery.css');
+         wp_enqueue_style ('sexhackme_gallery', SH_PLUGIN_DIR_URL.'css/sexhackme_gallery.css', array(),  SH_VERSION);
 
          // Sexhack Fix Header
-         wp_enqueue_style ('sexhackme_header', SH_PLUGIN_DIR_URL.'css/sexhackme_header.css');
+         wp_enqueue_style ('sexhackme_header', SH_PLUGIN_DIR_URL.'css/sexhackme_header.css', array(), SH_VERSION);
 
          // Fix Woocommerce Checkout
-         wp_enqueue_style ('sexhackme_checkout', SH_PLUGIN_DIR_URL.'css/sexhackme_checkout.css');
+         wp_enqueue_style ('sexhackme_checkout', SH_PLUGIN_DIR_URL.'css/sexhackme_checkout.css', array(), SH_VERSION);
 
          // XFrame Bypass
-         wp_enqueue_script('xfbp_poly', SH_PLUGIN_DIR_URL.'js/custom-elements-builtin.js');
-         wp_enqueue_script('xfbp_js', SH_PLUGIN_DIR_URL.'js/x-frame-bypass.js');
+         wp_enqueue_script('xfbp_poly', SH_PLUGIN_DIR_URL.'js/custom-elements-builtin.js', array(),  SH_VERSION);
+         wp_enqueue_script('xfbp_js', SH_PLUGIN_DIR_URL.'js/x-frame-bypass.js', array(), SH_VERSION);
 
 
       }
+
+
+      /**
+       * Show row meta on the plugin screen. (Used to add links like Documentation, Support etc.)
+       *
+       * @param  mixed $links Plugin Row Meta
+       * @param  mixed $file  Plugin Base file
+       * @return array
+       *
+       */
+      public static function plugin_row_meta( $links, $file ) {
+          if ( $file == SH_PLUGIN_BASENAME ) {
+
+              $row_meta = array(
+                 'get_support'    => '<a href="' . esc_url( 
+                        apply_filters( 'sh_docs_url', 'https://git.nexlab.net/SexHackMe/sexhackme/issues' ) 
+                     ) . '" title="' . esc_attr( 'Get Support' ) . '" target="_blank">Get Support</a>',
+                  );
+
+              return array_merge( $links, $row_meta );
+          }
+
+          return (array) $links;
+      }
+
+
+      public function add_plugin_action_links( $links ) {
+
+        if ( current_user_can( 'manage_options' ) ) {
+           $links[] = '<span class="delete"><a href="' . wp_nonce_url( 
+                  add_query_arg( array( 'page' => 'sh-uninstall-page' ) , 
+                  admin_url( 'admin.php' ) 
+              ), 
+             'sh_uninstall_page_nonce' ) . '">Uninstall</a></span>';
+
+           $settings_url = sprintf( '<a href="%1$s">%2$s</a>', 
+              menu_page_url( 'sh-settings-page', false ), 
+              esc_html( 'Settings' ) 
+           );
+
+           $docs_url = sprintf( '<a href="%1$s" target="_blank">%2$s</a>', 
+              esc_url( 'https://www.sexhack.me/SexHackMe_Wordpress' ), 
+              esc_html('Docs' ) 
+           ); 
+
+             array_unshift( $links, $settings_url, $docs_url );
+          }   
+
+          return $links;
+
+      }
+
 
 		/* FROM HERE IS THE DEPRECATED PART */
 
@@ -385,7 +450,6 @@ if(!class_exists('SexHackMe_Plugin')) {
 
 			$SECTIONS = array();
    		foreach( glob(dirname(__FILE__) . '/deprecated/*.php') as $class_path ) {
-            sexhack_log($class_path);
       		$SEXHACK_SECTION = false;
       		try {
          		include_once($class_path);
@@ -397,29 +461,17 @@ if(!class_exists('SexHackMe_Plugin')) {
          $this->SECTIONS = $SECTIONS;
          $this->instances = array();
          foreach($SECTIONS as $section) {
-            sexhack_log("Loading ".$section['name']);
-            $this->instance_subclass($section);
+            $class = "wp_SexHackMe\\".$section['class'];
+            $this->instances[$section['name']] = new $class();
          }
 
       }
 
-      public function instance_subclass($section)
-      {
-         $class = "wp_SexHackMe\\".$section['class'];
-         //sexhack_log($class);
-         $this->instances[$section['name']] = new $class();
-      }
-
-      public function settings_section() {
-         echo "<h3>Enable following functionalities:</h3>";
-      }
+      /* public function settings_section() {
+       *   echo "<h3>Enable following functionalities:</h3>";
+       * }
+       */
       
-      public function checkbox($res) 
-      {
-         if($res=="1") return "checked";
-      }
-
-
       public function initialize_plugin() 
       {
          add_settings_section('sexhackme-settings', ' ', array($this, 'settings_section'), 'sexhackme-settings');
@@ -443,10 +495,11 @@ if(!class_exists('SexHackMe_Plugin')) {
       public function admin_menu() 
       {
          add_menu_page('SexHackMe Settings', 'SexHackMe', 'manage_options', 'sexhackme-settings', 
-            array($this, 'admin_page'), plugin_dir_url(__FILE__) .'/img/admin_icon.png', 31);
+            array($this, 'admin_page'), SH_PLUGIN_DIR_PATH .'img/admin_icon.png', 31);
 
 			add_submenu_page( 'sexhackme-settings', 'SexHackMe Settings', 'Modules',
-    				'manage_options', 'sexhackme-settings');
+            'manage_options', 'sexhackme-settings');
+
          foreach($this->SECTIONS as $section) {
             if(get_option( $section['name'])=="1")
             {  
@@ -469,70 +522,10 @@ if(!class_exists('SexHackMe_Plugin')) {
 
       public function admin_page()
       {
-         ?>
-            <div class="wrap">
-               <h2>SexHackMe Plugin Settings</h2>
-               <form method="post" action="/wp-admin/options.php">
-               <?php settings_fields( 'sexhackme-settings' ); ?>
-               <?php do_settings_sections( 'sexhackme-settings' ); ?>
-               <table class="form-table">
-               <?php foreach($this->SECTIONS as $section) { ?>
-						<tr align="top">
-               	   <th scope="row"><?php echo $section['description'];?></th>
-							<td>
-								<input type="checkbox" name="<?php echo $section['name'];?>" value="1" <?php echo $this->checkbox(get_option( $section['name'] )); ?>/>
-								<br>
-                      <?php  
-                         if(array_key_exists('require-page', $section) && ($section['require-page']))
-                         { 
-                            $reqps = array();
-                            if(is_string($section['require-page'])) 
-                            {
-                               $reqtitle="Select the base plugin module  page";
-                               $reqpages=get_posts(array('post_type'    => $section['require-page'], 'parent' => 0));
-                               $reqps[] = array('title' => $reqtitle, 'pages' => $reqpages, 'option' => $section['name']."-page");
-                            } elseif(is_array($section['require-page'])) {
-                               $i=0;
-                               foreach($section['require-page'] as $rpage) {
-                                  if(array_key_exists('post_type', $rpage)) {
-                                     $reqpsa = array('title' => 'Select Page', 'option' => $section['name']."-page$i", 
-                                        'pages' => get_posts(array('post_type'  => $rpage['post_type'], 'parent' => 0)));
-                                     if(array_key_exists('option', $rpage)) $reqpsa['option'] = $rpage['option'];
-                                     if(array_key_exists('title', $rpage)) $reqpsa['title'] = $rpage['title'];
-                                     $reqps[] = $reqpsa;
-                                  }
-                                  $i++;
-
-                               }
-                            } else {
-                               $reqtitle="Select the base plugin module  page";
-                               $reqpages=get_pages();
-                               $reqps[] = array('title' => $reqtitle, 'pages' => $reqpages, 'option' => $section['name']."-page");
-                            }
-                           foreach($reqps as $reqarr) { 
-                        ?>
-        						<select id="<?php echo $reqarr['option'];?>" name="<?php echo $reqarr['option']; ?>" class="widefat">
-            					<option value="-1"><?php esc_html_e( 'Choose...', 'paid-member-subscriptions' ) ?></option>
-            					<?php
-									$opt=get_option($reqarr['option']);
-            					foreach( $reqarr['pages'] as $page ) {
-                					echo '<option value="' . esc_attr( $page->ID ) . '"';
-										if ($opt == $page->ID) { echo "selected";}
-										echo '>' . esc_html( $page->post_title ) . ' ( ID: ' . esc_attr( $page->ID ) . ')' . '</option>';
-            					}  ?>
-        						</select>
-                        <p class="description"><?php echo $reqarr['title']; ?></p>
-                        <?php } ?>
-							<?php } ?>
-							</td>
-						</tr>
-               <?php } ?>
-               </table>
-               <?php submit_button(); ?>
-               </form>
-            </div>
-         <?php
+         if(file_exists( SH_PLUGIN_DIR_PATH . 'templates/admin/sexhackme.php'))
+            include_once( SH_PLUGIN_DIR_PATH . 'templates/admin/sexhackme.php');
       }
+
    }
 
    // Let's run the plugin!

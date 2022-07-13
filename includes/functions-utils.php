@@ -37,6 +37,27 @@ if(!function_exists('sexhack_log')){
 }
 
 
+function sh_get_template($tmpl, $args=array())
+{
+   foreach($args as $var => $data) $$var = $data; 
+   if(file_exists(SH_PLUGIN_DIR_PATH . 'templates/' . $tmpl))
+      return include_once SH_PLUGIN_DIR_PATH . 'templates/' . $tmpl;
+   return false;
+}
+
+
+
+
+function sh_hls_player($video_url, $posters='')
+{
+    echo SH_VideoPlayer::addPlayer('hls', $video_url, $posters);
+}
+
+function sh_xr_player($video_url, $posters='', $projection='180_LR')
+{
+    echo SH_VideoPlayer::addPlayer('xr', $video_url, $posters, $projection);
+}
+
 function debug_rewrite_rules($matchonly=false) 
 {
    $matchonly=true;
@@ -260,5 +281,11 @@ function html2text($html)
 
     return $plaintext;
 }
+
+function checkbox($res)
+{
+     if($res=="1") return "checked";
+}
+
 
 ?>
