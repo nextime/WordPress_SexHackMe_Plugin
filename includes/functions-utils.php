@@ -63,6 +63,31 @@ function sh_xr_player($video_url, $posters='', $projection='180_LR')
     echo SH_VideoPlayer::addPlayer('xr', $video_url, $posters, $projection);
 }
 
+function sh_fix_user_with_no_plan($userid)
+{
+
+	 global $sexhack_pms;
+
+    if(!($sexhack_pms->is_member($user->ID)) && !($sexhack_pms->is_premium($user->ID)))
+    {  
+       $subscription_plan = $sexhack_pms->get_default_plan();
+       if($subscription_plan)
+       {
+           $data = array(
+               'user_id'              => $userid,
+               'subscription_plan_id' => $subscription_plan->id,
+               'start_date'           => date( 'Y-m-d H:i:s' ),
+               'expiration_date'      => $subscription_plan->get_expiration_date(),
+               'status'               => 'active',
+
+
+            );
+            $member_subscription = new \PMS_Member_Subscription();
+            $inserted            = $member_subscription->insert( $data );
+        }
+    }
+}
+
 function debug_rewrite_rules($matchonly=false) 
 {
    $matchonly=true;

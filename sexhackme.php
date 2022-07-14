@@ -229,9 +229,17 @@ if(!class_exists('SexHackMe_Plugin')) {
          if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-livecam-site-support.php') )
             include_once SH_PLUGIN_DIR_PATH . 'includes/class-livecam-site-support.php';
 
+         /* WooCommerce support class */
+         if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-woocommerce-support.php') )
+            include_once SH_PLUGIN_DIR_PATH . 'includes/class-woocommerce-support.php';
+
          /* Storefront customization support */
          if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-storefront.php') )
             include_once SH_PLUGIN_DIR_PATH . 'includes/class-storefront.php';
+
+         /* Unlock integration class */
+         if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-unlock-support.php') )
+            include_once  SH_PLUGIN_DIR_PATH . 'includes/class-unlock-support.php';
 
          /* Shortcodes */
          if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-shortcodes.php' ) )
