@@ -213,6 +213,11 @@ if(!class_exists('SexHackMe_Plugin')) {
          if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/functions-utils.php' ) )
             include_once SH_PLUGIN_DIR_PATH . 'includes/functions-utils.php';
 
+         /* Core functions  */
+         if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/functions-core.php' ) )
+            include_once SH_PLUGIN_DIR_PATH . 'includes/functions-core.php';
+
+
 			/* Cryptocurrencies utils */
          if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/functions-crypto.php' ) )
             include_once SH_PLUGIN_DIR_PATH . 'includes/functions-crypto.php';
