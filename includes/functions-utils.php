@@ -48,7 +48,10 @@ function sh_get_template($tmpl, $args=array())
 }
 
 
-
+function sh_disclaimer()
+{
+    echo sh_get_template("blocks/disclaimer.php");
+}
 
 function sh_hls_player($video_url, $posters='')
 {

@@ -229,6 +229,10 @@ if(!class_exists('SexHackMe_Plugin')) {
          if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-livecam-site-support.php') )
             include_once SH_PLUGIN_DIR_PATH . 'includes/class-livecam-site-support.php';
 
+         /* Storefront customization support */
+         if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-storefront.php') )
+            include_once SH_PLUGIN_DIR_PATH . 'includes/class-storefront.php';
+
          /* Shortcodes */
          if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-shortcodes.php' ) )
             include_once SH_PLUGIN_DIR_PATH . 'includes/class-shortcodes.php';
@@ -297,6 +301,9 @@ if(!class_exists('SexHackMe_Plugin')) {
          // Initialize shortcodes
          add_action( 'init', array( 'wp_SexHackMe\SH_Shortcodes', 'init' ) );
          //add_action( 'init', array( $this, 'init_dependencies' ), 1 );
+
+         // Initialize storefront fixes/personalizations
+         add_action( 'init', array( 'wp_SexHackMe\SH_StoreFront', 'init' ) );
 
          //Show row meta on the plugin screen (used to add links like Documentation, Support etc.).
          add_filter( 'plugin_row_meta', array( $this, 'plugin_row_meta' ), 10, 2 );
