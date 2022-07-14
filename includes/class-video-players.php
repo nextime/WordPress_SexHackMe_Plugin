@@ -21,6 +21,10 @@
 
 namespace wp_SexHackMe;
 
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit;
+
+
 if(!class_exists('SH_VideoPlayer')) {
    class SH_VideoPlayer
    {

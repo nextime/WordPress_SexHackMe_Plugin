@@ -21,6 +21,10 @@
 
 namespace wp_SexHackMe;
 
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit;
+
+
 if(!class_exists('SH_Shortcodes')) {
    class SH_Shortcodes
    {
@@ -32,6 +36,8 @@ if(!class_exists('SH_Shortcodes')) {
 				'sexvideo'       => __CLASS__ . '::video_xr',
 				'sh_videoxr'     => __CLASS__ . '::video_xr',
 				'sh_videohls'    => __CLASS__ . '::video_hls',
+            'xfbp'           => __CLASS__ . '::xframe_bypass',
+            'sexhacklive'    => __CLASS__ . '::sexhacklive',
          );
 
          foreach( $shortcodes as $shortcode_tag => $shortcode_func ) {
@@ -58,6 +64,26 @@ if(!class_exists('SH_Shortcodes')) {
          return "<div class='sexvideo_videojs'>" . sh_xr_player($url, $posters) . "</div>";
       }
 
+      public static function xframe_bypass($attr, $cont)
+      {
+         extract( shortcode_atts(array(
+            'url' => 'https://www.sexhack.me',
+         ), $attr));
+         return '<iframe is="x-frame-bypass" src="'.$url.'"></iframe>';
+
+      }
+
+      public static function sexhacklive($attr, $cont)
+      {
+         extract( shortcode_atts(array(
+            'site' => 'chaturbate',
+            'model' => 'sexhackme',
+         ), $attributes));
+			$ret = LiveCamSite::getCamStream($site, $model);
+			if($ret) return $ret;
+         return '<p>CamStreamDL Error: wrong site option '.$site.'</p> ';
+
+      }
 
 	}
 }

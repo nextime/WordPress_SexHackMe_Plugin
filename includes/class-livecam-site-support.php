@@ -21,16 +21,14 @@
 
 namespace wp_SexHackMe;
 
-if(!class_exists('Cam4ChaturbateLive')) {
-   class Cam4ChaturbateLive
-   {
-      public function __construct()
-      {
-			add_shortcode( 'sexhacklive', array( $this, 'sexhack_live' ));
-         sexhack_log('Cam4ChaturbateLive() Instanced');
-      }
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit;
 
-      public function parse_chaturbate($html)
+
+if(!class_exists('ChaturbateLive')) {
+   class ChaturbateLive
+   {
+      public static function parseSite($html)
       {
          $dom = new DOMDocument;
          @$dom->loadHTML($html);
@@ -48,8 +46,24 @@ if(!class_exists('Cam4ChaturbateLive')) {
          return FALSE;
       }
 
+      public static function getStream($model)
+      {
+         $vurl = false; //$this->parse_chaturbate(sexhack_getURL('https://chaturbate.com/'.$model.'/'));
+         if(!$vurl) {
+            return '<p>Chaturbate '.$model."'s cam is OFFLINE</p>";
+         }
+         return '<a href="https://chaturbate.com/'.$model.'/" target="_black" >Chaturbate '.$model.':</a> '.sh_hls_player($vurl);
 
-      public function parse_cam4($html)
+      }
+
+
+	}
+}
+
+if(!class_exists('Cam4Live')) {
+   class Cam4Live
+   {
+      public static function parseSite($html)
       {
          $dom = new DOMDocument;
          @$dom->loadHTML($html);
@@ -59,51 +73,33 @@ if(!class_exists('Cam4ChaturbateLive')) {
          return FALSE;
       }
 
-
-		public function sexhacklive_getChaturbate($model)
-		{
-			$vurl = false; //$this->parse_chaturbate(sexhack_getURL('https://chaturbate.com/'.$model.'/'));
-         if(!$vurl) {
-            return '<p>Chaturbate '.$model."'s cam is OFFLINE</p>";
-         }
-         return '<a href="https://chaturbate.com/'.$model.'/" target="_black" >Chaturbate '.$model.':</a> '.SexhackHlsPlayer::addPlayer($vurl);
-
-		}
-
-		public function sexhacklive_getCam4($model)
-		{
+      public static function getStream($model)
+      {
          $vurl = false; //$this->parse_cam4(sexhack_getURL('https://www.cam4.com/'.$model));
          if(!$vurl) {
             return '<p>Cam4 '.$model."'s cam is OFFLINE</p>";
          }
-         return '<a href="https://chaturbate.com/'.$model.'/" target="_blank" >Cam4 '.$model.":</a> ".SexhackHlsPlayer::addPlayer($vurl);
-
-		}
-
-      public function sexhack_live($attributes, $content)
-      {
-         extract( shortcode_atts(array(
-            'site' => 'chaturbate',
-            'model' => 'sexhackme',
-         ), $attributes));
-         if($site=='chaturbate') {
-            return $this->sexhacklive_getChaturbate($model);
-         } else if($site=='cam4') {
-            return $this->sexhacklive_getCam4($model);
-         }
-         return '<p>CamStreamDL Error: wrong site option '.$site.'</p> ';
+         return '<a href="https://chaturbate.com/'.$model.'/" target="_blank" >Cam4 '.$model.":</a> ".sh_hls_player($vurl);
 
       }
+
    }
+}
+
+if(!class_exists('LiveCamSite')) {
+	class LiveCamSite
+	{	
+		public static function getCamStream($site, $model)
+		{
+			if($site=='chaturbate') return ChaturbateLive::getStream($model);
+			else if($site=='cam4') return Cam4Live::getStream($model);
+			return false;
+		}
+	}
+
 }
 
 
 
-
-$SEXHACK_SECTION = array(
-   'class' => 'Cam4ChaturbateLive', 
-   'description' => 'Add shortcodes for retrieve cam4 and/or chaturbate live streaming (it needs HLS player active!!) Shortcuts: [sexhacklive site="chaturbate|cam4" model="modelname"] ', 
-   'name' => 'sexhackme_cam4chaturbate_live'
-);
 
 ?>

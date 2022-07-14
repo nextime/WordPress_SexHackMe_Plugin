@@ -21,6 +21,8 @@
 
 namespace wp_SexHackMe;
 
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 
 if(!function_exists('sexhack_log')){

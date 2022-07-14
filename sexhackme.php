@@ -207,24 +207,27 @@ if(!class_exists('SexHackMe_Plugin')) {
 
 			/* Manage Plugin Dependencies */
          if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-tgm-plugin-activation.php' ) )
-				include_once( SH_PLUGIN_DIR_PATH . 'includes/class-tgm-plugin-activation.php' );
+				include_once SH_PLUGIN_DIR_PATH . 'includes/class-tgm-plugin-activation.php';
 
          /* Utils  */
          if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/functions-utils.php' ) )
-            include_once( SH_PLUGIN_DIR_PATH . 'includes/functions-utils.php' );
+            include_once SH_PLUGIN_DIR_PATH . 'includes/functions-utils.php';
 
 			/* Cryptocurrencies utils */
          if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/functions-crypto.php' ) )
-            include_once( SH_PLUGIN_DIR_PATH . 'includes/functions-crypto.php' );
+            include_once SH_PLUGIN_DIR_PATH . 'includes/functions-crypto.php';
 
 			/* Paid Member Subscription utils */
          if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-paid-member-subscriptions-integration.php' ) )
-            include_once( SH_PLUGIN_DIR_PATH . 'includes/class-paid-member-subscriptions-integration.php' );
+            include_once SH_PLUGIN_DIR_PATH . 'includes/class-paid-member-subscriptions-integration.php';
 
          /* Video Players */
          if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-video-players.php' ) )
-            include_once( SH_PLUGIN_DIR_PATH . 'includes/class-video-players.php' );
+            include_once SH_PLUGIN_DIR_PATH . 'includes/class-video-players.php';
 
+         /* Cam4 and Chaturbate support */
+         if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-livecam-site-support.php') )
+            include_once SH_PLUGIN_DIR_PATH . 'includes/class-livecam-site-support.php';
 
          /* Shortcodes */
          if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-shortcodes.php' ) )

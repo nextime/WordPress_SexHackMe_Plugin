@@ -21,6 +21,9 @@
 
 namespace wp_SexHackMe;
 
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 
 function is_valid_eth_address($addr)
 {
