@@ -21,6 +21,8 @@
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit;
+
+
 ?>
 <div class="wrap">
     <h2>SexHackMe Plugin Settings</h2>
@@ -28,7 +30,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
         <?php settings_fields( 'sexhackme-settings' ); ?>
         <?php do_settings_sections( 'sexhackme-settings' ); ?>
         <table class="form-table">
-           <?php foreach($this->SECTIONS as $section) { ?>
+           <?php foreach($sections as $section) { ?>
                 <tr align="top">
                    <th scope="row"><?php echo $section['description'];?></th>
                      <td>

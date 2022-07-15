@@ -38,6 +38,7 @@ if(!class_exists('SH_Shortcodes')) {
 				'sh_videohls'    => __CLASS__ . '::video_hls',
             'xfbp'           => __CLASS__ . '::xframe_bypass',
             'sexhacklive'    => __CLASS__ . '::sexhacklive',
+				'sexadv'			  => __CLASS__ . '::adv_shortcode',
          );
 
          foreach( $shortcodes as $shortcode_tag => $shortcode_func ) {
@@ -83,6 +84,33 @@ if(!class_exists('SH_Shortcodes')) {
 			if($ret) return $ret;
          return '<p>CamStreamDL Error: wrong site option '.$site.'</p> ';
 
+      }
+
+      public static function adv_shortcode($attr, $cont)
+      {
+         global $post;
+
+         extract( shortcode_atts(array(
+            "adv" => false,
+         ), $attr));
+         if(!user_is_premium())
+         {
+            if($attr['adv'])
+            {  
+               $post = get_post(intval($attr['adv']));
+               if(($post) && ($post->post_type == 'sexhackadv'))
+               {
+                  $html = $post->post_content;
+                  wp_reset_postdata();
+
+                  return $html;
+               }
+            }
+
+            wp_reset_postdata();
+            //return 'Error in retrieving sexhackadv post. Wrong ID?';
+         }
+         return;
       }
 
 	}

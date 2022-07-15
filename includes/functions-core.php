@@ -108,6 +108,7 @@ function user_has_premium_access($uid='')
 {
    global $sexhack_pms;
 
+   if(!isset($sexhack_pms)) return false;
    return $sexhack_pms->is_premium($uid) AND is_user_logged_in();
 }
 
@@ -115,6 +116,7 @@ function user_is_premium($uid='')
 {
    global $sexhack_pms;
 
+   if(!isset($sexhack_pms)) return false; 
    return $sexhack_pms->is_premium($uid);
 }
 
@@ -122,6 +124,7 @@ function user_has_member_access($uid='')
 {
    global $sexhack_pms;
 
+   if(!isset($sexhack_pms)) return false; 
    if($uid) return $sexhack_pms->is_member($uid) OR $sexhack_pms->is_premium($uid);
    return is_user_logged_in();
 
@@ -131,6 +134,7 @@ function user_is_member($uid='')
 {
    global $sexhack_pms;
 
+   if(!isset($sexhack_pms)) return false; 
    return $sexhack_pms->is_member($uid);
 }
 

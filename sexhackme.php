@@ -217,9 +217,16 @@ if(!class_exists('SexHackMe_Plugin')) {
          if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/functions-core.php' ) )
             include_once SH_PLUGIN_DIR_PATH . 'includes/functions-core.php';
 
+         /* Custom Post Types declarations */
+         if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-post_types.php') )
+            include_once SH_PLUGIN_DIR_PATH . 'includes/class-post_types.php';
+
+         if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-admin.php' ) )
+            include_once SH_PLUGIN_DIR_PATH . 'includes/class-admin.php';
+
          /* Hooks compatibility/translation */
          if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/functions-hooks.php') )
-            include_once SH_PLUGIN_DIR_PATH . 'include/functions-hooks.php';
+            include_once SH_PLUGIN_DIR_PATH . 'includes/functions-hooks.php';
 
 			/* Cryptocurrencies utils */
          if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/functions-crypto.php' ) )
@@ -232,6 +239,10 @@ if(!class_exists('SexHackMe_Plugin')) {
          /* Video Players */
          if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-video-players.php' ) )
             include_once SH_PLUGIN_DIR_PATH . 'includes/class-video-players.php';
+
+         /* Advertising support */
+         if(file_exists( SH_PLUGIN_DIR_PATH . 'includes/functions-advert.php' ) )
+            include_once SH_PLUGIN_DIR_PATH . 'includes/functions-advert.php';
 
          /* Cam4 and Chaturbate support */
          if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-livecam-site-support.php') )
@@ -257,7 +268,9 @@ if(!class_exists('SexHackMe_Plugin')) {
          if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-shortcodes.php' ) )
             include_once SH_PLUGIN_DIR_PATH . 'includes/class-shortcodes.php';
 
-
+         /* Widgets */
+         if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-widgets.php' ) )
+            include_once SH_PLUGIN_DIR_PATH . 'includes/class-widgets.php';
 
          /* Hook to include needed files */
          do_action( 'pms_include_files' );
@@ -317,6 +330,9 @@ if(!class_exists('SexHackMe_Plugin')) {
          // Enqueue scripts on the admin side
          //if( is_admin() )
          //    add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ) );
+
+         // Initialize Custom post_types 
+         add_action( 'init', array( 'wp_SexHackMe\SH_PostTypes', 'init') );
 
          // Initialize shortcodes
          add_action( 'init', array( 'wp_SexHackMe\SH_Shortcodes', 'init' ) );
@@ -520,6 +536,10 @@ if(!class_exists('SexHackMe_Plugin')) {
                }
 				}
          }
+
+
+         SH_Admin::init();
+
       }
 
       public function admin_menu() 
@@ -527,8 +547,9 @@ if(!class_exists('SexHackMe_Plugin')) {
          add_menu_page('SexHackMe Settings', 'SexHackMe', 'manage_options', 'sexhackme-settings', 
             array($this, 'admin_page'), SH_PLUGIN_DIR_URL .'img/admin_icon.png', 31);
 
-			add_submenu_page( 'sexhackme-settings', 'SexHackMe Settings', 'Modules',
-            'manage_options', 'sexhackme-settings');
+
+         SH_Admin::menu();
+
 
          foreach($this->SECTIONS as $section) {
             if(get_option( $section['name'])=="1")
@@ -552,8 +573,7 @@ if(!class_exists('SexHackMe_Plugin')) {
 
       public function admin_page()
       {
-         if(file_exists( SH_PLUGIN_DIR_PATH . 'templates/admin/sexhackme.php'))
-            include_once( SH_PLUGIN_DIR_PATH . 'templates/admin/sexhackme.php');
+         sh_get_template('admin/sexhackme.php', array('sections' => $this->SECTIONS));
       }
 
    }
