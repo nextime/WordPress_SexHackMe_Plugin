@@ -22,4 +22,19 @@
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit;
 ?>
+   <div class="wrap">
+         <?php do_settings_sections( 'sexhackme-gallery-settings' ); ?>
+         <form method="post" action="/wp-admin/options.php">
+         <?php settings_fields( 'sexhackme-gallery-settings' ); ?>
+         <table class="form-table">
+            <tr align="top">
+               <td>
+                  <label>Slug for gallery</label>
+                  <input type="text" name="sexhack_gallery_slug" value="<?php echo get_option( 'sexhack_gallery_slug', "v" ) ?>" />
+               </td>
+            </tr>
+         </table>
+         <?php submit_button(); ?>
+         </form>
+   </div>
 

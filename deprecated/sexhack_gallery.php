@@ -510,38 +510,10 @@ if(!class_exists('SexHackVideoGallery')) {
 }
 
 
-function gallery_adminpage() 
-{
-   global $SEXHACK_GALLERY_DEFAULTSLUG;
-   $DEFAULTSLUG = $SEXHACK_GALLERY_DEFAULTSLUG;
-?>
-   <div class="wrap">
-         <?php do_settings_sections( 'sexhackme-gallery-settings' ); ?>
-         <form method="post" action="/wp-admin/options.php">
-         <?php settings_fields( 'sexhackme-gallery-settings' ); ?>
-         <table class="form-table">
-            <tr align="top">
-               <td>
-                  <label>Slug for gallery</label>
-                  <input type="text" name="sexhack_gallery_slug" value="<?php echo get_option( 'sexhack_gallery_slug', "$DEFAULTSLUG" ) ?>" />
-               </td>
-            </tr>
-         </table>
-         <?php submit_button(); ?>
-         </form>
-   </div>
-<?php
-}
-
 $SEXHACK_SECTION = array(
    'class' => 'SexHackVideoGallery', 
    'description' => 'Create Video galleries for Sexhack Video products', 
    //'require-page' => true,
-   'adminmenu' => array(
-                     array('title' => 'Gallery', 
-                           'slug' => 'gallery', 
-                           'callback' => 'wp_SexHackMe\gallery_adminpage')
-                     ),
    'name' => 'sexhackme_videogallery'
 );
 

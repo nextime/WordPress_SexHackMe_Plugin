@@ -60,6 +60,13 @@ if(!class_exists('SH_Admin')) {
             register_setting('sexhackme-advert-settings', 'sexadv_video_top');
 			   register_setting('sexhackme-advert-settings', 'sexadv_video_bot');
          }
+
+         // Gallery settings
+         if( file_exists(SH_PLUGIN_DIR_PATH . 'includes/admin/functions-gallery.php') )
+         {
+             include_once SH_PLUGIN_DIR_PATH . 'includes/admin/functions-gallery.php';
+             register_setting('sexhackme-gallery-settings', 'sexhack_gallery_slug');
+         }
       }
 
       public static function menu()
@@ -96,6 +103,17 @@ if(!class_exists('SH_Admin')) {
       	}
 
 
+         // Add Gallery settings page
+         if( file_exists(SH_PLUGIN_DIR_PATH . 'includes/admin/functions-gallery.php') )
+         {
+               add_submenu_page( 'sexhackme-settings',             // root slug
+                           'Gallery',                              // title
+                           'Gallery',                              // title
+                           'manage_options',                       // capabilities
+                           'gallery',                              // slug
+                           'wp_SexHackMe\gallery_adminpage');      // callback
+
+         }
 
       }
 
