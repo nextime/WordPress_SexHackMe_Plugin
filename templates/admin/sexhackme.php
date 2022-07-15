@@ -18,6 +18,9 @@
  * You should have received a copy of the GNU General Public License 
  * along with SexHackMe Wordpress Plugin. If not, see <https://www.gnu.org/licenses/>.
  */
+
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit;
 ?>
 <div class="wrap">
     <h2>SexHackMe Plugin Settings</h2>

@@ -19,6 +19,9 @@
  * along with SexHackMe Wordpress Plugin. If not, see <https://www.gnu.org/licenses/>.
  */
 
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 get_header(); ?>
 
 	<div id="primary" class="content-area">

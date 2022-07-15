@@ -33,9 +33,34 @@ function sh_get_template($tmpl, $args=array())
 }
 
 
+function sh_get_subscription_plans()
+{
+   return pms_get_subscription_plans();
+}
+
 function sh_disclaimer()
 {
     echo sh_get_template("blocks/disclaimer.php");
+}
+
+function sh_account_subscription_content()
+{
+    echo '<h3>Subscriptions</h3>';
+    echo do_shortcode( '[pms-account show_tabs="no"]' );
+    echo "<h3>Payment History:</h3>";
+    echo do_shortcode( '[pms-payment-history]');
+}
+
+function sh_genpass_register_form()
+{
+     // Check nonce
+     if ( !isset( $_POST['pmstkn'] ) || !wp_verify_nonce( sanitize_text_field( $_POST['pmstkn'] ), 'pms_register_form_nonce') )
+          return;
+
+     $pwd = wp_generate_password();
+     $_POST['pass1'] = $pwd;
+     $_POST['pass2'] = $pwd;
+
 }
 
 function sh_hls_player($video_url, $posters='')
@@ -71,6 +96,11 @@ function sh_fix_user_with_no_plan($userid)
             $inserted            = $member_subscription->insert( $data );
         }
     }
+}
+
+function sh_get_subscription_plan($plans)
+{
+   return pms_get_subscription_plan($plans);
 }
 
 

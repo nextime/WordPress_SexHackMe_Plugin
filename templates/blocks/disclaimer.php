@@ -18,7 +18,11 @@
  * You should have received a copy of the GNU General Public License 
  * along with SexHackMe Wordpress Plugin. If not, see <https://www.gnu.org/licenses/>.
  */
+
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit;
 ?>
+
          <div class="site-info">
          All pictures and videos are property of the respective models. Please copy them for personal use but do not republish any without permission.
          </div>

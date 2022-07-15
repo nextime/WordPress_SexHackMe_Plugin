@@ -217,6 +217,9 @@ if(!class_exists('SexHackMe_Plugin')) {
          if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/functions-core.php' ) )
             include_once SH_PLUGIN_DIR_PATH . 'includes/functions-core.php';
 
+         /* Hooks compatibility/translation */
+         if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/functions-hooks.php') )
+            include_once SH_PLUGIN_DIR_PATH . 'include/functions-hooks.php';
 
 			/* Cryptocurrencies utils */
          if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/functions-crypto.php' ) )
@@ -233,6 +236,10 @@ if(!class_exists('SexHackMe_Plugin')) {
          /* Cam4 and Chaturbate support */
          if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-livecam-site-support.php') )
             include_once SH_PLUGIN_DIR_PATH . 'includes/class-livecam-site-support.php';
+
+         /* WooCommerce support functions */
+         if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/functions-woocommerce-support.php') )
+            include_once SH_PLUGIN_DIR_PATH . 'includes/functions-woocommerce-support.php';
 
          /* WooCommerce support class */
          if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-woocommerce-support.php') )
@@ -518,7 +525,7 @@ if(!class_exists('SexHackMe_Plugin')) {
       public function admin_menu() 
       {
          add_menu_page('SexHackMe Settings', 'SexHackMe', 'manage_options', 'sexhackme-settings', 
-            array($this, 'admin_page'), SH_PLUGIN_DIR_PATH .'img/admin_icon.png', 31);
+            array($this, 'admin_page'), SH_PLUGIN_DIR_URL .'img/admin_icon.png', 31);
 
 			add_submenu_page( 'sexhackme-settings', 'SexHackMe Settings', 'Modules',
             'manage_options', 'sexhackme-settings');

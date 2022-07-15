@@ -19,6 +19,9 @@
  * along with SexHackMe Wordpress Plugin. If not, see <https://www.gnu.org/licenses/>.
  */
 
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 $uid = uniqid('sexvideo_');
 ?>
 <video id='<?php echo $uid; ?>' class='video-js vjs-default-skin vjs-2-1 vjs-big-play-centered' style='width: 100%; height: 100%;' controls poster='<?php echo $posters; ?>'>

@@ -19,6 +19,9 @@
  * along with SexHackMe Wordpress Plugin. If not, see <https://www.gnu.org/licenses/>.
  */
 
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 get_header(); ?>
 
 	<div id="primary" class="content-area">
@@ -100,7 +103,7 @@ get_header(); ?>
             } 
 				else 
 				{
-              	if(user_has_premium_access()) {
+              	if(wp_SexHackMe\user_has_premium_access()) {
                  	if($hls_premium) $tab = 'subscribers';
                  	elseif($vr_premium) $tab = 'vrsub';
                  	elseif($hls_members) $tab = 'members';
@@ -108,7 +111,7 @@ get_header(); ?>
                  	elseif($vr_public || $vr_preview) $tab = 'vrpub';
                  	else $tab = 'public';
               	}
-              	elseif(user_has_member_access())  // free membership
+              	elseif(wp_SexHackMe\user_has_member_access())  // free membership
               	{
                  	if($hls_members) $tab = 'members';
                  	elseif($vr_members) $tab = 'vrmem';
@@ -138,7 +141,7 @@ get_header(); ?>
 
 						case "members":
 						case "vrmem":
-							if(user_has_member_access())
+							if(wp_SexHackMe\user_has_member_access())
 							{
 			               if($hls_members) echo do_shortcode( "[sexhls url=\"".$hls_members."\" posters=\"".$thumb."\"]" );
                   	   else if($vr_members) echo do_shortcode( "[sexvideo url=\"".$vr_members."\" posters=\"".$thumb."\"]" );
@@ -155,7 +158,7 @@ get_header(); ?>
 
 						case "subscribers":
 						case "vrsub":
-							if(user_has_premium_access())
+							if(wp_SexHackMe\user_has_premium_access())
 							{
                   		if($hls_premium) echo do_shortcode( "[sexhls url=\"".$hls_premium."\" posters=\"".$thumb."\"]" );
                   		else if($vr_premium) echo do_shortcode( "[sexvideo url=\"".$vr_premium."\" posters=\"".$thumb."\"]" );
