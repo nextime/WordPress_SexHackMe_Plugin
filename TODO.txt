@@ -12,6 +12,10 @@ based on the ideas i planned for www.sexhack.me:
  - Version 0.0.4:
    * Upload Videos page for models
 
+ - Version 0.0.5:
+   * Better Video Page
+   * Tag filtering/support
+
  - Version 0.1.0:
    * Fixes of all the features on the previous versions
    * More projection on 3D/VR videos Support 
@@ -23,6 +27,9 @@ based on the ideas i planned for www.sexhack.me:
 
  - Version 0.3.0:
    * Remove dependency on Paid Member Subscription plugin, reimplement membership internally
+
+ - Version 0.5.0:
+   * Multiple tags filtering
 
  - Version 1.0.0:
    * Write new smartcontract for automation of instant and scheduled payout to models
@@ -36,6 +43,8 @@ based on the ideas i planned for www.sexhack.me:
    * IPFS Support for data storage?
    * General cleanup for privacy
 
+- Version 2.0.0:
+   * More and better VR Support
 
 --------------------------------------
 SPARSE NOTES 
