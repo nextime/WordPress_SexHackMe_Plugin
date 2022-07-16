@@ -1,4 +1,42 @@
-This is NOT a proper TODO list.
+This is a very rough plan for this plugin
+based on the ideas i planned for www.sexhack.me:
+
+
+ - Version 0.0.2:
+   * Proper functioning Video post type page for Videos, use WC products only for downloads.
+
+ - Version 0.0.3:
+   * Integration of Ultimate Members plugin for user and model profiles
+
+ - Version 0.0.4:
+   * Upload Videos page for models
+
+ - Version 0.1.0:
+   * Fixes of all the features on the previous versions
+   * More projection on 3D/VR videos Support 
+
+ - Version 0.2.0: 
+   * User wallets?
+   * Model wallets and payments system
+
+ - Version 0.3.0:
+   * Remove dependency on Paid Member Subscription plugin, reimplement membership internally
+
+Future developement:
+   * Write new smartcontract for automation of instant and scheduled payout to models
+   * Write new NFTs login system, remove Unlock Protocol dependency
+   * More social features
+   * Scalability: explore/support object storage support, distributed web support
+   * Scalability: better caching support
+   * Scalability: reduce DB/Storage queries with better use of sessions
+   * Web site performances: move content to ajax calls for lower data exchange and less requests
+   * Considering to remove Woocommerce and create internal system for payments and downloads
+   * IPFS Support for data storage?
+   * General cleanup for privacy
+
+
+--------------------------------------
+SPARSE NOTES 
 
 It's just a quick dirty list of things i want to 
 remember to do, mostly little refinery.
@@ -10,9 +48,4 @@ remember to do, mostly little refinery.
  * reduce duplication of code, database queries.
 
 -------------------------------------
-
-SOON this plugin will be re-written to make some order and re-group
-action, filters and so on with a better organizations of classes, hooks etc,
-and then the initialization will be re-done from scratch removing the "sub plugin selection"
-while we will remove dependencies from woocommerce, pms and the rest.
 
