@@ -23,7 +23,7 @@ based on the ideas i planned for www.sexhack.me:
  - Version 0.3.0:
    * Remove dependency on Paid Member Subscription plugin, reimplement membership internally
 
-Future developement:
+ - Version 1.0.0:
    * Write new smartcontract for automation of instant and scheduled payout to models
    * Write new NFTs login system, remove Unlock Protocol dependency
    * More social features

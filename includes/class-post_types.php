@@ -95,9 +95,9 @@ if(!class_exists('SH_PostTypes')) {
          $DEFAULTSLUG = get_option('sexhack_gallery_slug', 'v');
          $projects_structure = '/'.$DEFAULTSLUG.'/%wooprod%/';
          $rules = $wp_rewrite->wp_rewrite_rules();
-         if(array_key_exists($DEFAULTSLUG.'/([^/]+)/?$', $rules)) {
-            sexhack_log("REWRITE: rules OK: ".$DEFAULTSLUG.'/([^/]+)/?$ => '.$rules[$DEFAULTSLUG.'/([^/]+)/?$']);
-         } else {
+         if(!array_key_exists($DEFAULTSLUG.'/([^/]+)/?$', $rules)) {
+         //   sexhack_log("REWRITE: rules OK: ".$DEFAULTSLUG.'/([^/]+)/?$ => '.$rules[$DEFAULTSLUG.'/([^/]+)/?$']);
+         //} else {
             sexhack_log("REWRITE: Need to add and flush our rules!");
             $wp_rewrite->add_rewrite_tag("%wooprod%", '([^/]+)', "post_type=sexhack_video&wooprod=");
             $wp_rewrite->add_rewrite_tag("%videoaccess%", '([^/]+)', "videoaccess=");

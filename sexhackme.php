@@ -368,7 +368,7 @@ if(!class_exists('SexHackMe_Plugin')) {
          add_filter( 'plugin_action_links_' . plugin_basename(__FILE__), array( $this, 'add_plugin_action_links' ) );
          
 
-         sexhack_log("SexHackMe PLUGIN Loaded!");
+         //sexhack_log("SexHackMe PLUGIN Loaded!");
 
       }
 
