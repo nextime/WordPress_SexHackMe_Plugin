@@ -39,6 +39,7 @@ if(!class_exists('SH_Shortcodes')) {
             'xfbp'           => __CLASS__ . '::xframe_bypass',
             'sexhacklive'    => __CLASS__ . '::sexhacklive',
 				'sexadv'			  => __CLASS__ . '::adv_shortcode',
+				'sexgallery'     => __CLASS__ . '::videogallery_shortcode',
          );
 
          foreach( $shortcodes as $shortcode_tag => $shortcode_func ) {
@@ -112,6 +113,27 @@ if(!class_exists('SH_Shortcodes')) {
          }
          return;
       }
+
+      public static function videogallery_shortcode($attr, $cont)
+      {
+         global $post;
+			global $sh_videogallery;
+         extract( shortcode_atts(array(
+            "category" => "all",
+         ), $attr));
+
+         $html = "<div class='sexhack_gallery'>"; //<h3>SexHack VideoGallery</h3>";
+         $html .= '<ul class="products columns-4">';
+         $products = $sh_videogallery->getProducts();
+         while( $products->have_posts() ) {
+            $products->the_post();
+            $html .= $sh_videogallery->get_video_thumb();
+         }
+         wp_reset_postdata();
+         $html .= "</ul></div>";
+         return $html;
+      }
+
 
 	}
 }

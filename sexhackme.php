@@ -221,6 +221,15 @@ if(!class_exists('SexHackMe_Plugin')) {
          if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-post_types.php') )
             include_once SH_PLUGIN_DIR_PATH . 'includes/class-post_types.php';
 
+         /* Meta Boxes */
+         if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-meta-box.php') )
+            include_once SH_PLUGIN_DIR_PATH . 'includes/class-meta-box.php';
+
+         /* DB Query */
+         if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-query.php') )
+            include_once SH_PLUGIN_DIR_PATH . 'includes/class-query.php';
+
+         /* Admin interface */
          if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-admin.php' ) )
             include_once SH_PLUGIN_DIR_PATH . 'includes/class-admin.php';
 

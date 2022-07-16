@@ -22,6 +22,8 @@
 
 namespace wp_SexHackMe;
 
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 if(!class_exists('SH_VideoGallery')) {
 
@@ -39,12 +41,8 @@ if(!class_exists('SH_VideoGallery')) {
 
          // Register Query Vars
          add_filter("query_vars", array($this, "query_vars"));
-         add_shortcode("sexgallery", array($this, "sexgallery_shortcode"));
-         //add_action('add_meta_boxes', array($this, "sexhack_video_metaboxes"));
-         //add_action('admin_init', array($this, "register_settings"));
 			//add_filter('page_template', array($this, 'sexhack_video_template'));
 			add_filter('archive_template', array($this, 'sexhack_video_template'));
-			add_action('save_post', array($this, 'save_sexhack_video_meta_box_data' ));
 
 			add_action('pre_get_posts', array($this, 'fix_video_query'), 1, 1);
          sexhack_log('SexHackVideoGallery() Instanced');
@@ -90,183 +88,15 @@ if(!class_exists('SH_VideoGallery')) {
    		}
 		}
 
-
-
-      public function sexhack_video_metaboxes($post=false)
-      {
-			add_meta_box( 'sh-mbox-videodescription', 'Video Description', array($this, 'load_metabox_videodescription'), 'sexhack_video', 'normal','default');
-         add_meta_box( 'sh-mbox-video', 'Video locations', array( $this, 'load_metabox_videolocations' ), 'sexhack_video', 'normal', 'default' );
-         //remove_meta_box( 'postimagediv', 'sexhack_video', 'side' );
-         add_meta_box('postimagediv', 'Video Thumbnail', 'post_thumbnail_meta_box', 'sexhack_video', 'side', 'default');
-      }
-
-		public function load_metabox_videodescription($post)
-		{
-			wp_nonce_field('video_description_nonce','sh_video_description_nonce');
-			$value = get_post_meta( $post->ID, 'video_description', true );
-         echo '<textarea style="width:100%" id="video_description" name="video_description">' . esc_attr( $value ) . '</textarea>';
-
-		}
-
-		public function save_sexhack_video_meta_box_data( $post_id ) {
-
-
-    		// Verify that the nonce is set and valid.
-    		if (!isset( $_POST['sh_video_description_nonce']) 
-				|| !wp_verify_nonce( $_POST['sh_video_description_nonce'], 'video_description_nonce' ) ) {
-        		return;
-    		}
-
-    		// If this is an autosave, our form has not been submitted, so we don't want to do anything.
-    		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
-        		return;
-    		}
-
-    		// Check the user's permissions.
-    		if ( isset( $_POST['post_type'] ) && 'page' == $_POST['post_type'] ) {
-
-        		if ( ! current_user_can( 'edit_page', $post_id ) ) {
-            	return;
-        		}
-
-    		}
-   		 else {
-        		if ( ! current_user_can( 'edit_post', $post_id ) ) {
-            	return;
-        		}
-    		}
-
-    		/* OK, it's safe for us to save the data now. */
-
-    		// Make sure that it is set.
-    		if ( ! isset( $_POST['video_description'] ) ) {
-        		return;
-    		}
-
-    		// Sanitize user input.
-    		$my_data = sanitize_text_field( $_POST['video_description'] );
-
-    		// Update the meta field in the database.
-    		update_post_meta( $post_id, 'video_description', $my_data );
-		}
-
-
-      public function load_metabox_videolocations($post) //($object, $box)
-      {
-    		wp_nonce_field( 'global_notice_nonce', 'global_notice_nonce' );
-
-    		$value = get_post_meta( $post->ID, '_global_notice', true );
-
-    		echo '<textarea style="width:100%" id="global_notice" name="global_notice">' . esc_attr( $value ) . '</textarea>';
-      }
-
       public function getProducts($vcat=false) {
    
-         if(!$this->productlist && !$vcat) $this->productlist = $this->_getProducts($vcat);
-         else if($vcat) return $this->_getProducts($vcat);
+         if(!$this->productlist && !$vcat) $this->productlist = SH_Query::get_Videos($vcat); //$this->_getProducts($vcat);
+         else if($vcat) return SH_Query::get_Videos($vcat); //$this->_getProducts($vcat);
 
          return $this->productlist;
 
       }
       
-
-      // TODO: add pagination support
-	   public function _getProducts($vcat=false) 
-      {
-
-         $filter=false;
-         if(isset($_GET['sexhack_vselect']))
-         {
-            switch($_GET['sexhack_vselect'])
-            {
-               case 'premium':
-               case 'members':
-               case 'public':
-					case 'preview':
-                  $filter=$_GET['sexhack_vselect'];
-                  break;
-            }
-         }
-   		$queryarr = array(
- 
-      		/*
-       		* We're limiting the results to 100 products, change this as you
-       		* see fit. -1 is for unlimted but could introduce performance issues.
-       		*/
-      		'posts_per_page' => 100,
-      		'post_type'      => 'product',
-            'post_status'    => 'publish',
-            'product_cat'    => 'Videos, VR180, VR360',
-      		'order'          => 'ASC',
-      		'orderby'        => 'title',
-            'tax_query'    => array( array(
-               'taxonomy'  => 'product_visibility',
-               'terms'     => array( 'exclude-from-catalog' ),
-               'field'     => 'name',
-               'operator'  => 'NOT IN',
-            ) )
-            //'meta_query'   => array( array(
-            //   'value'     => 'hls_public',
-            //   'compare'   => 'like'
-            //) ),
-         );
-         if($filter)
-         {
-            if($filter=="preview") {
-               $queryarr['meta_query'] = array();
-               $queryarr['meta_query']['relation'] = 'OR';
-               $queryarr['meta_query'][] = array(
-                  'value'  =>  'video_preview',
-                  'compare' => 'like'
-               );
-               $queryarr['meta_query'][] = array(
-                  'value'  =>  'hls_preview',
-                  'compare' => 'like'
-               );
-               $queryarr['meta_query'][] = array(
-                  'value'  =>  'vr_preview',
-                  'compare' => 'like'
-               );
-
-            } else {
-               $queryarr['meta_query'] = array();
-               $queryarr['meta_query']['relation'] = 'OR';
-					$queryarr['meta_query'][] = array(
-							'value'     => 'hls_'.$filter,
-							'compare'   => 'like'
-               );
-               $queryarr['meta_query'][] = array(
-                     'value'     => 'vr_'.$filter,
-                     'compare'   => 'like'
-               );
-
-				}
-         }
-
-			$products = new \WP_Query($queryarr);
-			//sexhack_log(var_dump($products));
-			return $products;
-   	}
-
-      public function sexgallery_shortcode($attr, $cont)
-      {
-         global $post;
-         extract( shortcode_atts(array(
-            "category" => "all",
-         ), $attr));
-
-         $html = "<div class='sexhack_gallery'>"; //<h3>SexHack VideoGallery</h3>";
-         $html .= '<ul class="products columns-4">';
-			$products = $this->getProducts();
-			while( $products->have_posts() ) {
-				$products->the_post();
-				$html .= $this->get_video_thumb();
-         }
-			wp_reset_postdata();
-			$html .= "</ul></div>";
-         return $html;
-      }
-
 		public function get_video_thumb()
       {
 
@@ -328,8 +158,7 @@ if(!class_exists('SH_VideoGallery')) {
 		}
    }
 
-   $gal = new SH_VideoGallery();
-   $GLOBAL['sh_videogallery'] = $gal;
+   $GLOBALS['sh_videogallery'] = new SH_VideoGAllery();
 }
 
 ?>

@@ -77,7 +77,7 @@ if(!class_exists('SH_PostTypes')) {
                ),
             'description' => 'Videos for SexHack.me gallery',
             'public' => true,
-            //'register_meta_box_cb' => array($this, 'sexhack_video_metaboxes'), // XXX BUG We need this NOW!!
+            'register_meta_box_cb' => 'wp_SexHackMe\SH_MetaBox::add_video_metaboxes', // XXX BUG We need this NOW!!
             'show_ui' => true,
             'show_in_menu' => true,
             'show_in_rest' => true,
