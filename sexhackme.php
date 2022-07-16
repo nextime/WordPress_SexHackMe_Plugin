@@ -264,6 +264,11 @@ if(!class_exists('SexHackMe_Plugin')) {
          if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-unlock-support.php') )
             include_once  SH_PLUGIN_DIR_PATH . 'includes/class-unlock-support.php';
 
+         /* Video Gallery */
+         if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-videogallery.php') )
+            include_once SH_PLUGIN_DIR_PATH . 'includes/class-videogallery.php';
+
+
          /* Shortcodes */
          if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-shortcodes.php' ) )
             include_once SH_PLUGIN_DIR_PATH . 'includes/class-shortcodes.php';
@@ -314,8 +319,8 @@ if(!class_exists('SexHackMe_Plugin')) {
 			add_action( 'tgmpa_register', array($this, 'plugin_dependencies' ));
 
          // Set the main menu page
-         add_action('admin_menu', array($this, 'admin_menu'));
-         add_action('admin_init', array($this, 'initialize_plugin'));
+         add_action('admin_menu', array('wp_SexHackMe\SH_Admin', 'menu'));
+         add_action('admin_init', array('wp_SexHackMe\SH_Admin', 'init'));
 
 
          // Check if we need to flush rewrite rules
@@ -355,10 +360,6 @@ if(!class_exists('SexHackMe_Plugin')) {
 			
 
          sexhack_log("SexHackMe PLUGIN Loaded!");
-
-			// Initialize the deprecated plugin parts 
-			// XXX To be removed soon!
-			$this->deprecated();
 
       }
 
@@ -485,95 +486,6 @@ if(!class_exists('SexHackMe_Plugin')) {
 
           return $links;
 
-      }
-
-
-		/* FROM HERE IS THE DEPRECATED PART */
-
-      public function deprecated()
-      {
-
-
-			$SECTIONS = array();
-   		foreach( glob(dirname(__FILE__) . '/deprecated/*.php') as $class_path ) {
-      		$SEXHACK_SECTION = false;
-      		try {
-         		include_once($class_path);
-      		} catch(\Throwable $e) {
-         		sexhack_log($e);
-      		}
-      		if(is_array($SEXHACK_SECTION)) $SECTIONS[] = $SEXHACK_SECTION; 
-   		}
-         $this->SECTIONS = $SECTIONS;
-         $this->instances = array();
-         foreach($SECTIONS as $section) {
-            $class = "wp_SexHackMe\\".$section['class'];
-            $this->instances[$section['name']] = new $class();
-         }
-
-      }
-
-      /* public function settings_section() {
-       *   echo "<h3>Enable following functionalities:</h3>";
-       * }
-       */
-      
-      public function initialize_plugin() 
-      {
-         add_settings_section('sexhackme-settings', ' ', array($this, 'settings_section'), 'sexhackme-settings');
-         foreach($this->SECTIONS as $section) {
-            register_setting('sexhackme-settings', $section['name']);
-				if(array_key_exists('require-page', $section) && ($section['require-page']))
-            { 
-               if(is_array($section['require-page'])) {
-                  foreach($section['require-page'] as $pagereq) {
-                     if(array_key_exists('post_type', $pagereq)) {
-                        if(array_key_exists('option', $pagereq)) register_setting('sexhackme-settings', $pagereq['option']);
-                     }
-                  }
-               } else {
-					   register_setting('sexhackme-settings', $section['name']."-page");
-               }
-				}
-         }
-
-
-         SH_Admin::init();
-
-      }
-
-      public function admin_menu() 
-      {
-         add_menu_page('SexHackMe Settings', 'SexHackMe', 'manage_options', 'sexhackme-settings', 
-            array($this, 'admin_page'), SH_PLUGIN_DIR_URL .'img/admin_icon.png', 31);
-
-
-         SH_Admin::menu();
-
-
-         foreach($this->SECTIONS as $section) {
-            if(get_option( $section['name'])=="1")
-            {  
-               if (array_key_exists('adminmenu', $section) && is_array($section['adminmenu'])) { 
-                  foreach($section['adminmenu'] as $admsub) {
-                     sexhack_log($admsub);
-                     if(is_array($admsub) 
-						      && array_key_exists('title', $admsub) 
-						      && array_key_exists('callback', $admsub)
-						      && array_key_exists('slug', $admsub)) {
-						         add_submenu_page( 'sexhackme-settings', $admsub['title'], 
-												$admsub['title'], 'manage_options', $admsub['slug'], 
-												$admsub['callback']);
-                     }
-                  }
-               }
-				}
-			}
-      }
-
-      public function admin_page()
-      {
-         sh_get_template('admin/sexhackme.php', array('sections' => $this->SECTIONS));
       }
 
    }

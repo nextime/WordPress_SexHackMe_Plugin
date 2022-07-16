@@ -31,6 +31,8 @@ if(!class_exists('SH_PostTypes')) {
 
       public static function init()
       {
+			// For some pages we need to add also rewrite rules
+			global $wp_rewrite;
 
          // Advertising
          register_post_type('sexhackadv', array(
@@ -52,6 +54,59 @@ if(!class_exists('SH_PostTypes')) {
          ));
          add_filter( 'manage_sexhackadv_posts_columns', 'wp_SexHackMe\advert_add_id_column', 5 );
          add_action( 'manage_sexhackadv_posts_custom_column', 'wp_SexHackMe\advert_id_column_content', 5, 2 );
+
+
+         // SexHack Videos 
+      	// TODO: the idea is to have custom post type for models profiles and for videos.
+      	//       Ideally /$DEFAULTSLUG/nomevideo/ finisce sul corrispettivo prodotto woocommerce, 
+      	//       /$DEFAULTSLUG/modelname/nomevideo/ finisce sul corrispettivo page sexhackme_video quando show_in_menu e' attivo.
+     	 	//
+      	//       Devo pero' verificare le varie taxonomy e attributi della pagina, vedere come creare un prodotto in wordpress
+      	//       per ogni pagina sexhack_video che credo, sincronizzare prodotti e video pagine, gestire prodotti con lo stesso nome
+      	//       ( credo si possa fare dandogli differenti slugs ) 
+         register_post_type('sexhack_video', array(
+             'labels'        => array(
+                'name'                  => 'Videos',
+                'singular_name'         => 'Video',
+                'add_new'               => 'Add New',
+                'add_new_item'          => 'Add New Video',
+                'edit_item'             => 'Edit Video',
+                'not_found'             => 'There are no videos yet',
+                'not_found_in_trash'    => 'Nothing found in Trash',
+                'search_items'          => 'Search videos',
+               ),
+            'description' => 'Videos for SexHack.me gallery',
+            'public' => true,
+            //'register_meta_box_cb' => array($this, 'sexhack_video_metaboxes'), // XXX BUG We need this NOW!!
+            'show_ui' => true,
+            'show_in_menu' => true,
+            'show_in_rest' => true,
+            'menu_position' => 32,
+            'capability_type' => 'post', // TODO Maybe  We should create our own cap type?
+            // 'capabilities' => array(), // Or just select specific capabilities here
+            'hierarchical' => true,
+            'publicly_queryable' => true,
+            'rewrite' => false,
+            'query_var' => true,
+            'has_archive' => true,
+            'supports' => array('title'), // 'thumbnail', 'editor','excerpt','trackbacks','custom-fields','comments','revisions','author','page-attributes'),
+            'taxonomies' => array('category','post_tag'), // TODO  Shouldn't we have a "video_type" taxonomy for VR or flat?
+         ));
+			$DEFAULTSLUG = get_option('sexhack_gallery_slug', 'v');
+         $projects_structure = '/'.$DEFAULTSLUG.'/%wooprod%/';
+         $rules = $wp_rewrite->wp_rewrite_rules();
+         if(array_key_exists($DEFAULTSLUG.'/([^/]+)/?$', $rules)) {
+            sexhack_log("REWRITE: rules OK: ".$DEFAULTSLUG.'/([^/]+)/?$ => '.$rules[$DEFAULTSLUG.'/([^/]+)/?$']);
+         } else {
+            sexhack_log("REWRITE: Need to add and flush our rules!");
+            $wp_rewrite->add_rewrite_tag("%wooprod%", '([^/]+)', "post_type=sexhack_video&wooprod=");
+            $wp_rewrite->add_rewrite_tag("%videoaccess%", '([^/]+)', "videoaccess=");
+            $wp_rewrite->add_permastruct($DEFAULTSLUG, $projects_structure, false);
+            $wp_rewrite->add_permastruct($DEFAULTSLUG, $projects_structure."%videoaccess%/", false);
+            update_option('need_rewrite_flush', 1);
+
+         }
+
 
       }
 

@@ -24,13 +24,15 @@ namespace wp_SexHackMe;
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-
-function sexhackme_settings_section() {
-   echo "<h3></h3>";
+function gallery_adminpage()
+{
+   sh_get_template('admin/gallery.php');
 }
 
-function sexhackme_admin_page()
-   sh_get_template('admin/sexhackme.php'));
-}
+function gallery_settings_section()
+{
+   echo "<h2>SexHackMe Gallery Settings</h2>";
+} 
+
 
 ?>

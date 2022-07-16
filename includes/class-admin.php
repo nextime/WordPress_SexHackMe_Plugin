@@ -31,8 +31,8 @@ if(!class_exists('SH_Admin')) {
 
       public static function init()
       {
+         // Add general settings section     
          add_settings_section('sexhackme-settings', ' ', 'wp_SexHackMe\sexhackme_settings_section', 'sexhackme-settings');
-
 
 			// Add WC-PMS_Integration settings
          if( file_exists(SH_PLUGIN_DIR_PATH . 'includes/admin/functions-wcpms.php') )
@@ -65,18 +65,23 @@ if(!class_exists('SH_Admin')) {
          if( file_exists(SH_PLUGIN_DIR_PATH . 'includes/admin/functions-gallery.php') )
          {
              include_once SH_PLUGIN_DIR_PATH . 'includes/admin/functions-gallery.php';
+             add_settings_section('sexhackme-gallery-settings', ' ','wp_SexHackMe\gallery_settings_section', 'sexhackme-gallery-settings');
              register_setting('sexhackme-gallery-settings', 'sexhack_gallery_slug');
          }
       }
 
       public static function menu()
       {
-      	//add_menu_page('SexHackMe Settings', 'SexHackMe', 'manage_options', 'sexhackme-settings',
-         //   	array($this, 'admin_page'), SH_PLUGIN_DIR_URL .'img/admin_icon.png', 31);
+
+      	add_menu_page('SexHackMe Settings', 'SexHackMe', 'manage_options', 'sexhackme-settings',
+            	'wp_SexHackMe\sexhackme_admin_page', SH_PLUGIN_DIR_URL .'img/admin_icon.png', 31);
 
 			// Add The main page again cause with multiple subpages apparently we need to do it.
-         add_submenu_page( 'sexhackme-settings', 'SexHackMe Settings', 'Modules',
+          add_submenu_page( 'sexhackme-settings', 'SexHackMe Settings', 'General Settings',
                   'manage_options', 'sexhackme-settings');
+
+         // TODO We don't have a main page yet, so, remove it.
+         remove_submenu_page( 'sexhackme-settings', 'sexhackme-settings' );
 
 		   // Add page WC-PMS_Integration
 			if( file_exists(SH_PLUGIN_DIR_PATH . 'includes/admin/functions-wcpms.php') )

@@ -22,113 +22,26 @@
 
 namespace wp_SexHackMe;
 
-$SEXHACK_GALLERY_DEFAULTSLUG = 'v';
 
-if(!class_exists('SexHackVideoGallery')) {
-
-	// Creating the widget
-	class sexhack_gallery_widget extends \WP_Widget {
- 
-		function __construct() 
-		{
-			parent::__construct(
-			// Base ID of your widget
-			'sexhack_gallery_widget', 
- 
-			// Widget name will appear in UI
-			__('SexHack Gallery', 'sexhack_widget_domain'), 
- 
-			// Widget description
-			array( 'description' => __( 'Add SexHack Gallery links', 'sexhack_widget_domain' ), )
-			);
-		}
- 
-		// Creating widget front-end
-		public function widget( $args, $instance ) 
-		{
-			global $post;
-
-			$pattern = get_shortcode_regex();
- 
-    		if (   preg_match_all( '/'. $pattern .'/s', $post->post_content, $matches )
-        		&& array_key_exists( 2, $matches )
-        		&& in_array( 'sexgallery', $matches[2] )
-    			) 
-			{
-				$current_url = get_permalink(get_the_ID());
-
-				$title = apply_filters( 'widget_title', $instance['title'] );
- 
-				// before and after widget arguments are defined by themes
-				echo $args['before_widget'];
-				if ( ! empty( $title ) )
-					echo $args['before_title'] . $title . $args['after_title'];
- 				?>
-					<ul>
-						<li><a href="">All videos</a></li>
-						<li><a href="?sexhack_vselect=public">Public videos</a></li>
-						<li><a href="?sexhack_vselect=members">Members videos</a></li>
-						<li><a href="?sexhack_vselect=premium">Premium videos</a></li>
-						<li><a href="?sexhack_vselect=preview">Previews videos</a></li>
-					</ul>
-				<?php
-				echo $args['after_widget'];
-			}
-		}
- 		
-		// Widget Backend
-		public function form( $instance )
-	 	{	
-			if ( isset( $instance[ 'title' ] ) ) 
-			{
-				$title = $instance[ 'title' ];
-			}
-			else {
-				$title = __( 'Filter gallery', 'sexhack_widget_domain' );
-			}
-			// Widget admin form
-			?>
-			<p>
-				<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:' ); ?></label>
-				<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
-			</p>
-			<?php
-		}
- 
-		// Updating widget replacing old instances with new
-		public function update( $new_instance, $old_instance ) 
-		{
-				$instance = array();
-				$instance['title'] = ( ! empty( $new_instance['title'] ) ) ? strip_tags( $new_instance['title'] ) : '';
-				return $instance;
-		} 
- 
-			// Class wpb_widget ends here
-	} 
- 
-   // Register and load the widget
-	function gallery_load_widget() {
-   		register_widget( 'wp_SexHackMe\sexhack_gallery_widget' );
-	}
-	add_action( 'widgets_init', 'wp_SexHackMe\gallery_load_widget' );
+if(!class_exists('SH_VideoGallery')) {
 
 
-
-   class SexHackVideoGallery
+   class SH_VideoGallery
    {
 
 
       public function __construct()
       {
 
+         // TODO What an horrible and inefficient way to cache the query result.
+         //     Think about moving it in session and with a better data structure.
          $this->productlist = false;
 
          // Register Query Vars
          add_filter("query_vars", array($this, "query_vars"));
          add_shortcode("sexgallery", array($this, "sexgallery_shortcode"));
-         add_action('init', array($this, "register_sexhack_video_post_type"));
          //add_action('add_meta_boxes', array($this, "sexhack_video_metaboxes"));
-         add_action('admin_init', array($this, "register_settings"));
+         //add_action('admin_init', array($this, "register_settings"));
 			//add_filter('page_template', array($this, 'sexhack_video_template'));
 			add_filter('archive_template', array($this, 'sexhack_video_template'));
 			add_action('save_post', array($this, 'save_sexhack_video_meta_box_data' ));
@@ -138,35 +51,6 @@ if(!class_exists('SexHackVideoGallery')) {
 
       }
 
-
-      public function register_settings() 
-      {
-         add_settings_section('sexhackme-gallery-settings', ' ', array($this, 'settings_section'), 'sexhackme-gallery-settings');
-         register_setting('sexhackme-gallery-settings', 'sexhack_gallery_slug');
-         //add_settings_field('sexhack_gallery_slug', 'sexhack_gallery_slug', 'sexhack_gallery_slug',
-         //                  array($this, 'settings_field'), 'sexhackme-gallery-settings', 'sexhackme-gallery-settings' );
-
-      }
-
-      public function settings_section() 
-      { 
-         echo "<h2>SexHackMe Gallery Settings</h2>";
-      }
-
-      /*
-      public function settings_field($name) 
-      {              
-         echo $name;    
-      } 
-      */      
-
-      public function check_rewrite($rules)
-      {
-         // TODO Check if our rules are present and call flush if not
-         //      (double check if already done in the $this->register_sexhack_video_post_type and it's enough)
-         sexhack_log($rules);
-         return $rules;
-      }
 
       public function query_vars($vars)
       {
@@ -206,69 +90,6 @@ if(!class_exists('SexHackVideoGallery')) {
    		}
 		}
 
-
-
-      // sets custom post type
-      // TODO: the idea is to have custom post type for models profiles and for videos.
-      //       Ideally /$DEFAULTSLUG/nomevideo/ finisce sul corrispettivo prodotto woocommerce, 
-      //       /$DEFAULTSLUG/modelname/nomevideo/ finisce sul corrispettivo page sexhackme_video quando show_in_menu e' attivo.
-      //
-      //       Devo pero' verificare le varie taxonomy e attributi della pagina, vedere come creare un prodotto in wordpress
-      //       per ogni pagina sexhack_video che credo, sincronizzare prodotti e video pagine, gestire prodotti con lo stesso nome
-      //       ( credo si possa fare dandogli differenti slugs ) 
-		public function register_sexhack_video_post_type() 
-		{
-    		global $wp_rewrite;
-         global $SEXHACK_GALLERY_DEFAULTSLUG;
-
-         $DEFAULTSLUG = get_option('sexhack_gallery_slug', $SEXHACK_GALLERY_DEFAULTSLUG);
-
-
-         sexhack_log("REGISTER SEXHACK_VIDEO ");
-
-    		register_post_type('sexhack_video', array(
-             'labels'        => array(
-                'name'                  => 'Videos',
-                'singular_name'         => 'Video',
-                'add_new'               => 'Add New',
-                'add_new_item'          => 'Add New Video',
-                'edit_item'             => 'Edit Video',
-                'not_found'             => 'There are no videos yet',
-                'not_found_in_trash'    => 'Nothing found in Trash',
-                'search_items'          => 'Search videos',
-               ),
-            'description' => 'Videos for SexHack.me gallery',
-       		'public' => true,
-				'register_meta_box_cb' => array($this, 'sexhack_video_metaboxes'),
-       		'show_ui' => true,
-       		'show_in_menu' => true,
-				'show_in_rest' => true,
-				'menu_position' => 32,
-       		'capability_type' => 'post', // XXX We should create our own cap type?
-				// 'capabilities' => array(), // Or just select specific capabilities here
-       		'hierarchical' => true,
-       		'publicly_queryable' => true,
-       		'rewrite' => false,
-       		'query_var' => true,
-       		'has_archive' => true,
-       		'supports' => array('title'), // 'thumbnail', 'editor','excerpt','trackbacks','custom-fields','comments','revisions','author','page-attributes'),
-       		'taxonomies' => array('category','post_tag'), // XXX Shouldn't we have a "video_type" taxonomy for VR or flat?
-    		));
-
-         $projects_structure = '/'.$DEFAULTSLUG.'/%wooprod%/';
-         $rules = $wp_rewrite->wp_rewrite_rules();
-         if(array_key_exists($DEFAULTSLUG.'/([^/]+)/?$', $rules)) {
-            sexhack_log("REWRITE: rules OK: ".$DEFAULTSLUG.'/([^/]+)/?$ => '.$rules[$DEFAULTSLUG.'/([^/]+)/?$']);
-         } else {
-            sexhack_log("REWRITE: Need to add and flush our rules!");
-            $wp_rewrite->add_rewrite_tag("%wooprod%", '([^/]+)', "post_type=sexhack_video&wooprod=");
-            $wp_rewrite->add_rewrite_tag("%videoaccess%", '([^/]+)', "videoaccess=");
-            $wp_rewrite->add_permastruct($DEFAULTSLUG, $projects_structure, false);
-            $wp_rewrite->add_permastruct($DEFAULTSLUG, $projects_structure."%videoaccess%/", false);
-            update_option('need_rewrite_flush', 1);
-
-         }
-		}
 
 
       public function sexhack_video_metaboxes($post=false)
@@ -341,8 +162,8 @@ if(!class_exists('SexHackVideoGallery')) {
 
       public function getProducts($vcat=false) {
    
-         if(!$this->productlist)
-            $this->productlist = $this->_getProducts($vcat);
+         if(!$this->productlist && !$vcat) $this->productlist = $this->_getProducts($vcat);
+         else if($vcat) return $this->_getProducts($vcat);
 
          return $this->productlist;
 
@@ -448,9 +269,8 @@ if(!class_exists('SexHackVideoGallery')) {
 
 		public function get_video_thumb()
       {
-         global $SEXHACK_GALLERY_DEFAULTSLUG;
 
-         $DEFAULTSLUG = get_option('sexhack_gallery_slug', $SEXHACK_GALLERY_DEFAULTSLUG);
+         $DEFAULTSLUG = get_option('sexhack_gallery_slug', 'v');
 
       	$id = get_the_ID();
       	$prod = wc_get_product($id);
@@ -506,15 +326,10 @@ if(!class_exists('SexHackVideoGallery')) {
 
 			return $html;
 		}
-	}
+   }
+
+   $gal = new SH_VideoGallery();
+   $GLOBAL['sh_videogallery'] = $gal;
 }
-
-
-$SEXHACK_SECTION = array(
-   'class' => 'SexHackVideoGallery', 
-   'description' => 'Create Video galleries for Sexhack Video products', 
-   //'require-page' => true,
-   'name' => 'sexhackme_videogallery'
-);
 
 ?>

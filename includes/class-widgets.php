@@ -87,7 +87,99 @@ if(!class_exists('SH_ADVWidget')) {
    }
 
    add_action( 'widgets_init', array('wp_SexHackMe\SH_ADVWidget', 'register' ));
+
 }
 
+
+if(!class_exists('SH_GalleryWidget')) {
+
+   // Creating the widget
+   class SH_GalleryWidget extends \WP_Widget {
+
+      function __construct()
+      {
+         parent::__construct(
+         // Base ID of your widget
+         'sexhack_gallery_widget',
+
+         // Widget name will appear in UI
+         __('SexHack Gallery', 'sexhack_widget_domain'),
+
+         // Widget description
+         array( 'description' => __( 'Add SexHack Gallery links', 'sexhack_widget_domain' ), )
+         );
+      }
+
+      // Creating widget front-end
+      public function widget( $args, $instance )
+      {
+         global $post;
+
+         $pattern = get_shortcode_regex();
+
+         if (   preg_match_all( '/'. $pattern .'/s', $post->post_content, $matches )
+            && array_key_exists( 2, $matches )
+            && in_array( 'sexgallery', $matches[2] )
+            )
+         {
+            $current_url = get_permalink(get_the_ID());
+
+            $title = apply_filters( 'widget_title', $instance['title'] );
+
+            // before and after widget arguments are defined by themes
+            echo $args['before_widget'];
+            if ( ! empty( $title ) )
+               echo $args['before_title'] . $title . $args['after_title'];
+            ?>
+               <ul>
+                  <li><a href="">All videos</a></li>
+                  <li><a href="?sexhack_vselect=public">Public videos</a></li>
+                  <li><a href="?sexhack_vselect=members">Members videos</a></li>
+                  <li><a href="?sexhack_vselect=premium">Premium videos</a></li>
+                  <li><a href="?sexhack_vselect=preview">Previews videos</a></li>
+               </ul>
+            <?php
+            echo $args['after_widget'];
+         }
+      }
+
+      // Widget Backend
+      public function form( $instance )
+      {
+         if ( isset( $instance[ 'title' ] ) )
+         {
+            $title = $instance[ 'title' ];
+         }
+         else {
+            $title = __( 'Filter gallery', 'sexhack_widget_domain' );
+         }
+         // Widget admin form
+         ?>
+         <p>
+            <label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:' ); ?></label>
+            <input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
+         </p>
+         <?php
+      }
+
+      // Updating widget replacing old instances with new
+      public function update( $new_instance, $old_instance )
+      {
+            $instance = array();
+            $instance['title'] = ( ! empty( $new_instance['title'] ) ) ? strip_tags( $new_instance['title'] ) : '';
+            return $instance;
+      }
+
+
+      public static function register()
+      {  
+         register_widget('wp_SexHackMe\SH_GalleryWidget');
+      }
+
+
+   }  // Class widget ends here
+
+	 add_action( 'widgets_init', array('wp_SexHackMe\SH_GalleryWidget', 'register' ));
+}
 
 ?>
