@@ -45,7 +45,6 @@ if(!class_exists('SH_VideoGallery')) {
 			add_filter('archive_template', array($this, 'sexhack_video_template'));
 
 			add_action('pre_get_posts', array($this, 'fix_video_query'), 1, 1);
-         sexhack_log('SexHackVideoGallery() Instanced');
 
       }
 
@@ -65,7 +64,6 @@ if(!class_exists('SH_VideoGallery')) {
    		if($is_sexhack_video ) {
       		set_query_var( 'post_type', 'sexhack_video' );
       		if ( file_exists( plugin_dir_path(__DIR__) . '/templates/'.$template)) {
-         		sexhack_log("NEW TEMPLATE!: ".plugin_dir_path(__DIR__) . '/templates/'.$template);
          		return plugin_dir_path(__DIR__) . '/templates/'.$template;
       		}
     		}
@@ -78,12 +76,10 @@ if(!class_exists('SH_VideoGallery')) {
    		if($query->get('post_type')=='sexhack_video') {
       		$wooprod = $query->get('wooprod', false);
       		if($wooprod) {
-         		sexhack_log($_SERVER['REQUEST_URI']." BEFORE ".print_r($query, true));
          		$query->query['post_type'] = 'sexhack_video';
          		$query->set('name', esc_sql($wooprod));
          		$query->set('post_type', 'any');
          		//$query->set('post_type', '');
-         		sexhack_log("AFTER ".print_r($query, true));
       		}
    		}
 		}

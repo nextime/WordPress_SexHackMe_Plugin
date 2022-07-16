@@ -31,7 +31,6 @@ if(!class_exists('SexhackWoocommerceProductVideos')) {
    {
       public function __construct()
       {
-         sexhack_log('SexhackWoocommerceProductVideos() Instanced');
          add_action( 'woocommerce_before_single_product', array($this, 'video_remove_default_woocommerce_image' ));
          add_filter( 'query_vars', array($this, 'themeslug_query_vars' ));
       }
@@ -112,7 +111,6 @@ if(!class_exists('WoocommerceAccountRemoveNameSurname')) {
       {  
          add_filter('woocommerce_save_account_details_required_fields', array($this, 'ts_hide_first_last_name'));
          add_action( 'woocommerce_edit_account_form_start', array($this, 'add_username_to_edit_account_form'));
-         sexhack_log('WoocommerceAccountRemoveNameSurname() Instanced');
       }
 
       // Add the custom field "username"
@@ -148,7 +146,6 @@ if(!class_exists('WoocommerceEmailCheckout')) {
    {
       public function __construct()
       {
-         sexhack_log('WoocommerceEmailCheckout() Instanced');
 			add_filter( 'woocommerce_checkout_fields' , array($this,'simplify_checkout_virtual') );
 			add_filter( 'woocommerce_login_redirect', array($this, 'fix_woocommerce_user'), 99, 2);
 
@@ -206,7 +203,6 @@ if(!class_exists('SH_WooCommerce_Registration_Integration')) {
                      
          //$this->addcart = false;
                      
-         sexhack_log('SH_WooCommerce_Registration_Integration() Instanced');
 
          // Register new endpoint (URL) for My Account page
          add_action( 'init', array($this, 'add_subscriptions_endpoint'), 300 );
@@ -262,12 +258,10 @@ if(!class_exists('SH_WooCommerce_Registration_Integration')) {
       function add_subscriptions_endpoint()
       {
          global $wp_rewrite;
-         sexhack_log("SUBSCRIPTION ENDPOINT ADDED");
          add_rewrite_endpoint( 'subscriptions', EP_ROOT | EP_PAGES );
          $rules = $wp_rewrite->wp_rewrite_rules();
          if(!array_key_exists('(.?.+?)/subscriptions(/(.*))?/?$', $rules))
          {
-            sexhack_log("SUBSCRIPTION RULESS NEEDS REWRITE");
             update_option('need_rewrite_flush', 1);
          }
       }

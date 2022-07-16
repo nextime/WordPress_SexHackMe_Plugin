@@ -34,7 +34,6 @@ if(!class_exists('SexhackAddUnlockLogin')) {
 			add_action("woocommerce_after_order_notes", array($this, "add_to_checkout"));
 			add_filter("pms_register_shortcode_content", array($this, "add_to_register"), 10, 2);
          add_filter("unlock_authenticate_user", array($this, "fix_unlock_user"), 11, 1);
-         sexhack_log('SexhackAddUnlockLogin() Instanced');
       }
 
       public function get_proto(){

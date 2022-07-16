@@ -36,7 +36,6 @@ if(!class_exists('SH_VideoPlayer')) {
          {
             case 'hls':
                  $html = sh_get_template("videoplayer/hls.php", array('vurl' => $vurl, 'posters' => $posters ));
-                 sexhack_log($html);
                break;
 
             case 'xr':

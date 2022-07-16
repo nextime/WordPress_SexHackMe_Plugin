@@ -131,7 +131,6 @@ if(!class_exists('SexhackPmsPasswordDataLeak')) {
    {
       public function __construct()
       {
-         sexhack_log('SexhackPmsPasswordDataLeak() Instanced');
          add_filter( 'pms_recover_password_message', array($this, "change_recover_form_message") );
          add_action( 'init', array($this, 'reset_password_form'), 9);
 			add_action( 'login_form_rp', array( $this, 'redirect_password_reset' ) );
