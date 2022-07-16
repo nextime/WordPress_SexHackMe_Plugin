@@ -16,3 +16,5 @@ this is a list of the actual dependencies:
 
  It is also assumed you are using storefront as a theme in couple with 
  WooCommerce, but should work with other themes too.
+
+ For more details please take a look to the [TODO LIST](https://git.nexlab.net/SexHackMe/sexhackme/blob/master/TODO.txt)
