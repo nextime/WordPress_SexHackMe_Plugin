@@ -15,6 +15,7 @@ based on the ideas i planned for www.sexhack.me:
  - Version 0.1.0:
    * Fixes of all the features on the previous versions
    * More projection on 3D/VR videos Support 
+   * Compression of css and js files
 
  - Version 0.2.0: 
    * User wallets?
