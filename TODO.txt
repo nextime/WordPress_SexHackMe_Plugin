@@ -4,6 +4,7 @@ based on the ideas i planned for www.sexhack.me:
 
  - Version 0.0.2:
    * Proper functioning Video post type page for Videos, use WC products only for downloads.
+   * Database table dedicated for Video pages.
 
  - Version 0.0.3:
    * Integration of Ultimate Members plugin for user and model profiles
