@@ -41,10 +41,10 @@ if(!class_exists('SH_VideoGallery')) {
 
          // Register Query Vars
          add_filter("query_vars", array($this, "query_vars"));
-			//add_filter('page_template', array($this, 'sexhack_video_template'));
-			add_filter('archive_template', array($this, 'sexhack_video_template'));
+         //add_filter('page_template', array($this, 'sexhack_video_template'));
+         add_filter('archive_template', array($this, 'sexhack_video_template'));
 
-			add_action('pre_get_posts', array($this, 'fix_video_query'), 1, 1);
+         add_action('pre_get_posts', array($this, 'fix_video_query'), 1, 1);
 
       }
 
@@ -56,33 +56,33 @@ if(!class_exists('SH_VideoGallery')) {
          return $vars;
       }
 
-		public function sexhack_video_template($template) 
+      public function sexhack_video_template($template) 
       {
          $template='video.php';
          if(isset($_GET['SEXHACKDEBUG'])) $template='newvideo.php';
-   		$is_sexhack_video = get_query_var('wooprod', false);
-   		if($is_sexhack_video ) {
-      		set_query_var( 'post_type', 'sexhack_video' );
-      		if ( file_exists( plugin_dir_path(__DIR__) . '/templates/'.$template)) {
-         		return plugin_dir_path(__DIR__) . '/templates/'.$template;
-      		}
-    		}
-    		return $template;
-		}
+         $is_sexhack_video = get_query_var('wooprod', false);
+         if($is_sexhack_video ) {
+            set_query_var( 'post_type', 'sexhack_video' );
+            if ( file_exists( plugin_dir_path(__DIR__) . '/templates/'.$template)) {
+               return plugin_dir_path(__DIR__) . '/templates/'.$template;
+            }
+          }
+          return $template;
+      }
 
 
-		public function fix_video_query($query)
-		{  
-   		if($query->get('post_type')=='sexhack_video') {
-      		$wooprod = $query->get('wooprod', false);
-      		if($wooprod) {
-         		$query->query['post_type'] = 'sexhack_video';
-         		$query->set('name', esc_sql($wooprod));
-         		$query->set('post_type', 'any');
-         		//$query->set('post_type', '');
-      		}
-   		}
-		}
+      public function fix_video_query($query)
+      {  
+         if($query->get('post_type')=='sexhack_video') {
+            $wooprod = $query->get('wooprod', false);
+            if($wooprod) {
+               $query->query['post_type'] = 'sexhack_video';
+               $query->set('name', esc_sql($wooprod));
+               $query->set('post_type', 'any');
+               //$query->set('post_type', '');
+            }
+         }
+      }
 
       public function getProducts($vcat=false) {
    
@@ -93,21 +93,21 @@ if(!class_exists('SH_VideoGallery')) {
 
       }
       
-		public function get_video_thumb()
+      public function get_video_thumb()
       {
 
          $DEFAULTSLUG = get_option('sexhack_gallery_slug', 'v');
 
-      	$id = get_the_ID();
-      	$prod = wc_get_product($id);
-      	$image = get_the_post_thumbnail($id, "medium", array("class" => "sexhack_thumbnail")); //array("class" => "alignleft sexhack_thumbnail"));
+         $id = get_the_ID();
+         $prod = wc_get_product($id);
+         $image = get_the_post_thumbnail($id, "medium", array("class" => "sexhack_thumbnail")); //array("class" => "alignleft sexhack_thumbnail"));
 
          $hls = $prod->get_attribute("hls_public");
          $hls_member = $prod->get_attribute("hls_members");
          $hls_premium = $prod->get_attribute("hls_premium");
          $video_preview = $prod->get_attribute("video_preview");
          $gif_preview = $prod->get_attribute("gif_preview");
-			$vr_premium = $prod->get_attribute("vr_premium");
+         $vr_premium = $prod->get_attribute("vr_premium");
          $vr_member = $prod->get_attribute("vr_members");
          $vr_public = $prod->get_attribute("vr_public");
          $vr_preview = $prod->get_attribute("vr_preview");
@@ -118,10 +118,10 @@ if(!class_exists('SH_VideoGallery')) {
 
          $gif = $prod->get_attribute("gif_thumbnail");
          if(!$gif) $gif = $gif_preview;
-			if($gif) $image .= "<img src='$gif' class='alignleft sexhack_thumb_hover' loading='lazy' />";
+         if($gif) $image .= "<img src='$gif' class='alignleft sexhack_thumb_hover' loading='lazy' />";
 
-      	$html = '<li class="product type-product sexhack_thumbli">';
-      	$vurl = str_replace("/product/", "/".$DEFAULTSLUG."/", esc_url( get_the_permalink() ));
+         $html = '<li class="product type-product sexhack_thumbli">';
+         $vurl = str_replace("/product/", "/".$DEFAULTSLUG."/", esc_url( get_the_permalink() ));
          $vtitle = esc_html( get_the_title() );
          $vtags=array();
 
@@ -135,11 +135,11 @@ if(!class_exists('SH_VideoGallery')) {
          if(($vr_premium) OR ($vr_member) OR ($vr_public) OR ($vr_preview) 
             OR ((count($prod->get_downloads()) > 0) 
             AND (in_array("VR180", $categories) 
-            OR in_array("VR360", $categories)))) $html .= '<label class="sexhack_vtag sexhack_VR"">VR/3D</label>';			
+            OR in_array("VR360", $categories)))) $html .= '<label class="sexhack_vtag sexhack_VR"">VR/3D</label>';         
 
          $html .= "<a href=\"$vurl\" class=\"woocommerce-LoopProduct-link woocommerce-loop-product__link\">";
          $html .= "<div class='sexhack_thumb_cont'>".$image."</div>";
-			
+         
          foreach($vtags as $vid => $vtag)
          {
             $left = intval($vid)*12;
@@ -147,11 +147,11 @@ if(!class_exists('SH_VideoGallery')) {
             $html .= $vtag;
          }
 
-      	$html .= "<h3 class=\"sexhack_gallery_title woocommerce-loop-product__title\" alt='".$vtitle."'>".trim_text_preview($vtitle, 60, false)."</h3>";
-      	$html .= "</a></li>";
+         $html .= "<h3 class=\"sexhack_gallery_title woocommerce-loop-product__title\" alt='".$vtitle."'>".trim_text_preview($vtitle, 60, false)."</h3>";
+         $html .= "</a></li>";
 
-			return $html;
-		}
+         return $html;
+      }
    }
 
    $GLOBALS['sh_videogallery'] = new SH_VideoGAllery();

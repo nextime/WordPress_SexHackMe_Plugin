@@ -28,30 +28,30 @@ if(!class_exists('SH_PMS_Support')) {
    class SH_PMS_Support
    {
 
-	   public function __construct()
-	   {
+      public function __construct()
+      {
          $this->plans = false;
-	   }
+      }
 
-	   private function set_pms_plans()
-	   {
-    	   $plans = array(
-       	   'member' => array(),
+      private function set_pms_plans()
+      {
+          $plans = array(
+             'member' => array(),
             'premium'=> array(),
             'byid' => array()
          );
       
-    	   $splans=pms_get_subscription_plans(true);
-    	   foreach($splans as $splan)
-    	   {
-       	   if(intval($splan->price)==0) $plans['member'][] = $splan->id;
+          $splans=pms_get_subscription_plans(true);
+          foreach($splans as $splan)
+          {
+             if(intval($splan->price)==0) $plans['member'][] = $splan->id;
             else $plans['premium'][] = $splan->id;
 
             $plans['byid'][$splan->id] = $splan;
          }
          $this->plans = $plans;
-	 	   return $plans;
-	   }
+          return $plans;
+      }
 
 
       public function refresh_plans()
@@ -100,15 +100,15 @@ if(!class_exists('SH_PMS_Support')) {
       }
 
 
-	   public function is_member($uid='')
-	   {
-		   return pms_is_member( $uid, $this->get_member_plans() );
-	   }
+      public function is_member($uid='')
+      {
+         return pms_is_member( $uid, $this->get_member_plans() );
+      }
 
-	   public function is_premium($uid='')
-	   {
-		   return pms_is_member( $uid, $this->get_premium_plans() );
-	   }
+      public function is_premium($uid='')
+      {
+         return pms_is_member( $uid, $this->get_premium_plans() );
+      }
    }
 
    function instance_SH_PMS_Support() {
@@ -116,7 +116,7 @@ if(!class_exists('SH_PMS_Support')) {
       $GLOBALS['sh_pms'] = new SH_PMS_Support();
 
       // backward compatibility
-	   $GLOBALS['sexhack_pms'] = $GLOBALS['sh_pms'];
+      $GLOBALS['sexhack_pms'] = $GLOBALS['sh_pms'];
 
       // Do action after instancing the global var to notify is reay
       do_action('sh_pms_ready');
@@ -133,8 +133,8 @@ if(!class_exists('SexhackPmsPasswordDataLeak')) {
       {
          add_filter( 'pms_recover_password_message', array($this, "change_recover_form_message") );
          add_action( 'init', array($this, 'reset_password_form'), 9);
-			add_action( 'login_form_rp', array( $this, 'redirect_password_reset' ) );
-			add_action( 'login_form_resetpass', array( $this, 'redirect_password_reset' ) );
+         add_action( 'login_form_rp', array( $this, 'redirect_password_reset' ) );
+         add_action( 'login_form_resetpass', array( $this, 'redirect_password_reset' ) );
       }
 
       public function change_recover_form_message($string)
@@ -143,19 +143,19 @@ if(!class_exists('SexhackPmsPasswordDataLeak')) {
          return str_replace("<br/>", "<br/>If valid, ", $string);
       }
 
-		public function redirect_password_reset() 
+      public function redirect_password_reset() 
       {
          // XXX This should be configurable.
-			wp_redirect( home_url( 'password-reset' ) );
-		}
+         wp_redirect( home_url( 'password-reset' ) );
+      }
 
       public function reset_password_form() 
       {
 
-			/*
+         /*
          * Username or Email
          */
-	      $error=false;
+         $error=false;
          if( isset( $_POST['pms_username_email'] ) ) {
 
             //Check recover password form nonce;
@@ -189,7 +189,7 @@ if(!class_exists('SexhackPmsPasswordDataLeak')) {
                     }
                     else $error=true;  
                 }
-			   }
+            }
 
             // Extra validation
             do_action( 'pms_recover_password_form_validation' );
@@ -208,9 +208,9 @@ if(!class_exists('SexhackPmsPasswordDataLeak')) {
 
 
              }
-     		 } // isset($_POST[pms_username_email])
-	 		 unset($_POST['pms_username_email']);
-		}
+            } // isset($_POST[pms_username_email])
+           unset($_POST['pms_username_email']);
+      }
    }
 
 

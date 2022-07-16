@@ -67,8 +67,8 @@ function starts_with ($startString, $string)
 function dump_rewrite( &$wp ) {
     global $wp_rewrite;
 
-	 ini_set( 'error_reporting', -1 );
-	 ini_set( 'display_errors', 'On' );
+    ini_set( 'error_reporting', -1 );
+    ini_set( 'display_errors', 'On' );
     echo '<h2>rewrite rules</h2>';
     echo var_export( $wp_rewrite->wp_rewrite_rules(), true );
 
@@ -93,7 +93,7 @@ function dump_rewrite( &$wp ) {
 }
 
 function do_dump_rewrite() {
-	add_action( 'parse_request', 'wp_SexHackMe\sarca' );
+   add_action( 'parse_request', 'wp_SexHackMe\sarca' );
 }
 
 
@@ -107,7 +107,7 @@ function get_proto(){
 
 
 function send_changepwd_mail($user_login, $baseurl=false){
-	
+   
     global $wpdb, $wp_hasher;
     if(!is_object($user_login)) {
       $user_login = sanitize_text_field($user_login);
@@ -124,7 +124,7 @@ function send_changepwd_mail($user_login, $baseurl=false){
     }
     
     do_action('lostpassword_post');
-	
+   
     if ( !$user_data ) return false;
     if ( !is_object($user_data) ) return false;
 
@@ -139,8 +139,8 @@ function send_changepwd_mail($user_login, $baseurl=false){
     else if ( is_wp_error($allow) )
         return false;
 
-	 $key = pms_retrieve_activation_key( $user_login );
-	 //$key = get_password_reset_key( $user_data );
+    $key = pms_retrieve_activation_key( $user_login );
+    //$key = get_password_reset_key( $user_data );
     do_action( 'retrieve_password_key', $user_login, $key );
 
     if ( empty( $wp_hasher ) ) {
@@ -192,7 +192,7 @@ function send_changepwd_mail($user_login, $baseurl=false){
     if ( $message && !wp_mail($user_email, $title, $message) )
         wp_die( __('The e-mail could not be sent.') . "<br />\n" . __('Possible reason: your host may have disabled the mail() function...') );
 
-	
+   
 }
 
 function sexhack_getURL($url)
@@ -209,12 +209,12 @@ function sexhack_getURL($url)
 
 function trim_text_preview($text, $len=340, $fill=false)
 {
-	$min="10";
-	if($len < $min) $len=$min;
-	if (strlen($text) > $len)
-	{
-    	$offset = ($len - 3) - strlen($text);
-    	$text = substr($text, 0, strrpos($text, ' ', $offset)) . '...';
+   $min="10";
+   if($len < $min) $len=$min;
+   if (strlen($text) > $len)
+   {
+       $offset = ($len - 3) - strlen($text);
+       $text = substr($text, 0, strrpos($text, ' ', $offset)) . '...';
    }  
    if($fill)
    {
@@ -224,7 +224,7 @@ function trim_text_preview($text, $len=340, $fill=false)
          $text .= "&nbsp";
       }
    }
-	return $text;
+   return $text;
 }
 
 function html2text($html)

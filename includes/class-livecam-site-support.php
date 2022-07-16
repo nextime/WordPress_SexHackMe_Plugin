@@ -57,7 +57,7 @@ if(!class_exists('ChaturbateLive')) {
       }
 
 
-	}
+   }
 }
 
 if(!class_exists('Cam4Live')) {
@@ -87,15 +87,15 @@ if(!class_exists('Cam4Live')) {
 }
 
 if(!class_exists('LiveCamSite')) {
-	class LiveCamSite
-	{	
-		public static function getCamStream($site, $model)
-		{
-			if($site=='chaturbate') return ChaturbateLive::getStream($model);
-			else if($site=='cam4') return Cam4Live::getStream($model);
-			return false;
-		}
-	}
+   class LiveCamSite
+   {   
+      public static function getCamStream($site, $model)
+      {
+         if($site=='chaturbate') return ChaturbateLive::getStream($model);
+         else if($site=='cam4') return Cam4Live::getStream($model);
+         return false;
+      }
+   }
 
 }
 

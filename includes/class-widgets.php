@@ -179,7 +179,7 @@ if(!class_exists('SH_GalleryWidget')) {
 
    }  // Class widget ends here
 
-	 add_action( 'widgets_init', array('wp_SexHackMe\SH_GalleryWidget', 'register' ));
+    add_action( 'widgets_init', array('wp_SexHackMe\SH_GalleryWidget', 'register' ));
 }
 
 ?>

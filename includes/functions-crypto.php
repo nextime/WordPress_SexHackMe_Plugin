@@ -27,7 +27,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 function is_valid_eth_address($addr)
 {
-	return preg_match('/^0x[a-fA-F0-9]{40}$/', $addr);
+   return preg_match('/^0x[a-fA-F0-9]{40}$/', $addr);
 }
 
 

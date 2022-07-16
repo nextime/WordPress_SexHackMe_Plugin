@@ -40,61 +40,61 @@ if(!class_exists('SexhackWoocommerceProductVideos')) {
          return $qvars;
       }
 
-		public function video_remove_default_woocommerce_image() {
-			remove_action( 'woocommerce_before_single_product_summary', 'woocommerce_show_product_images', 20 );
+      public function video_remove_default_woocommerce_image() {
+         remove_action( 'woocommerce_before_single_product_summary', 'woocommerce_show_product_images', 20 );
          remove_action( 'woocommerce_product_thumbnails', 'woocommerce_show_product_thumbnails', 20 );
          add_action( 'woocommerce_before_single_product_summary', array($this, 'woocommerce_show_product_images_videos'), 30 );
-		}
+      }
 
-		public function woocommerce_show_product_images_videos() {
+      public function woocommerce_show_product_images_videos() {
     
-    		// Get video and display
-    		$prod = wc_get_product(get_the_ID());
+          // Get video and display
+          $prod = wc_get_product(get_the_ID());
    
-			// verify GET vars
-			$bypass = get_query_var('sexhack_forcevideo', false);
-	
-			// Possible displays
-			$disps = array('video', 'gif', 'image');
-	
-			// By default fallback to:
-			$display='image';
-	
-			// detect attributes
-			$video = $prod->get_attribute('video_preview');
-			$gif = $prod->get_attribute('gif_preview');
-	
-			if(in_array($bypass, $disps)) $display=$bypass;
-			else if($video) $display="video";
-			else if($gif) $display="gif";
+         // verify GET vars
+         $bypass = get_query_var('sexhack_forcevideo', false);
    
-			switch($display) {
-				case "video":
-			
-        			// Sanitize video URL
-        			$video = esc_url( $video );
+         // Possible displays
+         $disps = array('video', 'gif', 'image');
+   
+         // By default fallback to:
+         $display='image';
+   
+         // detect attributes
+         $video = $prod->get_attribute('video_preview');
+         $gif = $prod->get_attribute('gif_preview');
+   
+         if(in_array($bypass, $disps)) $display=$bypass;
+         else if($video) $display="video";
+         else if($gif) $display="gif";
+   
+         switch($display) {
+            case "video":
+         
+                 // Sanitize video URL
+                 $video = esc_url( $video );
 
-        			// Display video
-        			echo '<div class="images"><div class="responsive-video-wrap"><h3>Video Preview</h3>';
-					echo '<video src='."'$video'".' controls autoplay muted playsinline loop></video></div></div>';
-					break;
-			
-				case "gif":
-		
-					// sanitize URL
-					$gif = esc_url( $gif );
-		
-					// Display GIF
-					echo '<div class="images"><img src="'.$gif.'" /></div>';
-					break;
-			
-				case "image":
+                 // Display video
+                 echo '<div class="images"><div class="responsive-video-wrap"><h3>Video Preview</h3>';
+               echo '<video src='."'$video'".' controls autoplay muted playsinline loop></video></div></div>';
+               break;
+         
+            case "gif":
+      
+               // sanitize URL
+               $gif = esc_url( $gif );
+      
+               // Display GIF
+               echo '<div class="images"><img src="'.$gif.'" /></div>';
+               break;
+         
+            case "image":
         
-        			// No video defined so get thumbnail
-        			wc_get_template( 'single-product/product-image.php' );
-    				break;
-			}
-		}
+                 // No video defined so get thumbnail
+                 wc_get_template( 'single-product/product-image.php' );
+                break;
+         }
+      }
 
    }
    
@@ -134,9 +134,9 @@ if(!class_exists('WoocommerceAccountRemoveNameSurname')) {
          return $required_fields;
       }
    }
-	
-	// Start changing the woocommerce account form
-	new WoocommerceAccountRemoveNameSurname;
+   
+   // Start changing the woocommerce account form
+   new WoocommerceAccountRemoveNameSurname;
 
 }
 
@@ -146,40 +146,40 @@ if(!class_exists('WoocommerceEmailCheckout')) {
    {
       public function __construct()
       {
-			add_filter( 'woocommerce_checkout_fields' , array($this,'simplify_checkout_virtual') );
-			add_filter( 'woocommerce_login_redirect', array($this, 'fix_woocommerce_user'), 99, 2);
+         add_filter( 'woocommerce_checkout_fields' , array($this,'simplify_checkout_virtual') );
+         add_filter( 'woocommerce_login_redirect', array($this, 'fix_woocommerce_user'), 99, 2);
 
       }
 
-		public function simplify_checkout_virtual( $fields ) {
+      public function simplify_checkout_virtual( $fields ) {
     
-   		$only_virtual = true;
+         $only_virtual = true;
     
-   		foreach( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
-      		// Check if there are non-virtual products
-      		if ( ! $cart_item['data']->is_virtual() ) $only_virtual = false;   
-   		}
+         foreach( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
+            // Check if there are non-virtual products
+            if ( ! $cart_item['data']->is_virtual() ) $only_virtual = false;   
+         }
      
-    		if( $only_virtual ) {
-       		unset($fields['billing']['billing_company']);
-       		unset($fields['billing']['billing_address_1']);
-       		unset($fields['billing']['billing_address_2']);
-       		unset($fields['billing']['billing_city']);
-       		unset($fields['billing']['billing_postcode']);
-       		unset($fields['billing']['billing_country']);
-       		unset($fields['billing']['billing_state']);
-       		unset($fields['billing']['billing_phone']);
-	   		unset($fields['billing']['billing_first_name']);
-       		unset($fields['billing']['billing_last_name']);                
-       		add_filter( 'woocommerce_enable_order_notes_field', '__return_false' );
-      	}
+          if( $only_virtual ) {
+             unset($fields['billing']['billing_company']);
+             unset($fields['billing']['billing_address_1']);
+             unset($fields['billing']['billing_address_2']);
+             unset($fields['billing']['billing_city']);
+             unset($fields['billing']['billing_postcode']);
+             unset($fields['billing']['billing_country']);
+             unset($fields['billing']['billing_state']);
+             unset($fields['billing']['billing_phone']);
+            unset($fields['billing']['billing_first_name']);
+             unset($fields['billing']['billing_last_name']);                
+             add_filter( 'woocommerce_enable_order_notes_field', '__return_false' );
+         }
      
-      	return $fields;
+         return $fields;
       }
 
       // Fix the user plan if none by add the default (usually free) one
-    	public function fix_woocommerce_user($redirect, $user)
-     	{
+       public function fix_woocommerce_user($redirect, $user)
+        {
 
          if(is_object($user) && is_checkout())
          {
@@ -303,8 +303,8 @@ if(!class_exists('SH_WooCommerce_Registration_Integration')) {
       }
    }
 
-	// Initilize
-	new SH_WooCommerce_Registration_Integration;
+   // Initilize
+   new SH_WooCommerce_Registration_Integration;
 
 }
 ?>

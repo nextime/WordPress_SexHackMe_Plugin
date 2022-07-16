@@ -100,7 +100,7 @@ if(!class_exists('SH_MetaBox')) {
 
          // Update the meta field in the database.
          update_post_meta( $post_id, 'video_description', $my_data );
-		}
+      }
 
    }
    add_action('save_post', array('wp_SexHackMe\SH_MetaBox', '::save_meta_box_data' ));

@@ -29,24 +29,24 @@ if(!class_exists('SH_Shortcodes')) {
    class SH_Shortcodes
    {
 
-		public static function init() {
+      public static function init() {
 
          $shortcodes = array(
             'sexhls'         => __CLASS__ . '::video_hls',
-				'sexvideo'       => __CLASS__ . '::video_xr',
-				'sh_videoxr'     => __CLASS__ . '::video_xr',
-				'sh_videohls'    => __CLASS__ . '::video_hls',
+            'sexvideo'       => __CLASS__ . '::video_xr',
+            'sh_videoxr'     => __CLASS__ . '::video_xr',
+            'sh_videohls'    => __CLASS__ . '::video_hls',
             'xfbp'           => __CLASS__ . '::xframe_bypass',
             'sexhacklive'    => __CLASS__ . '::sexhacklive',
-				'sexadv'			  => __CLASS__ . '::adv_shortcode',
-				'sexgallery'     => __CLASS__ . '::videogallery_shortcode',
+            'sexadv'           => __CLASS__ . '::adv_shortcode',
+            'sexgallery'     => __CLASS__ . '::videogallery_shortcode',
          );
 
          foreach( $shortcodes as $shortcode_tag => $shortcode_func ) {
             add_shortcode( $shortcode_tag, $shortcode_func );
          }
 
-		}
+      }
 
       public static function video_hls($attr, $cont)
       {
@@ -81,8 +81,8 @@ if(!class_exists('SH_Shortcodes')) {
             'site' => 'chaturbate',
             'model' => 'sexhackme',
          ), $attributes));
-			$ret = LiveCamSite::getCamStream($site, $model);
-			if($ret) return $ret;
+         $ret = LiveCamSite::getCamStream($site, $model);
+         if($ret) return $ret;
          return '<p>CamStreamDL Error: wrong site option '.$site.'</p> ';
 
       }
@@ -117,7 +117,7 @@ if(!class_exists('SH_Shortcodes')) {
       public static function videogallery_shortcode($attr, $cont)
       {
          global $post;
-			global $sh_videogallery;
+         global $sh_videogallery;
          extract( shortcode_atts(array(
             "category" => "all",
          ), $attr));
@@ -135,7 +135,7 @@ if(!class_exists('SH_Shortcodes')) {
       }
 
 
-	}
+   }
 }
 
 

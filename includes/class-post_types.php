@@ -31,8 +31,8 @@ if(!class_exists('SH_PostTypes')) {
 
       public static function init()
       {
-			// For some pages we need to add also rewrite rules
-			global $wp_rewrite;
+         // For some pages we need to add also rewrite rules
+         global $wp_rewrite;
 
          // Advertising
          register_post_type('sexhackadv', array(
@@ -57,13 +57,13 @@ if(!class_exists('SH_PostTypes')) {
 
 
          // SexHack Videos 
-      	// TODO: the idea is to have custom post type for models profiles and for videos.
-      	//       Ideally /$DEFAULTSLUG/nomevideo/ finisce sul corrispettivo prodotto woocommerce, 
-      	//       /$DEFAULTSLUG/modelname/nomevideo/ finisce sul corrispettivo page sexhackme_video quando show_in_menu e' attivo.
-     	 	//
-      	//       Devo pero' verificare le varie taxonomy e attributi della pagina, vedere come creare un prodotto in wordpress
-      	//       per ogni pagina sexhack_video che credo, sincronizzare prodotti e video pagine, gestire prodotti con lo stesso nome
-      	//       ( credo si possa fare dandogli differenti slugs ) 
+         // TODO: the idea is to have custom post type for models profiles and for videos.
+         //       Ideally /$DEFAULTSLUG/nomevideo/ finisce sul corrispettivo prodotto woocommerce, 
+         //       /$DEFAULTSLUG/modelname/nomevideo/ finisce sul corrispettivo page sexhackme_video quando show_in_menu e' attivo.
+            //
+         //       Devo pero' verificare le varie taxonomy e attributi della pagina, vedere come creare un prodotto in wordpress
+         //       per ogni pagina sexhack_video che credo, sincronizzare prodotti e video pagine, gestire prodotti con lo stesso nome
+         //       ( credo si possa fare dandogli differenti slugs ) 
          register_post_type('sexhack_video', array(
              'labels'        => array(
                 'name'                  => 'Videos',
@@ -92,7 +92,7 @@ if(!class_exists('SH_PostTypes')) {
             'supports' => array('title'), // 'thumbnail', 'editor','excerpt','trackbacks','custom-fields','comments','revisions','author','page-attributes'),
             'taxonomies' => array('category','post_tag'), // TODO  Shouldn't we have a "video_type" taxonomy for VR or flat?
          ));
-			$DEFAULTSLUG = get_option('sexhack_gallery_slug', 'v');
+         $DEFAULTSLUG = get_option('sexhack_gallery_slug', 'v');
          $projects_structure = '/'.$DEFAULTSLUG.'/%wooprod%/';
          $rules = $wp_rewrite->wp_rewrite_rules();
          if(array_key_exists($DEFAULTSLUG.'/([^/]+)/?$', $rules)) {
@@ -111,7 +111,7 @@ if(!class_exists('SH_PostTypes')) {
       }
 
 
-	}
+   }
 }
 
 ?>

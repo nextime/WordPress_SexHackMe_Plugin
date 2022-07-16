@@ -116,7 +116,7 @@ if(!class_exists('SexHackMe_Plugin')) {
 
           // Add a cron job to be executed daily
           //$this->cron_job();
-		}
+      }
 
 
       /*
@@ -183,31 +183,31 @@ if(!class_exists('SexHackMe_Plugin')) {
        */
       public function add_default_settings() 
       {
-			$already_installed = get_option( 'sh_already_installed' );
+         $already_installed = get_option( 'sh_already_installed' );
 
 
 
          if ( !$already_installed )
             update_option( 'sh_already_installed', 'yes', false );
 
-		}
+      }
 
 
-	   /*
+      /*
        * Function to include the files needed
        *
        */
       public function include_dependencies() 
       {
-	
-			/*
+   
+         /*
          if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/' ) )
             include_once( SH_PLUGIN_DIR_PATH . 'includes/' );
-			*/		
+         */      
 
-			/* Manage Plugin Dependencies */
+         /* Manage Plugin Dependencies */
          if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-tgm-plugin-activation.php' ) )
-				include_once SH_PLUGIN_DIR_PATH . 'includes/class-tgm-plugin-activation.php';
+            include_once SH_PLUGIN_DIR_PATH . 'includes/class-tgm-plugin-activation.php';
 
          /* Utils  */
          if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/functions-utils.php' ) )
@@ -237,11 +237,11 @@ if(!class_exists('SexHackMe_Plugin')) {
          if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/functions-hooks.php') )
             include_once SH_PLUGIN_DIR_PATH . 'includes/functions-hooks.php';
 
-			/* Cryptocurrencies utils */
+         /* Cryptocurrencies utils */
          if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/functions-crypto.php' ) )
             include_once SH_PLUGIN_DIR_PATH . 'includes/functions-crypto.php';
 
-			/* Paid Member Subscription utils */
+         /* Paid Member Subscription utils */
          if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-paid-member-subscriptions-integration.php' ) )
             include_once SH_PLUGIN_DIR_PATH . 'includes/class-paid-member-subscriptions-integration.php';
 
@@ -290,16 +290,16 @@ if(!class_exists('SexHackMe_Plugin')) {
          do_action( 'pms_include_files' );
 
 
-			/* Testing code */
+         /* Testing code */
          foreach( glob(dirname(__FILE__) . '/testing/*.php') as $class_path ) {
             try {
                include_once($class_path);
             } catch(\Throwable $e) {
                sexhack_log($e);
             }
-			}
+         }
 
-		}
+      }
 
 
       /**
@@ -324,8 +324,8 @@ if(!class_exists('SexHackMe_Plugin')) {
       public function init() 
       {
 
-			// Check plugin dependencies
-			add_action( 'tgmpa_register', array($this, 'plugin_dependencies' ));
+         // Check plugin dependencies
+         add_action( 'tgmpa_register', array($this, 'plugin_dependencies' ));
 
          // Set the main menu page
          add_action('admin_menu', array('wp_SexHackMe\SH_Admin', 'menu'));
@@ -366,7 +366,7 @@ if(!class_exists('SexHackMe_Plugin')) {
 
          // Add new actions besides the activate/deactivate ones from the Plugins page
          add_filter( 'plugin_action_links_' . plugin_basename(__FILE__), array( $this, 'add_plugin_action_links' ) );
-			
+         
 
          sexhack_log("SexHackMe PLUGIN Loaded!");
 
@@ -375,27 +375,27 @@ if(!class_exists('SexHackMe_Plugin')) {
       // XXX There are so many dependencies to add here...
       public function plugin_dependencies() 
       {
-   		$plugins = array(
-      		array(
-         		'name'      => 'WooCommerce',
-         		'slug'      => 'woocommerce',
-         		'required'  => false,
-         		//'is_callable' => 'wpseo_init',
-      		)
-   		);
-   		$config = array(
-		      'id'           => 'sexhackme',             // Unique ID for hashing notices for multiple instances of TGMPA.
-		      'default_path' => '',                      // Default absolute path to bundled plugins.
-		      'menu'         => 'tgmpa-install-plugins', // Menu slug.
-		      'parent_slug'  => 'plugins.php',           // Parent menu slug.
-		      'capability'   => 'manage_options',        // Capability needed to view plugin install page, should be a capability associated with the parent menu used.
-		      'has_notices'  => true,                    // Show admin notices or not.
-		      'dismissable'  => true,                    // If false, a user cannot dismiss the nag message.
-  	   		'dismiss_msg'  => '',                      // If 'dismissable' is false, this message will be output at top of nag.
-      		'is_automatic' => false,                   // Automatically activate plugins after installation or not.
-      		'message'      => '',                      // Message to output right before the plugins table.
-   		);
-		}
+         $plugins = array(
+            array(
+               'name'      => 'WooCommerce',
+               'slug'      => 'woocommerce',
+               'required'  => false,
+               //'is_callable' => 'wpseo_init',
+            )
+         );
+         $config = array(
+            'id'           => 'sexhackme',             // Unique ID for hashing notices for multiple instances of TGMPA.
+            'default_path' => '',                      // Default absolute path to bundled plugins.
+            'menu'         => 'tgmpa-install-plugins', // Menu slug.
+            'parent_slug'  => 'plugins.php',           // Parent menu slug.
+            'capability'   => 'manage_options',        // Capability needed to view plugin install page, should be a capability associated with the parent menu used.
+            'has_notices'  => true,                    // Show admin notices or not.
+            'dismissable'  => true,                    // If false, a user cannot dismiss the nag message.
+              'dismiss_msg'  => '',                      // If 'dismissable' is false, this message will be output at top of nag.
+            'is_automatic' => false,                   // Automatically activate plugins after installation or not.
+            'message'      => '',                      // Message to output right before the plugins table.
+         );
+      }
 
 
       public function register_flush() 
@@ -508,7 +508,7 @@ if(!class_exists('SexHackMe_Plugin')) {
 // DEBUG REWRITE RULES
 if( WP_DEBUG === true ){
    // only matched?
-	//add_action("the_post", 'wp_SexHackMe\debug_rewrite_rules');
+   //add_action("the_post", 'wp_SexHackMe\debug_rewrite_rules');
 }
 
 
