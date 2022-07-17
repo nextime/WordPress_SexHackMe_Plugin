@@ -5,6 +5,9 @@ This plugin is developed for the website https://www.sexhack.me
 The most updated version of this plugin and the developement is 
 at https://git.nexlab.net/SexHackMe/sexhackme
 
+for issues and contribution please use only 
+https://git.nexlab.net/SexHackMe/sexhackme/issues only.
+
 The goal is to have a platform for Video streaming on demand
 somewhat similar to pornhub based on wordpress + woocommerce.
 
