@@ -60,7 +60,7 @@ if(!class_exists('SexHackMe_Plugin')) {
 
           register_deactivation_hook(__FILE__, array($this, 'uninstall') );
 
-          //add_action( 'plugins_loaded', array( $this, 'register_custom_meta_tables' ) );
+          add_action( 'plugins_loaded', array( $this, 'register_custom_meta_tables' ) );
 
           // Check if this is a newer version
           add_action( 'plugins_loaded', array( $this, 'update_check' ) );
@@ -94,7 +94,7 @@ if(!class_exists('SexHackMe_Plugin')) {
                  switch_to_blog( $blog_id );
 
                  // Create needed tables
-                 //$this->create_tables();
+                 $this->create_tables();
 
                  // Add default settings
                  //$this->add_default_settings();
@@ -107,7 +107,7 @@ if(!class_exists('SexHackMe_Plugin')) {
            } else {
 
               // Create needed tables
-              //$this->create_tables();
+              $this->create_tables();
 
               // Add default settings
               //$this->add_default_settings();
@@ -143,7 +143,7 @@ if(!class_exists('SexHackMe_Plugin')) {
 
          if( SH_VERSION != $db_version ) {
 
-             //$this->create_tables();
+             $this->create_tables();
 
              do_action('sh_update_check');
 
@@ -151,6 +151,109 @@ if(!class_exists('SexHackMe_Plugin')) {
          }
 
       }
+
+		/*
+		* Create or update the database tables needed for the plugin to work
+		* as needed
+		*
+		*/
+		public function create_tables() {
+
+			global $wpdb;
+
+			// Add / Update the tables as needed
+			$charset_collate = $wpdb->get_charset_collate();
+         $sql_query = "CREATE TABLE {$wpdb->prefix}{$this->prefix}videos (
+          	id bigint(20) AUTO_INCREMENT NOT NULL,
+          	user_id bigint(20) NOT NULL,
+				status ENUM('creating', 'uploading', 'queue', 'processing', 'ready','published','error') NOT NULL DEFAULT 'creating',
+				private ENUM('Y', 'N') NOT NULL DEFAULT 'N',
+				visible ENUM('Y', 'N') NOT NULL DEFAULT 'Y',
+				title varchar(256) NOT NULL,
+				description varchar(1024) NOT NULL,
+				uploaded datetime DEFAULT NULL,
+				slug varchar(256) NOT NULL,
+				product_id bigint(20) NOT NULL DEFAULT '0',
+				price float(10) NOT NULL DEFAULT '0',
+				video_type ENUM('FLAT','VR') NOT NULL DEFAULT 'FLAT',
+				vr_projection ENUM('VR180_LR', 'VR360_LR') NOT NULL DEFAULT 'VR180_LR',
+				preview varchar(1024) DEFAULT NULL,
+				hls_public varchar(1024) DEFAULT NULL,
+				hls_members varchar(1024) DEFAULT NULL,
+				hls_premium varchar(1024) DEFAULT NULL,
+				thumbnail varchar(1024) DEFAULT NULL,
+				gif varchar(1024) DEFAULT NULL,
+				download_public varchar(1024) DEFAULT NULL,
+				download_members varchar(1024) DEFAULT NULL,
+				download_premium varchar(1024) DEFAULT NULL,
+				size_public varchar(256) DEFAULT NULL,
+				size_members varchar(256) DEFAULT NULL,
+				size_premium varchar(256) DEFAULT NULL,
+				format_public varchar(256) DEFAULT NULL,
+            format_members varchar(256) DEFAULT NULL,
+            format_premium varchar(256) DEFAULT NULL,
+            duration_public varchar(256) DEFAULT NULL,
+				duration_members varchar(256) DEFAULT NULL,
+				duration_premiunt varchar(256) DEFAULT NULL,
+				resolution_public varchar(256) DEFAULT NULL,
+				resolution_members varchar(256) DEFAULT NULL,
+				resolution_premium varchar(256) DEFAULT NULL,				
+				views_public bigint(32) NOT NULL DEFAULT '0',
+				views_members bigint(32) NOT NULL DEFAULT '0',
+				views_premium bigint(32) NOT NULL DEFAULT '0',
+				sells bigint(32) NOT NULL DEFAULT '0',
+          	PRIMARY KEY  (id),
+          	KEY user_id (user_id),
+				KEY slug (slug),
+				KEY price (price),
+				KEY video_type (video_type),
+				KEY product_id (product_id)
+        	) {$charset_collate};
+     		CREATE TABLE {$wpdb->prefix}{$this->prefix}video_meta (
+          	meta_id bigint(20) AUTO_INCREMENT NOT NULL,
+          	video_id bigint(20) NOT NULL DEFAULT '0',
+          	meta_key varchar(191),
+          	meta_value longtext,
+          	PRIMARY KEY  (meta_id),
+          	KEY video_id (video_id),
+          	KEY meta_key (meta_key)
+        	) {$charset_collate};
+			CREATE TABLE {$wpdb->prefix}{$this->prefix}videotags (
+				id bigint(20) AUTO_INCREMENT NOT NULL,
+				tag varchar(32) NOT NULL,
+				PRIMARY KEY  (id),
+				KEY tag (tag)
+			) {$charset_collate};
+         CREATE TABLE {$wpdb->prefix}{$this->prefix}videoguests_assoc (
+            id bigint(20) AUTO_INCREMENT NOT NULL,
+            user_id bigint(20) NOT NULL,
+            PRIMARY KEY  (id),
+            KEY user_id (user_id)
+         ) {$charset_collate};
+         CREATE TABLE {$wpdb->prefix}{$this->prefix}videocategory_assoc (
+            id bigint(20) AUTO_INCREMENT NOT NULL,
+            user_id bigint(20) NOT NULL,
+            PRIMARY KEY  (id),
+            KEY user_id (user_id)
+         ) {$charset_collate};
+         CREATE TABLE {$wpdb->prefix}{$this->prefix}videoaccess_assoc (
+            id bigint(20) AUTO_INCREMENT NOT NULL,
+            user_id bigint(20) NOT NULL,
+            PRIMARY KEY  (id),
+            KEY user_id (user_id)
+         ) {$charset_collate};
+         CREATE TABLE {$wpdb->prefix}{$this->prefix}videotags_assoc (
+            id bigint(20) AUTO_INCREMENT NOT NULL,
+            video_id bigint(20) NOT NULL,
+            PRIMARY KEY  (id),
+            KEY video_id (video_id)
+			) {$charset_collate};";
+
+         require_once( ABSPATH . '/wp-admin/includes/upgrade.php' );
+
+         dbDelta( $sql_query );
+
+		}
 
       /*
        * Function that schedules a hook to be executed daily (cron job)
@@ -311,7 +414,7 @@ if(!class_exists('SexHackMe_Plugin')) {
 
           global $wpdb;
 
-          $wpdb->member_subscriptionmeta = $wpdb->prefix . $this->prefix . 'member_subscriptionmeta';
+          $wpdb->sh_video_meta = $wpdb->prefix . $this->prefix . 'video_meta';
 
       }
 
