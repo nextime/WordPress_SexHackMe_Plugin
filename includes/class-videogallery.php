@@ -155,6 +155,7 @@ if(!class_exists('SH_VideoGallery')) {
    }
 
    $GLOBALS['sh_videogallery'] = new SH_VideoGAllery();
+   do_action('sh_videogallery_ready');
 }
 
 ?>
