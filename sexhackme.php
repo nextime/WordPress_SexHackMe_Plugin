@@ -54,6 +54,7 @@ if(!class_exists('SexHackMe_Plugin')) {
 
           // The prefix of the plugin
           $this->prefix = 'sh_';
+          define( 'SH_PREFIX', $this->prefix);
 
           // Install needed components on plugin activation
           register_activation_hook( __FILE__, array( $this, 'install' ) );
@@ -166,7 +167,7 @@ if(!class_exists('SexHackMe_Plugin')) {
          $sql_query = "CREATE TABLE {$wpdb->prefix}{$this->prefix}videos (
              id bigint(20) AUTO_INCREMENT NOT NULL,
              user_id bigint(20) NOT NULL,
-             post_id biting(20) NOT NULL,
+             post_id bigint(20) NOT NULL,
              product_id bigint(20) NOT NULL DEFAULT '0',
              status ENUM('creating', 'uploading', 'queue', 'processing', 'ready','published','error') NOT NULL DEFAULT 'creating',
              private ENUM('Y', 'N') NOT NULL DEFAULT 'N',
@@ -195,7 +196,7 @@ if(!class_exists('SexHackMe_Plugin')) {
              format_premium varchar(256) DEFAULT NULL,
              duration_public varchar(256) DEFAULT NULL,
              duration_members varchar(256) DEFAULT NULL,
-             duration_premiunt varchar(256) DEFAULT NULL,
+             duration_premium varchar(256) DEFAULT NULL,
              resolution_public varchar(256) DEFAULT NULL,
              resolution_members varchar(256) DEFAULT NULL,
              resolution_premium varchar(256) DEFAULT NULL,            
@@ -298,6 +299,22 @@ if(!class_exists('SexHackMe_Plugin')) {
       }
 
 
+      private function file_include($file)
+      {
+			
+         if(isset($_GET['SHDEV']) || isset($_POST['SHDEV']))
+			{
+				$devar = explode('/', $file);
+				$devar[count($devar)-1] = 'dev-'.$devar[count($devar)-1];
+				$devfile = implode('/', $devar);
+ 				if (file_exists( SH_PLUGIN_DIR_PATH . $devfile  ))
+            	return include_once SH_PLUGIN_DIR_PATH . $devfile;
+			}
+         if(file_exists( SH_PLUGIN_DIR_PATH . $file ) ) 
+            return include_once SH_PLUGIN_DIR_PATH . $file;
+         return false;
+      }
+
       /*
        * Function to include the files needed
        *
@@ -305,91 +322,69 @@ if(!class_exists('SexHackMe_Plugin')) {
       public function include_dependencies() 
       {
    
-         /*
-         if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/' ) )
-            include_once( SH_PLUGIN_DIR_PATH . 'includes/' );
-         */      
-
          /* Manage Plugin Dependencies */
-         if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-tgm-plugin-activation.php' ) )
-            include_once SH_PLUGIN_DIR_PATH . 'includes/class-tgm-plugin-activation.php';
+         $this->file_include('includes/class-tgm-plugin-activation.php');
 
          /* Utils  */
-         if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/functions-utils.php' ) )
-            include_once SH_PLUGIN_DIR_PATH . 'includes/functions-utils.php';
+         $this->file_include('includes/functions-utils.php');
 
          /* Core functions  */
-         if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/functions-core.php' ) )
-            include_once SH_PLUGIN_DIR_PATH . 'includes/functions-core.php';
+         $this->file_include('includes/functions-core.php');
 
          /* Custom Post Types declarations */
-         if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-post_types.php') )
-            include_once SH_PLUGIN_DIR_PATH . 'includes/class-post_types.php';
+         $this->file_include('includes/class-post_types.php');
 
          /* Meta Boxes */
-         if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-meta-box.php') )
-            include_once SH_PLUGIN_DIR_PATH . 'includes/class-meta-box.php';
+         $this->file_include('includes/class-meta-box.php');
 
          /* DB Query */
-         if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-query.php') )
-            include_once SH_PLUGIN_DIR_PATH . 'includes/class-query.php';
+         $this->file_include('includes/class-query.php');
 
          /* Admin interface */
-         if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-admin.php' ) )
-            include_once SH_PLUGIN_DIR_PATH . 'includes/class-admin.php';
+         $this->file_include('includes/class-admin.php');
 
          /* Hooks compatibility/translation */
-         if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/functions-hooks.php') )
-            include_once SH_PLUGIN_DIR_PATH . 'includes/functions-hooks.php';
+         $this->file_include('includes/functions-hooks.php');
 
          /* Cryptocurrencies utils */
-         if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/functions-crypto.php' ) )
-            include_once SH_PLUGIN_DIR_PATH . 'includes/functions-crypto.php';
+         $this->file_include('includes/functions-crypto.php');
 
          /* Paid Member Subscription utils */
-         if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-paid-member-subscriptions-integration.php' ) )
-            include_once SH_PLUGIN_DIR_PATH . 'includes/class-paid-member-subscriptions-integration.php';
+         $this->file_include('includes/class-paid-member-subscriptions-integration.php');
 
          /* Video Players */
-         if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-video-players.php' ) )
-            include_once SH_PLUGIN_DIR_PATH . 'includes/class-video-players.php';
+         $this->file_include('includes/class-video-players.php');
 
          /* Advertising support */
-         if(file_exists( SH_PLUGIN_DIR_PATH . 'includes/functions-advert.php' ) )
-            include_once SH_PLUGIN_DIR_PATH . 'includes/functions-advert.php';
+         $this->file_include('includes/functions-advert.php');
 
          /* Cam4 and Chaturbate support */
-         if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-livecam-site-support.php') )
-            include_once SH_PLUGIN_DIR_PATH . 'includes/class-livecam-site-support.php';
+         $this->file_include('includes/class-livecam-site-support.php');
 
          /* WooCommerce support functions */
-         if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/functions-woocommerce-support.php') )
-            include_once SH_PLUGIN_DIR_PATH . 'includes/functions-woocommerce-support.php';
+         $this->file_include('includes/functions-woocommerce-support.php');
 
          /* WooCommerce support class */
-         if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-woocommerce-support.php') )
-            include_once SH_PLUGIN_DIR_PATH . 'includes/class-woocommerce-support.php';
+         $this->file_include('includes/class-woocommerce-support.php');
 
          /* Storefront customization support */
-         if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-storefront.php') )
-            include_once SH_PLUGIN_DIR_PATH . 'includes/class-storefront.php';
+         $this->file_include('includes/class-storefront.php');
 
          /* Unlock integration class */
-         if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-unlock-support.php') )
-            include_once  SH_PLUGIN_DIR_PATH . 'includes/class-unlock-support.php';
+         $this->file_include('includes/class-unlock-support.php');
+
+         /* Video */
+         $this->file_include('includes/class-video.php');
 
          /* Video Gallery */
-         if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-videogallery.php') )
-            include_once SH_PLUGIN_DIR_PATH . 'includes/class-videogallery.php';
+         $this->file_include('includes/class-videogallery.php');
 
 
          /* Shortcodes */
-         if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-shortcodes.php' ) )
-            include_once SH_PLUGIN_DIR_PATH . 'includes/class-shortcodes.php';
+         $this->file_include('includes/class-shortcodes.php');
 
          /* Widgets */
-         if( file_exists( SH_PLUGIN_DIR_PATH . 'includes/class-widgets.php' ) )
-            include_once SH_PLUGIN_DIR_PATH . 'includes/class-widgets.php';
+         $this->file_include('includes/class-widgets.php');
 
          /* Hook to include needed files */
          do_action( 'pms_include_files' );

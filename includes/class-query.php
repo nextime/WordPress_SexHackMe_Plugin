@@ -28,7 +28,125 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 if(!class_exists('SH_Query')) {
    class SH_Query
    {
+
+      public static function save_Video($video)
+      {
+         global $wpdb;
+
+         if(is_object($video))
+         {
+            $fieldsarray = $video->get_sql_array();
+            $fields = "";
+            $keys = "";
+            $values = "";
+            $count=0;
+            foreach($fieldsarray as $k => $v)
+            {
+               $v = $wpdb->_real_escape($v);
+               $adds = "\n";
+               $fields .= $k." = '$v'";
+               $keys .= $k;
+               $values .= "'$v'";
+               if($count < count($fieldsarray)-1) $adds = ",\n";
+               $fields .= $adds;
+               $keys .= $adds;
+               $values .= $adds;
+
+               $count++;
+            }
+            if($video->id || (is_long($video->id) && $video->id > 0)) 
+            {
+               // Save an already existing video entry
+               $sql = "UPDATE {$wpdb->prefix}".SH_PREFIX."videos SET
+                           {$fields}
+								WHERE
+									id = {$video->id};";
+               $wpdb->query( $sql );
+
+            } 
+            else 
+            {
+               // Save a new video
+               $sql = "INSERT INTO {$wpdb->prefix}".SH_PREFIX."videos 
+                              ({$keys})
+                           VALUES  
+                              ({$values});";
+					$wpdb->query( $sql );
+					$video->id = $wpdb->insert_id;
+
+            }
+
+            return $video;
+
+         }
+      }
+
+      public static function get_Video($id, $idtype='')
+      {
+         global $wpdb;  
+
+
+         switch($idtype)
+         {
+            case "product":
+            case "post":
+               $idtype=$idtype."_id";
+               break;
+            default:
+               $idtype="id";
+
+         }
+
+
+         // TODO sanitize query
+         $sql = "SELECT * from {$wpdb->prefix}".SH_PREFIX."videos WHERE {$idtype}=".intval($id);
+         $dbres = $wpdb->get_results( $sql );
+         if(is_array($dbres) && count($dbres) > 0)
+         {
+            return new SH_Video((array)$dbres[0]);
+         }
+         return false;
+      }
+
+      
+
+
       public static function get_Videos($vcat=false)
+      {
+
+         global $wpdb;
+
+
+         // XXX TODO This filtering using a $_GET in the query class is SHIT.
+         //     Move it in the gallery interface, and pass a fucking argument
+         $filter=false;
+         if(isset($_GET['sexhack_vselect']))
+         {
+            switch($_GET['sexhack_vselect'])
+            {
+               case 'premium':
+               case 'members':
+               case 'public':
+               case 'preview':
+                  $filter=$_GET['sexhack_vselect'];
+                  break;
+            }
+         }
+
+			$result = array();
+         //$sql = $wpdb->prepare("SELECT * from {$wpdb->prefix}{$prefix}videos");
+         $sql = "SELECT * from {$wpdb->prefix}".SH_PREFIX."videos";
+         $dbres = $wpdb->get_results( $sql );
+		
+         foreach($dbres as $row)
+         {
+         	$result[] = new SH_Video($row);
+         }
+
+
+      }
+
+      public static function get_Products($vcat=false)
       {
          $filter=false;
          if(isset($_GET['sexhack_vselect']))
@@ -45,7 +163,6 @@ if(!class_exists('SH_Query')) {
          }
 
          $queryarr = array(
-
             /*
             * We're limiting the results to 100 products, change this as you
             * see fit. -1 is for unlimted but could introduce performance issues.
@@ -103,8 +220,9 @@ if(!class_exists('SH_Query')) {
          //sexhack_log(var_dump($products));
          return $products;
 
-
       }
+
+
    }
 }
 

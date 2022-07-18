@@ -59,7 +59,7 @@ if(!class_exists('SH_VideoGallery')) {
       public function sexhack_video_template($template) 
       {
          $template='video.php';
-         if(isset($_GET['SEXHACKDEBUG'])) $template='newvideo.php';
+         if(isset($_GET['SHDEV'])) $template='newvideo.php';
          $is_sexhack_video = get_query_var('wooprod', false);
          if($is_sexhack_video ) {
             set_query_var( 'post_type', 'sexhack_video' );
@@ -86,8 +86,8 @@ if(!class_exists('SH_VideoGallery')) {
 
       public function getProducts($vcat=false) {
    
-         if(!$this->productlist && !$vcat) $this->productlist = SH_Query::get_Videos($vcat); //$this->_getProducts($vcat);
-         else if($vcat) return SH_Query::get_Videos($vcat); //$this->_getProducts($vcat);
+         if(!$this->productlist && !$vcat) $this->productlist = SH_Query::get_Products($vcat); //$this->_getProducts($vcat);
+         else if($vcat) return SH_Query::get_Products($vcat); //$this->_getProducts($vcat);
 
          return $this->productlist;
 

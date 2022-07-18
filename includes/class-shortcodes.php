@@ -123,6 +123,7 @@ if(!class_exists('SH_Shortcodes')) {
          ), $attr));
 
          $html = "<div class='sexhack_gallery'>"; //<h3>SexHack VideoGallery</h3>";
+         if(isset($_GET['SHDEV'])) $html .= '<h3>DEVELOPEMENT MODE</h3>';
          $html .= '<ul class="products columns-4">';
          $products = $sh_videogallery->getProducts();
          while( $products->have_posts() ) {

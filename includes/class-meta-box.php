@@ -31,36 +31,30 @@ if(!class_exists('SH_MetaBox')) {
 
       public static function add_video_metaboxes($post=false)
       {
-         add_meta_box( 'sh-mbox-videodescription', 'Video Description', array(__CLASS__, '::load_metabox_videodescription'), 'sexhack_video', 'normal','default');
-         add_meta_box( 'sh-mbox-video', 'Video locations', array( __CLASS__, '::load_metabox_videolocations' ), 'sexhack_video', 'normal', 'default' );
-         //remove_meta_box( 'postimagediv', 'sexhack_video', 'side' );
+         add_meta_box( 'sh-mbox-videodescription', 'Videos', 'wp_SexHackMe\SH_MetaBox::load_metabox_video', 'sexhack_video', 'normal','default');
+         remove_meta_box( 'postimagediv', 'sexhack_video', 'side' );
          add_meta_box('postimagediv', 'Video Thumbnail', 'post_thumbnail_meta_box', 'sexhack_video', 'side', 'default');
       }
 
-      public static function load_metabox_videodescription($post)
+      public static function load_metabox_video($post)
       {
          wp_nonce_field('video_description_nonce','sh_video_description_nonce');
-         $value = get_post_meta( $post->ID, 'video_description', true );
-         echo '<textarea style="width:100%" id="video_description" name="video_description">' . esc_attr( $value ) . '</textarea>';
 
-      }
+         $video = sh_get_video_from_post($post->ID);
+         if(!$video) $video = new SH_Video();
+         $video->post_id = $post->ID;
+         $video->post = $post;
+         sh_get_template("admin/metabox_video.php", array('video' => $video, 'post' => $post));   
 
-      public static function load_metabox_videolocations($post) //($object, $box)
-      {
-         wp_nonce_field( 'global_notice_nonce', 'global_notice_nonce' );
-
-         $value = get_post_meta( $post->ID, '_global_notice', true );
-
-         echo '<textarea style="width:100%" id="global_notice" name="global_notice">' . esc_attr( $value ) . '</textarea>';
       }
 
 
       public static function save_meta_box_data($post_id)
       {
-         return $this->save_sexhack_video_meta_box_data($post_id);
+         return SH_MetaBox::save_sexhack_video_meta_box_data($post_id);
       }
 
-      public function save_sexhack_video_meta_box_data( $post_id ) 
+      public static function save_sexhack_video_meta_box_data( $post_id ) 
       {
 
 
@@ -94,16 +88,28 @@ if(!class_exists('SH_MetaBox')) {
          if ( ! isset( $_POST['video_description'] ) ) {
             return;
          }
+         
+         $video = sh_get_video_from_post($post_id);
+         if(!$video) $video = new SH_Video();
+         $video->post_id = $post_id;
+         $post = $video->get_post();
+         
+         $video->title = $post->post_title;
+         $video->slug = $post->post_name;
 
+         sexhack_log($post);
+            
          // Sanitize user input.
-         $my_data = sanitize_text_field( $_POST['video_description'] );
+         $video->description = sanitize_text_field( $_POST['video_description'] );
 
          // Update the meta field in the database.
-         update_post_meta( $post_id, 'video_description', $my_data );
+         //update_post_meta( $post_id, 'video_description', $my_data );
+         sh_save_video($video);
+
       }
 
    }
-   add_action('save_post', array('wp_SexHackMe\SH_MetaBox', '::save_meta_box_data' ));
+   add_action('save_post', 'wp_SexHackMe\SH_MetaBox::save_meta_box_data' );
 }
 
 

@@ -90,7 +90,7 @@ if(!class_exists('SH_PostTypes')) {
             'query_var' => true,
             'has_archive' => true,
             'supports' => array('title'), // 'thumbnail', 'editor','excerpt','trackbacks','custom-fields','comments','revisions','author','page-attributes'),
-            'taxonomies' => array('category','post_tag'), // TODO  Shouldn't we have a "video_type" taxonomy for VR or flat?
+            'taxonomies' => array(),//'category'), // ,'post_tag'), // TODO  Shouldn't we have a "video_type" taxonomy for VR or flat?
          ));
          $DEFAULTSLUG = get_option('sexhack_gallery_slug', 'v');
          $projects_structure = '/'.$DEFAULTSLUG.'/%wooprod%/';
