@@ -34,6 +34,12 @@ if(!class_exists('SH_MetaBox')) {
          add_meta_box( 'sh-mbox-videodescription', 'Videos', 'wp_SexHackMe\SH_MetaBox::load_metabox_video', 'sexhack_video', 'normal','default');
          remove_meta_box( 'postimagediv', 'sexhack_video', 'side' );
          add_meta_box('postimagediv', 'Video Thumbnail', 'post_thumbnail_meta_box', 'sexhack_video', 'side', 'default');
+
+         // XXX Remove Paid Member Subscription meta boxes
+         remove_meta_box( 'pms_post_content_restriction', 'sexhack_video', 'default');
+
+         // XXX Remove Members plugin meta box
+         remove_meta_box( 'members-cp', 'sexhack_video', 'default');
       }
 
       public static function load_metabox_video($post)
@@ -102,6 +108,7 @@ if(!class_exists('SH_MetaBox')) {
          // Sanitize user input.
          $video->description = sanitize_text_field( $_POST['video_description'] );
 
+         sexhack_log($_POST);
          // Update the meta field in the database.
          //update_post_meta( $post_id, 'video_description', $my_data );
          sh_save_video($video);

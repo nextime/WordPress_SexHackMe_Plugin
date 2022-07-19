@@ -609,7 +609,10 @@ if(!class_exists('SexHackMe_Plugin')) {
 if( WP_DEBUG === true ){
    // only matched?
    //add_action("the_post", 'wp_SexHackMe\debug_rewrite_rules');
+   sexhack_log("REQUEST: ".$_SERVER['REQUEST_URI']." QUERY: ".$_SERVER['QUERY_STRING']. "POST:");
+   sexhack_log($_POST);
 }
+
 
 
 

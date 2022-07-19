@@ -41,6 +41,7 @@ if(!class_exists('SH_PostTypes')) {
             'show_ui' => true,
             'show_in_menu' => true, // Visibility in admin menu.
             'menu_position' => 32,
+            'menu_icon' => SH_PLUGIN_DIR_URL . 'img/adv_icon.png',
             'capability_type' => 'post',
             'hierarchical' => false,
             'publicly_queryable' => true,
@@ -82,6 +83,7 @@ if(!class_exists('SH_PostTypes')) {
             'show_in_menu' => true,
             'show_in_rest' => true,
             'menu_position' => 32,
+            'menu_icon' => SH_PLUGIN_DIR_URL . 'img/porn_icon.png',
             'capability_type' => 'post', // TODO Maybe  We should create our own cap type?
             // 'capabilities' => array(), // Or just select specific capabilities here
             'hierarchical' => true,
@@ -89,7 +91,7 @@ if(!class_exists('SH_PostTypes')) {
             'rewrite' => false,
             'query_var' => true,
             'has_archive' => true,
-            'supports' => array('title'), // 'thumbnail', 'editor','excerpt','trackbacks','custom-fields','comments','revisions','author','page-attributes'),
+            'supports' => array('title', 'thumbnail'), //'editor','excerpt','trackbacks','custom-fields','comments','revisions','author','page-attributes'),
             'taxonomies' => array(),//'category'), // ,'post_tag'), // TODO  Shouldn't we have a "video_type" taxonomy for VR or flat?
          ));
          $DEFAULTSLUG = get_option('sexhack_gallery_slug', 'v');
