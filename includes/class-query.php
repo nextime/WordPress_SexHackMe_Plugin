@@ -81,25 +81,35 @@ if(!class_exists('SH_Query')) {
          }
       }
 
+      public static function delete_Video($id, $idtype='')
+      {
+         global $wpdb;
+
+         if(!is_integer($id))
+            return;
+
+         $idtype=sanitize_idtype($idtype);
+
+         if(!$idtype) return false;
+
+         $sql = "DELETE FROM {$wpdb->prefix}".SH_PREFIX."videos WHERE {$idtype}=".intval($id);
+         return $wpdb->query( $sql );
+
+      }
+
       public static function get_Video($id, $idtype='')
       {
          global $wpdb;  
 
 
-         switch($idtype)
-         {
-            case "product":
-            case "post":
-               $idtype=$idtype."_id";
-               break;
-            default:
-               $idtype="id";
+         if(!is_integer($id))
+            return;
 
-         }
+         $idtype=sanitize_idtype($idtype);
 
+         if(!$idtype) return false;
 
-         // TODO sanitize query
-         $sql = "SELECT * from {$wpdb->prefix}".SH_PREFIX."videos WHERE {$idtype}=".intval($id);
+         $sql = "SELECT * FROM {$wpdb->prefix}".SH_PREFIX."videos WHERE {$idtype}=".intval($id);
          $dbres = $wpdb->get_results( $sql );
          if(is_array($dbres) && count($dbres) > 0)
          {

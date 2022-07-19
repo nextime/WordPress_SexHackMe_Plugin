@@ -32,36 +32,6 @@ function sh_get_template($tmpl, $args=array())
    return false;
 }
 
-
-function sh_save_video($video)
-{
-   return SH_Query::save_Video($video);
-}
-
-function sh_get_videos($vcat=false)
-{
-   return SH_Query::get_Videos($vcat);
-}
-
-function sh_get_video($id)
-{
-   return SH_Query::get_Video($id);
-}
-
-function sh_get_video_from_post($p)
-{
-   if(is_int($p) && $p > 0) return SH_Query::get_Video($p, 'post');
-   else if(is_object($p)) return SH_Query::get_Video($p->ID, 'post');
-   return false;
-}
-
-function sh_get_video_from_product($p)
-{
-   if(is_int($p) and $p > 0) return SH_Query::get_Video($p, 'product');
-   else if(is_object($p)) return SH_Query::get_Video($p->get_id(), 'product');
-   return false;
-}
-
 function sh_get_subscription_plans()
 {
    return pms_get_subscription_plans();

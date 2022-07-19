@@ -39,6 +39,24 @@ if(!function_exists('sexhack_log')){
 }
 
 
+function sanitize_idtype($idt=false)
+{
+   if((!$idt) || ($idt=='')) $idt='id';
+
+   switch($idt)
+   {
+      case 'post':
+      case 'product':
+         return $idt."_id";
+         break;
+      case 'id':
+         return $idt;
+         break;
+      default:
+         return false;
+   }
+} 
+
 function debug_rewrite_rules($matchonly=false) 
 {
    $matchonly=true;
