@@ -30,6 +30,9 @@ based on the ideas I planned for www.sexhack.me:
  - Version 0.5.0:
    * Multiple tags filtering
 
+ - Version 0.8.1
+   * Verify and fix support for PHP 8.1
+
  - Version 1.0.0:
    * Write new smartcontract for automation of instant and scheduled payout to models
    * Write new NFTs login system, remove Unlock Protocol dependency
