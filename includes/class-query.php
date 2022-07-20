@@ -54,7 +54,7 @@ if(!class_exists('SH_Query')) {
 
                $count++;
             }
-            if($video->id || (is_long($video->id) && $video->id > 0)) 
+            if(($video->id) && (is_long($video->id) && $video->id > 0)) 
             {
                // Save an already existing video entry
                $sql = "UPDATE {$wpdb->prefix}".SH_PREFIX."videos SET
