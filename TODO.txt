@@ -18,7 +18,6 @@ based on the ideas I planned for www.sexhack.me:
 
  - Version 0.1.0:
    * Fixes of all the features on the previous versions
-   * More projection on 3D/VR videos Support 
    * Compression of css and js files
 
  - Version 0.2.0: 
@@ -43,6 +42,9 @@ based on the ideas I planned for www.sexhack.me:
    * Integrate the plugin "Multipurpose Confirmation Alert" or similar
    * User forums
    * Internal chat/messaging system
+
+- Version 1.2.0:
+  * More projection on 3D/VR videos Support
 
 - Version 2.0.0:
    * More and better VR Support
