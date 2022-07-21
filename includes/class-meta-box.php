@@ -31,18 +31,33 @@ if(!class_exists('SH_MetaBox')) {
 
       public static function add_video_metaboxes($post=false)
       {
-         add_meta_box( 'sh-mbox-videodescription', 'Videos', 'wp_SexHackMe\SH_MetaBox::load_metabox_video', 'sexhack_video', 'normal','default');
+
+         // Main configuration for Video pages
+         add_meta_box( 'sh-mbox-videodescription', 'Video details', 'wp_SexHackMe\SH_MetaBox::main_metabox_video', 'sexhack_video', 'normal','default');
+
+         // Remove Thumbnail featured image
          remove_meta_box( 'postimagediv', 'sexhack_video', 'side' );
-         add_meta_box('postimagediv', 'Video Thumbnail', 'post_thumbnail_meta_box', 'sexhack_video', 'side', 'default');
+
+         // Model selection
+         add_meta_box('video_model', 'Model', 'wp_SexHackMe\SH_MetaBox::model_select_meta_box', 'sexhack_video', 'side', 'default');
+
+         // Video categories
+         add_meta_box('video_category', 'Video categories', 'wp_SexHackMe\SH_MetaBox::video_categories_meta_box', 'sexhack_video', 'side', 'default');
+     
+         // Video tags
+         add_meta_box('video_tags', 'Video tags', 'wp_SexHackMe\SH_MetaBox::video_tags_meta_box', 'sexhack_video', 'side', 'default');
 
          // XXX Remove Paid Member Subscription meta boxes
          remove_meta_box( 'pms_post_content_restriction', 'sexhack_video', 'default');
 
          // XXX Remove Members plugin meta box
          remove_meta_box( 'members-cp', 'sexhack_video', 'default');
+
+         // Re-add featured image thumbnail
+         add_meta_box('video_postimagediv', 'Video Thumbnail', 'post_thumbnail_meta_box', 'sexhack_video', 'side', 'default');
       }
 
-      public static function load_metabox_video($post)
+      public static function main_metabox_video($post)
       {
          wp_nonce_field('video_description_nonce','sh_video_description_nonce');
 
@@ -53,6 +68,26 @@ if(!class_exists('SH_MetaBox')) {
          sh_get_template("admin/metabox_video.php", array('video' => $video, 'post' => $post));   
 
       }
+
+      public static function model_select_meta_box( $post, $box ) {
+         sh_get_template("admin/metabox_model.php");
+      }
+
+      public static function video_categories_meta_box( $post, $box ) {
+         sh_get_template("admin/metabox_videocategories.php");
+      }
+
+      
+
+		public static function video_tags_meta_box( $post, $box ) {
+    		$user_can_assign_terms = true; //current_user_can( $taxonomy->cap->assign_terms );
+    		$comma                 = _x( ',', 'tag delimiter' );
+    		$terms_to_edit         = "prova,prova2,antani"; //get_terms_to_edit( $post->ID, $tax_name );
+    		if ( ! is_string( $terms_to_edit ) ) {
+        		$terms_to_edit = '';
+    		}
+			sh_get_template("admin/metabox_videotags.php", array('terms_to_edit' => $terms_to_edit, "comma" => $comma, 'user_can_assign_terms' => $user_can_assign_terms));
+		}
 
 
       public static function save_meta_box_data($post_id)
@@ -99,18 +134,38 @@ if(!class_exists('SH_MetaBox')) {
          if(!$video) $video = new SH_Video();
          $video->post_id = $post_id;
          $post = $video->get_post();
-         
+
+         // XXX TODO Sanitize inputs!
+         //
+         // Title and slug 
          $video->title = $post->post_title;
          $video->slug = $post->post_name;
 
+
+         // TODO Remove debug
+         sexhack_log("SAVE post object:");
          sexhack_log($post);
-            
-         // Sanitize user input.
+         sexhack_log('   - $POST:');
+         sexhack_log($_POST);
+
+         // Video description
          $video->description = sanitize_text_field( $_POST['video_description'] );
 
-         sexhack_log($_POST);
-         // Update the meta field in the database.
-         //update_post_meta( $post_id, 'video_description', $my_data );
+         // Video thumbnail
+         if(array_key_exists('video_thumbnail', $_POST) && sanitize_text_field($_POST['video_thumbnail']))
+            $video->thumbnail = sanitize_text_field( $_POST['video_thumbnail'] );
+         else if(array_key_exists('_thumbnail_id', $_POST)
+            && is_numeric($_POST['_thumbnail_id'])
+            && intval($_POST['_thumbnail_id']) > 0)
+         {
+            $video->thumbnail = intval($_POST['_thumbnail_id']);
+         }
+         else
+            $video->thumbnail = false;
+
+
+
+         // Save the video data in the database.
          sh_save_video($video);
 
       }

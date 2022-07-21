@@ -120,6 +120,10 @@ if(!class_exists('SH_Admin')) {
 
          }
 
+         // Add Video tags and categories subpages to Video edit menu
+         //if(in_array('sexhack_video', get_post_types())
+         //{
+         //}
       }
 
    }

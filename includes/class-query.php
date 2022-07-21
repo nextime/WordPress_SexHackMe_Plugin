@@ -29,19 +29,46 @@ if(!class_exists('SH_Query')) {
    class SH_Query
    {
 
+      public static function get_columns($table)
+      {
+         global $wpdb;
+
+         $sql = "SELECT `COLUMN_NAME`  FROM `INFORMATION_SCHEMA`.`COLUMNS`  
+            WHERE `TABLE_SCHEMA`='".DB_NAME."'  AND `TABLE_NAME`='".$wpdb->_real_escape($table)."';";
+
+         $colums = array();
+         $res = $wpdb->get_results( $sql, ARRAY_N );
+         foreach($res as $k => $v)
+            $colums[]=$v[0];
+         return $colums;
+   
+      }
+
+
       public static function save_Video($video)
       {
          global $wpdb;
 
          if(is_object($video))
          {
-            $fieldsarray = $video->get_sql_array();
+            $fieldsarrayraw = $video->get_sql_array();
+            $fieldsarray = array();
             $fields = "";
             $keys = "";
             $values = "";
             $count=0;
+            $tables = SH_Query::get_columns($wpdb->prefix.SH_PREFIX."videos");
+            //sexhack_log("TABLES");
+            //sexhack_log($tables);
+            foreach($fieldsarrayraw as $k => $v)
+            {
+               if(!in_array($k, $tables)) continue;
+               $fieldsarray[$k] = $v;
+            }
             foreach($fieldsarray as $k => $v)
             {
+               if(!in_array($k, $tables)) continue;
+
                $v = $wpdb->_real_escape($v);
                $adds = "\n";
                $fields .= $k." = '$v'";
@@ -54,7 +81,7 @@ if(!class_exists('SH_Query')) {
 
                $count++;
             }
-            if(($video->id) && (is_long($video->id) && $video->id > 0)) 
+            if((is_long($video->id) || is_numeric($video->id)) && intval($video->id) > 0)
             {
                // Save an already existing video entry
                $sql = "UPDATE {$wpdb->prefix}".SH_PREFIX."videos SET
@@ -75,7 +102,7 @@ if(!class_exists('SH_Query')) {
 					$video->id = $wpdb->insert_id;
 
             }
-
+            //sexhack_log($sql);
             return $video;
 
          }
@@ -143,15 +170,17 @@ if(!class_exists('SH_Query')) {
             }
          }
 
-			$result = array();
+			$results = array();
          //$sql = $wpdb->prepare("SELECT * from {$wpdb->prefix}{$prefix}videos");
          $sql = "SELECT * from {$wpdb->prefix}".SH_PREFIX."videos";
          $dbres = $wpdb->get_results( $sql );
 		
          foreach($dbres as $row)
          {
-         	$result[] = new SH_Video($row);
+         	$results[] = new SH_Video($row);
          }
+
+         return $results;
 
 
       }

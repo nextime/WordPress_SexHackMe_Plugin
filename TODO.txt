@@ -3,7 +3,8 @@ based on the ideas I planned for www.sexhack.me:
 
 
  - Version 0.0.2:
-   * Proper functioning Video post type page for Videos, use WC products only for downloads.
+   * Proper functioning Video post type page for Videos (with initial rough admin editing interface).
+   * use WC products only for downloads and memberships.
    * Database table dedicated for Video pages.
 
  - Version 0.0.3:
@@ -11,6 +12,8 @@ based on the ideas I planned for www.sexhack.me:
 
  - Version 0.0.4:
    * Upload Videos page for models
+   * admin interface  Video page editing meta-boxes rewriting
+   * admin page for video tags and video categories.
 
  - Version 0.0.5:
    * Better Video Page

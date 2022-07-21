@@ -42,6 +42,7 @@ if(!class_exists('SH_Video')) {
          'title' => '',
          'description' => '', 
          'uploaded' => false,
+         'updated' => false,
          'slug' => '', 
          'price' => 0,
          'video_type' => 'FLAT',

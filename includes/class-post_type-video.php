@@ -31,6 +31,7 @@ if(!class_exists('SH_PostType_Video')) {
       public function __construct()
       {
          add_action('delete_post', array($this, 'delete_post'), 10, 2);
+         add_action('transition_post_status', array($this, 'change_post_status'), 10, 3);
       }
 
       public function delete_post($post_id, $post)
@@ -41,8 +42,28 @@ if(!class_exists('SH_PostType_Video')) {
             return;
 
          sh_delete_video_from_post($post_id);
+      }
 
+      public function change_post_status($new, $old, $post)
+      {
+         // Only sexhack_video posts...
+         if(!is_object($post) || ($post->post_type!='sexhack_video')) 
+            return;
 
+         //sexhack_log("STATUS CHANGE: post ".$post->ID." changed from $old to $new");
+         if($old===$new) return;
+
+         $video = sh_get_video_from_post($post);
+         if($video)
+         {
+            $vold = $video->status;
+            if($new=='publish' && $video->status == 'ready') $video->status = 'published';
+            else if($new!='publish' && $video->status == 'published') $video->status = 'ready';
+
+            //sexhack_log("    *  video ".$video->id." is ".$video->status." (was $vold)");
+
+            if($vold!=$video->status) sh_save_video($video);
+         }
       }
 
    }
