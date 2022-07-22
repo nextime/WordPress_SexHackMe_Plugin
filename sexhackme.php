@@ -394,6 +394,9 @@ if(!class_exists('SexHackMe_Plugin')) {
          /* Unlock integration class */
          $this->file_include('includes/class-unlock-support.php');
 
+         /* integrate google drive plugin database support */
+         $this->file_include('includes/class-integrate-google-drive.php');
+
          /* Video */
          $this->file_include('includes/class-video.php');
          $this->file_include('includes/functions-video.php');

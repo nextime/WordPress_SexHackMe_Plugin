@@ -58,15 +58,15 @@ echo '<style>div#visibility.misc-pub-section.misc-pub-visibility{display:none}</
       <h4>Preview</h4>
       <p>
          <label> * Thumbnail (URI,PATH or thumbail ID):</label>
-         <input type='text' nane="video_thumbnail" value='<?php  echo esc_attr( $video->thumbnail ); ?>' > (Override featured image)</input>
+         <input type='text' name="video_thumbnail" value='<?php  echo esc_attr( $video->thumbnail ); ?>' > (Override featured image)</input>
       </p>
       <p>
          <label> * Animated GIF (URI or PATH):</label>
-         <input type='text' nane="video_gif" value='<?php  echo esc_attr( $video->gif ); ?>'  />
+         <input type='text' name="video_gif" value='<?php  echo esc_attr( $video->gif ); ?>'  />
       </p>
       <p>
          <label> * Video preview/teaser (max 1 min)</label>
-         <input type='text' nane="video_preview" value='<?php  echo esc_attr( $video->preview ); ?>' />
+         <input type='text' name="video_preview" value='<?php  echo esc_attr( $video->preview ); ?>' />
       <p>
    </p>
 
@@ -80,8 +80,8 @@ echo '<style>div#visibility.misc-pub-section.misc-pub-visibility{display:none}</
       <p>
          <label> * VR Projection</label>
          <select name='video_vr_projection'>
-            <option value='VR180_LR' <?php if($video->video_vr_projection=='VR180_LR') echo "selected"; ?>>Equirectangular 180 LR</option>
-            <option value='VR360_LR' <?php if($video->video_vr_projection=='VR360_LR') echo "selected"; ?>>Equirectangular 360 LR</option>
+            <option value='VR180_LR' <?php if($video->vr_projection=='VR180_LR') echo "selected"; ?>>Equirectangular 180 LR</option>
+            <option value='VR360_LR' <?php if($video->vr_projection=='VR360_LR') echo "selected"; ?>>Equirectangular 360 LR</option>
          </select>
          <label>(ignored for non VR videos)</option>
       </p>
@@ -89,7 +89,7 @@ echo '<style>div#visibility.misc-pub-section.misc-pub-visibility{display:none}</
    <p>
       <h4>Price:</h4>
       <label>USD:</label>
-      <input type='text' nane="video_price" value='<?php  echo esc_attr( $video->price ); ?>' />
+      <input type='text' name="video_price" value='<?php  echo esc_attr( $video->price ); ?>' />
    </p>
    <p>
 		<?php 
@@ -119,35 +119,35 @@ echo '<style>div#visibility.misc-pub-section.misc-pub-visibility{display:none}</
 					<h4> <?php echo ucfirst($vt); ?> files</h4>
            		<p>
                    <label> * Download (URI or PATH):</label>
-                   <input type='text' nane="video_download_<?php echo $vt;?>" value='<?php  echo esc_attr( $video->__get($vtdown) ); ?>'  />
+                   <input type='text' name="video_download_<?php echo $vt;?>" value='<?php  echo esc_attr( $video->__get($vtdown) ); ?>'  />
 					</p>
 					</p>
 						 <label> * HLS playlist (URI or PATH):</label>
-						 <input type='text' nane="video_hls_<?php echo $vt;?>" value='<?php  echo esc_attr( $video->__get($vthls ) ); ?>'  />
+						 <input type='text' name="video_hls_<?php echo $vt;?>" value='<?php  echo esc_attr( $video->__get($vthls ) ); ?>'  />
 					</p>
                </p>
                    <label> * Duration:</label>
-                   <input type='text' nane="video_duration_<?php echo $vt;?>" value='<?php  echo esc_attr( $video->__get($vtduration ) ); ?>'  />
+                   <input type='text' name="video_duration_<?php echo $vt;?>" value='<?php  echo esc_attr( $video->__get($vtduration ) ); ?>'  />
                </p>
                </p>
                    <label> * File size:</label>
-                   <input type='text' nane="video_size_<?php echo $vt;?>" value='<?php  echo esc_attr( $video->__get($vtsize ) ); ?>'  />
+                   <input type='text' name="video_size_<?php echo $vt;?>" value='<?php  echo esc_attr( $video->__get($vtsize ) ); ?>'  />
                </p>
                </p>
                    <label> * Resolution:</label>
-                   <input type='text' nane="video_resolution_<?php echo $vt;?>" value='<?php  echo esc_attr( $video->__get($vtresolution ) ); ?>'  />
+                   <input type='text' name="video_resolution_<?php echo $vt;?>" value='<?php  echo esc_attr( $video->__get($vtresolution ) ); ?>'  />
                </p>
                </p>
                    <label> * Format:</label>
-                   <input type='text' nane="video_format_<?php echo $vt;?>" value='<?php  echo esc_attr( $video->__get($vtformat ) ); ?>'  />
+                   <input type='text' name="video_format_<?php echo $vt;?>" value='<?php  echo esc_attr( $video->__get($vtformat ) ); ?>'  />
                </p>
                </p>
                    <label> * Codec:</label>
-                   <input type='text' nane="video_codec_<?php echo $vt;?>" value='<?php  echo esc_attr( $video->__get($vtcodec ) ); ?>'  />
+                   <input type='text' name="video_codec_<?php echo $vt;?>" value='<?php  echo esc_attr( $video->__get($vtcodec ) ); ?>'  />
                </p>
                </p>
                    <label> * Audio codec:</label>
-                   <input type='text' nane="video_acodec_<?php echo $vt;?>" value='<?php  echo esc_attr( $video->__get($vtacodec ) ); ?>'  />
+                   <input type='text' name="video_acodec_<?php echo $vt;?>" value='<?php  echo esc_attr( $video->__get($vtacodec ) ); ?>'  />
                </p>
 
      			</div>

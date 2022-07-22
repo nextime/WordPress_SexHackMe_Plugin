@@ -86,8 +86,7 @@ function save_sexhack_video_meta_box_data( $post_id )
 		$video->model = intval($_POST['video_model']);
 
    // Video description
-	if(array_key_exists('video_description', $_POST) && sanitize_text_field($_POST['video_description']))
-   	$video->description = sanitize_text_field( $_POST['video_description'] );
+ 	$video->description = sanitize_text_field( $_POST['video_description'] );
 
    // Video thumbnail
    if(array_key_exists('video_thumbnail', $_POST) && sanitize_text_field($_POST['video_thumbnail']))
@@ -112,11 +111,12 @@ function save_sexhack_video_meta_box_data( $post_id )
 
    // Video visible
    if(array_key_exists('video_visible', $_POST) && in_array($_POST['video_visible'], array('Y','N')))
-      $video->private = $_POST['video_visible'];
+      $video->visible = $_POST['video_visible'];
 
 	// Video price
-	if(array_key_exists('video_price', $_POST) && is_numeric($_POST['video_price']) && (floatval($_POST['video_price']) > 0))
-		$video->price = floatval($_POST['video_price']);
+	if(array_key_exists('video_price', $_POST) && is_numeric($_POST['video_price']) && (floatval($_POST['video_price']) >= 0))
+      $video->price = floatval($_POST['video_price']);
+   else $video->price = 0;
 
 	// Video type
 	if(array_key_exists('video_type', $_POST) && in_array($_POST['video_type'], array('VR', 'FLAT')))
@@ -128,11 +128,15 @@ function save_sexhack_video_meta_box_data( $post_id )
 
 	// Preview video
 	if(array_key_exists('video_preview', $_POST) && check_url_or_path(sanitize_text_field($_POST['video_preview'])))
-		$video->preview = sanitize_text_field($_POST['video_preview']);
+      $video->preview = sanitize_text_field($_POST['video_preview']);
+   else
+      $video->preview = false;
 
 	// Animated gif path
 	if(array_key_exists('video_gif', $_POST) && check_url_or_path(sanitize_text_field($_POST['video_gif'])))
       $video->gif = sanitize_text_field($_POST['video_gif']);
+   else
+      $video->gif = false;
 
 	// Differenciated content for access levels
 	foreach(array('public','members','premium') as $vt)
@@ -143,14 +147,14 @@ function save_sexhack_video_meta_box_data( $post_id )
 			(strncasecmp(strrev(sanitize_text_field($_POST['video_hls_'.$vt])), '8u3m', 4) === 0)) 
 		{
 			$video->__set('hls_'.$vt, sanitize_text_field($_POST['video_hls_'.$vt]));
-		}
+		} else $video->__set('hls_'.$vt, false);
 	
       // Download 
       if(array_key_exists('video_download_'.$vt, $_POST) &&
          check_url_or_path(sanitize_text_field($_POST['video_download_'.$vt])))
       {  
          $video->__set('download_'.$vt, sanitize_text_field($_POST['video_download_'.$vt]));
-      }
+      } else $video->__set('download_'.$vt, false);
   
 		// Text only data
 		foreach(array('size','format','codec','acodec','duration','resolution') as $key)
@@ -159,10 +163,25 @@ function save_sexhack_video_meta_box_data( $post_id )
          	sanitize_text_field($_POST['video_'.$key.'_'.$vt]))
       	{  
          	$video->__set($key.'_'.$vt, sanitize_text_field($_POST['video_'.$key.'_'.$vt]));
-      	} 
+      	} else $video->__set($key.'_'.$vt, false);
 		} 
 	
 	}
+
+   // Video Categories
+   if(array_key_exists('vcategory', $_POST) && is_array($_POST['vcategory']))
+   {
+      foreach($_POST['vcategory'] as $cat_id)
+      {
+         if(is_numeric($cat_id) && intval($cat_id) > 0)
+         {
+            $cat = sh_get_categories(intval($cat_id));
+            if($cat) $video->add_category($cat);
+         }
+      }
+   } 
+   // Make sure the categories array is initialized
+   $video->get_categories(false);
 
    // Save the video data in the database.
    sh_save_video($video);

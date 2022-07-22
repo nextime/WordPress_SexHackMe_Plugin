@@ -132,18 +132,14 @@ if(!class_exists('SH_Video')) {
       {
          if(isset($this->attributes['tags'])) return $this->tags;
          $tags = sh_get_video_tags($this->id);
-         $this->tags = array();
-         $this->tagsnames = array();
-         $tags_indexed = array();
-         $tagsnames = array();
+         $this->attributes['tags'] = array();
+         $this->attributes['tagsnames'] = array();
          if($tags)
          {
             foreach($tags as $tag) {
-               $tags_indexed[$tag->id] = $tag;
-               $tagsnames[] = $tag->tag;
+               $this->attributes['tags'][$tag->id] = $tag;
+               $this->attributes['tagsnames'][] = $tag->tag;
             }
-            $this->tags = $tags_indexed;
-            $this->tagsnames = $tagsnames;
          }
          return $this->tags;
       }
@@ -155,17 +151,27 @@ if(!class_exists('SH_Video')) {
          return $this->tagsnames;
       }
 
-      public function get_categories()
+      public function add_category($cat)
+      {
+         if(!is_object($cat)) return false;
+         if(!isset($this->attributes['categories'])) $this->attributes['categories'] = array();
+         $this->attributes['categories'][$cat->id] = $cat;
+         return true;
+
+      }
+
+      public function get_categories($usedb=true)
       {
          if(isset($this->attributes['categories'])) return $this->categories;
-         $cats = sh_get_video_categories($this->id);
-         $this->categories = array();
-         $cats_indexed = array();
-         if($cats)
+         $this->attributes['categories'] = array();
+         if($usedb)
          {
-            foreach($cats as $cat)
-               $cats_indexed[$cat->id] = $cat;
-            $this->categories = $cats_indexed;
+            $cats = sh_get_video_categories($this->id);
+            if($cats)
+            {
+               foreach($cats as $cat)
+                  $this->attributes['categories'][$cat->id] = $cat;
+            }
          }
          return $this->categories;
       }
@@ -218,7 +224,9 @@ if(!class_exists('SH_Video')) {
          $r = array();
          foreach($this->attributes as $k => $v)
          {
-            if(($v) && !in_array($k, array('id', 'post', 'product', 'tags','categories', 'tagsnames')) ) $r[$k] = $v;
+            if(($v!==false) && !in_array($k, array('id','post','product','tags',
+               'categories','tagsnames','created','updated','sells',
+               'views_public','views_members','views_premium')) ) $r[$k] = $v;
          }
          return $r;
       }

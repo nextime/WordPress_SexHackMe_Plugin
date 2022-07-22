@@ -51,6 +51,8 @@ if(!class_exists('SH_Query')) {
 
          if(is_object($video))
          {
+
+            sexhack_log($video);
             $fieldsarrayraw = $video->get_sql_array();
             $fieldsarray = array();
             $fields = "";
@@ -240,7 +242,11 @@ if(!class_exists('SH_Query')) {
          if($id && is_numeric($id)) 
             $sql .= " WHERE id='".intval($id)."'";
          $dbres = $wpdb->get_results( $sql );
-         return $dbres;
+
+         if(!$id) return $dbres;
+         if(is_array($dbres) && count($dbres) > 0) return $dbres[0];
+
+
       }
 
 
