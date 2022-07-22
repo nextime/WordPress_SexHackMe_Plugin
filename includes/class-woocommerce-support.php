@@ -24,6 +24,31 @@ namespace wp_SexHackMe;
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit;
 
+/* Sync Video Pages and Products */
+if(!class_exists("SH_VideoProducts")) {
+   class SH_VideoProducts
+   {
+
+      public function __construct()
+      {
+         add_action('sh_save_video_after_query', array($this, 'sync_product_from_video'), 1, 10);
+      }
+
+      public function sync_product_from_video($video)
+      {
+         sexhack_log("PRODUUUUUUCT");
+         sexhack_log($video);
+
+         $download = apply_filters('sh_download_url_filter', $video->download_public);
+         sexhack_log($download);
+
+
+      }
+
+   }
+   new SH_VideoProducts;
+}
+
 
 /* Class to add Video to product page instead of image */
 if(!class_exists('SexhackWoocommerceProductVideos')) {
@@ -33,6 +58,7 @@ if(!class_exists('SexhackWoocommerceProductVideos')) {
       {
          add_action( 'woocommerce_before_single_product', array($this, 'video_remove_default_woocommerce_image' ));
          add_filter( 'query_vars', array($this, 'themeslug_query_vars' ));
+
       }
 
       public function themeslug_query_vars( $qvars ) {

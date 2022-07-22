@@ -32,10 +32,94 @@ if(!class_exists('SH_GDrive')) {
       function __construct()
       {
          add_filter('sh_download_url_filter', array($this, 'get_download_url'));
-      {
+      } 
 
       function get_download_url($file)
       {
+         if ( function_exists( 'igd_fs' ) )
+         {
+            // Integrate Google Drive Plugin is installed and active, so, filter it!
+            
+            if((strlen($file) > 9) && (strncmp($file, "gdrive://", 9) === 0))
+            {
+               $gpath=substr($file, 9);
+               if(strncmp($gpath, '/', 1)===0) $gpath=substr($file, 10);
+               $gparts = explode('/', $gpath);
+               if(count($gparts) > 0)
+               {
+
+                  $parent=false;
+                  $gfile=false;
+                  $success=false; 
+                  $igd = \IGD\App::instance();
+
+                  // Try root first
+                  foreach($gparts as $k => $part)
+                  {
+                     if($k == 0) 
+                     {
+                        $gdo = $igd->get_files(array('q'=> "{$part} in name"), 'root', false);
+                     } else {
+                        $gdo = $igd->get_files(array('q'=> "name='{$part}"), $parent, false);
+                     }
+
+                     if(!is_array($gdo) || (count($gdo) < 1) || array_key_exists('error', $gdo)) break;
+
+                     $parent=false;
+                     foreach($gdo as $g)
+                     {
+                        if($g['name']==$part)
+                        {
+                           $parent=$g['id'];
+                           $gf=$g;
+                        }
+                     }
+                  
+                     if(!$parent) break;
+
+                     if(count($gparts)-1 == $k) $success=true;
+                  } 
+                        
+
+                  // Then try on the shared with me folder
+                  if(!$success)
+                  {
+                     foreach($gparts as $k => $part)
+                     {
+                        if($k == 0)
+                        {
+                           $gdo = $igd->get_files(array('q'=> "parents='' and  sharedWithMe=true and '{$part}' in name"), 'shared', false);
+                        } else {
+                           $gdo = $igd->get_files(array('q'=> "name='{$part}"), $parent, false);
+                        }
+                        sexhack_log($gdo);
+                        if(!is_array($gdo) || (count($gdo) < 1) || array_key_exists('error', $gdo)) break;
+
+								$parent=false;
+                     	foreach($gdo as $g)
+                     	{  
+                        	if($g['name']==$part)
+                        	{
+                           	$parent=$g['id'];
+                           	$gf=$g;
+                        	}
+								}
+                     }  
+						}
+
+
+                  if(count($gparts)-1 == $k) $success=true;
+
+                  if($success) $gfile = $gf;
+
+                  if($gfile && ($gfile['type'] != 'application/vnd.google-apps.folder'))
+                  {
+                    $file="https://drive.google.com/open?action=igd-wc-download&id=".$gfile['id'];
+                  }
+
+               }
+            }
+         }
          return $file;
       }
    }

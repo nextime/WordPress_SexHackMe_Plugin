@@ -65,6 +65,10 @@ echo '<style>div#visibility.misc-pub-section.misc-pub-visibility{display:none}</
          <input type='text' name="video_gif" value='<?php  echo esc_attr( $video->gif ); ?>'  />
       </p>
       <p>
+         <label> * small preview GIF (URI or PATH):</label>
+         <input type='text' name="video_gif_small" value='<?php  echo esc_attr( $video->gif_small ); ?>'  />
+      </p>
+      <p>
          <label> * Video preview/teaser (max 1 min)</label>
          <input type='text' name="video_preview" value='<?php  echo esc_attr( $video->preview ); ?>' />
       <p>

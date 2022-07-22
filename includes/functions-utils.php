@@ -249,6 +249,8 @@ function check_url_or_path($url)
 {
    if (strncmp($url, "/", 1) === 0)
       return 'path';
+   else if(strncmp($url, 'gdrive://', 9) === 0)
+      return 'gdrive';
    else if(filter_var($url, FILTER_VALIDATE_URL))
       return 'uri';
 

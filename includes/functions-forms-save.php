@@ -82,8 +82,8 @@ function save_sexhack_video_meta_box_data( $post_id )
    sexhack_log($_POST);
 
 	// Model
-	if(array_key_exists('video_model', $_POST) && is_integer($_POST['video_model']) && intval($_POST['video_model']) > 0)
-		$video->model = intval($_POST['video_model']);
+	if(array_key_exists('video_model', $_POST) && is_numeric($_POST['video_model']) && intval($_POST['video_model']) > 0)
+		$video->user_id = intval($_POST['video_model']);
 
    // Video description
  	$video->description = sanitize_text_field( $_POST['video_description'] );
@@ -138,6 +138,13 @@ function save_sexhack_video_meta_box_data( $post_id )
    else
       $video->gif = false;
 
+   // Small Animated gif path
+   if(array_key_exists('video_gif_small', $_POST) && check_url_or_path(sanitize_text_field($_POST['video_gif_small'])))
+      $video->gif_small = sanitize_text_field($_POST['video_gif_small']);
+   else
+      $video->gif_small = false;
+
+
 	// Differenciated content for access levels
 	foreach(array('public','members','premium') as $vt)
 	{
@@ -182,6 +189,26 @@ function save_sexhack_video_meta_box_data( $post_id )
    } 
    // Make sure the categories array is initialized
    $video->get_categories(false);
+
+
+   // Video Tags
+   if(array_key_exists('video_tags', $_POST) && is_array($_POST['video_tags']))
+   {
+      foreach($_POST['video_tags'] as $tag_name)
+      {
+         $vtags = $video->get_tags(false);
+         if(sanitize_text_field(strtolower($tag_name)))
+         {
+            $tag_name = sanitize_text_field(strtolower($tag_name));
+            $tag = sh_get_tag_by_name($tag_name, true);
+            if($tag) $video->add_tag($tag);
+         }
+
+      }
+   }
+   // Make sure the tags array is initialized
+   $video->get_tags(false);
+
 
    // Save the video data in the database.
    sh_save_video($video);

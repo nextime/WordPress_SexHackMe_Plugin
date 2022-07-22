@@ -52,7 +52,7 @@ if(!class_exists('SH_Query')) {
          if(is_object($video))
          {
 
-            sexhack_log($video);
+            //sexhack_log($video);
             $fieldsarrayraw = $video->get_sql_array();
             $fieldsarray = array();
             $fields = "";
@@ -110,9 +110,12 @@ if(!class_exists('SH_Query')) {
                $updateid = true;
 
             }
+
+            do_action("sh_save_video_before_query", $video);
+
 				$wpdb->query( $sql );
             if($updateid) $video->id = $wpdb->insert_id;
-            sexhack_log($sql);
+            //sexhack_log($sql);
 
             foreach($video->get_categories() as $cat)
             {  
@@ -122,24 +125,26 @@ if(!class_exists('SH_Query')) {
                               ({$cat->id}, {$video->id});\n";
             }
             foreach($video->get_tags_names() as $tagname)
-            {   
+            {
                $tagname = $wpdb->_real_escape($tagname);
-               $q = "INSERT IGNORE INTO {$wpdb->prefix}".SH_PREFIX."videotags 
-                              (tag) VALUES ('{$tagname}');";
-               $wpdb->query($q);
-                  
-               $sqlarr[] = "INSERT INTO {$wpdb->prefix}".SH_PREFIX."videotags_assoc
+               $tag = sh_get_tag_by_name($tagname, true);
+
+               if($tag)
+               {
+                  $sqlarr[] = "INSERT INTO {$wpdb->prefix}".SH_PREFIX."videotags_assoc
                               (tag_id, video_id)
                            VALUES
-                              ((SELET id FROM {$wpdb->prefix}".SH_PREFIX."videotags WHERE tag='{$tagname}'), {$video->id});";
+                              ('{$tag->id}', '{$video->id}');";
+               }
                
             }
             foreach($sqlarr as $sql)
             {
-               sexhack_log($sql);
+               //sexhack_log($sql);
                if($sql)
 				      $wpdb->query( $sql );  
             }
+            do_action("sh_save_video_after_query", $video);
 
             return $video;
 
@@ -245,10 +250,26 @@ if(!class_exists('SH_Query')) {
 
          if(!$id) return $dbres;
          if(is_array($dbres) && count($dbres) > 0) return $dbres[0];
-
-
       }
 
+      public static function get_Tag_By_Name($name, $create=false)
+      {
+         global $wpdb;
+
+         $sql = "SELECT * FROM {$wpdb->prefix}".SH_PREFIX."videotags WHERE tag='{$name}'";
+         $res = $wpdb->get_results($sql);
+         if(is_array($res))
+         {
+            if(count($res) > 0) return $res[0];
+            if(count($res) == 0 && $create) 
+            {
+               $sql = "INSERT IGNORE INTO {$wpdb->prefix}".SH_PREFIX."videotags (tag) VALUES ('{$name}')";
+               $wpdb->query($sql);
+               return SH_Query::get_Tag_By_Name($name);
+            }
+         }
+         return false;
+      }
 
       public static function get_Video_Categories($vid)
       {

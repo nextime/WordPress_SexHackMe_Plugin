@@ -26,7 +26,14 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 function sh_save_video($video)
 {
-   return SH_Query::save_Video($video);
+   if(is_object($video)) {
+      // Initialize categories and tags is they are not.
+      // Get from database active if not cached already.
+      $video->get_categories(true);
+      $video->get_tags(true);
+      return SH_Query::save_Video($video);
+   }
+   return false;
 }
 
 function sh_delete_video($v)
@@ -92,6 +99,11 @@ function sh_get_video_tags($v)
    if(is_numeric($v) and $v > 0) return SH_Query::get_Video_Tags($v);
    else if(is_object($v)) return SH_Query::get_Video_Tags($v->id);
    return false;
+}
+
+function sh_get_tag_by_name($name, $create=false)
+{
+   return SH_Query::get_Tag_By_Name($name, $create);
 }
 
 function sh_delete_tags_from_video($v)

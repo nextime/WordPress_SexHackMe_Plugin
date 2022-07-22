@@ -40,6 +40,12 @@ foreach($video->get_tags() as $tag)
 </div>
 </p>
 <div id="vtagsdata"></div>
+<?php
+foreach($video->get_tags() as $tag)
+{
+   echo "  <input type='hidden' name='video_tags[]' data='".$tag->tag."'  value='".$tag->tag."' />\n";
+}
+?>
 <!--
 <p class="hide-if-no-js"><button type="button" class="button-link tagcloud-link" id="link-video_tags" aria-expanded="false">Choose from the most used tags</button></p>
 -->

@@ -53,6 +53,7 @@ if(!class_exists('SH_Video')) {
          'hls_premium' =>  false,
          'thumbnail' => false,
          'gif' => false,
+         'gif_small' => false,
          'download_public' => false,
          'download_members' => false,
          'download_premium' => false,
@@ -128,17 +129,20 @@ if(!class_exists('SH_Video')) {
          return isset($this->attributes['key']);
       }
 
-      public function get_tags()
+      public function get_tags($usedb=true)
       {
          if(isset($this->attributes['tags'])) return $this->tags;
-         $tags = sh_get_video_tags($this->id);
          $this->attributes['tags'] = array();
          $this->attributes['tagsnames'] = array();
-         if($tags)
+         if($usedb)
          {
-            foreach($tags as $tag) {
-               $this->attributes['tags'][$tag->id] = $tag;
-               $this->attributes['tagsnames'][] = $tag->tag;
+            $tags = sh_get_video_tags($this->id);
+            if($tags)
+            {
+               foreach($tags as $tag) {
+                  $this->attributes['tags'][$tag->id] = $tag;
+                  $this->attributes['tagsnames'][] = $tag->tag;
+               }
             }
          }
          return $this->tags;
@@ -158,6 +162,16 @@ if(!class_exists('SH_Video')) {
          $this->attributes['categories'][$cat->id] = $cat;
          return true;
 
+      }
+
+      public function add_tag($tag)
+      {
+         if(!is_object($tag)) return false;
+         if(!isset($this->attributes['tags'])) $this->attributes['tags'] = array();
+         if(!isset($this->attributes['tagsnames'])) $this->attributes['tagsnames'] = array();
+         $this->attributes['tags'][$tag->id] = $tag;
+         $this->attributes['tagsnames'][] = $tag->tag;
+         return true;
       }
 
       public function get_categories($usedb=true)
