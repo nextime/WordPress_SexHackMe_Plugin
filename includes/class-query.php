@@ -81,15 +81,21 @@ if(!class_exists('SH_Query')) {
 
                $count++;
             }
+            $updateid = false;
+            $sqlarr = array();
             if((is_long($video->id) || is_numeric($video->id)) && intval($video->id) > 0)
             {
                // Save an already existing video entry
                $sql = "UPDATE {$wpdb->prefix}".SH_PREFIX."videos SET
-                           {$fields}
+                          {$fields}
 								WHERE
-									id = {$video->id};";
-               $wpdb->query( $sql );
-
+                           id = {$video->id};";
+               $sqlarr[] = "DELETE FROM {$wpdb->prefix}".SH_PREFIX."videotags_assoc 
+                        WHERE
+                           video_id = {$video->id};";
+               $sqlarr[] = "DELETE FROM {$wpdb->prefix}".SH_PREFIX."videocategory_assoc 
+                        WHERE
+                           video_id = {$video->id};\n";
             } 
             else 
             {
@@ -97,12 +103,42 @@ if(!class_exists('SH_Query')) {
                $sql = "INSERT INTO {$wpdb->prefix}".SH_PREFIX."videos 
                               ({$keys})
                            VALUES  
-                              ({$values});";
-					$wpdb->query( $sql );
-					$video->id = $wpdb->insert_id;
+                              ({$values});\n";
+
+               $updateid = true;
 
             }
-            //sexhack_log($sql);
+				$wpdb->query( $sql );
+            if($updateid) $video->id = $wpdb->insert_id;
+            sexhack_log($sql);
+
+            foreach($video->get_categories() as $cat)
+            {  
+               $sqlarr[] = "INSERT INTO {$wpdb->prefix}".SH_PREFIX."videocategory_assoc
+                              (cat_id, video_id)
+                           VALUES
+                              ({$cat->id}, {$video->id});\n";
+            }
+            foreach($video->get_tags_names() as $tagname)
+            {   
+               $tagname = $wpdb->_real_escape($tagname);
+               $q = "INSERT IGNORE INTO {$wpdb->prefix}".SH_PREFIX."videotags 
+                              (tag) VALUES ('{$tagname}');";
+               $wpdb->query($q);
+                  
+               $sqlarr[] = "INSERT INTO {$wpdb->prefix}".SH_PREFIX."videotags_assoc
+                              (tag_id, video_id)
+                           VALUES
+                              ((SELET id FROM {$wpdb->prefix}".SH_PREFIX."videotags WHERE tag='{$tagname}'), {$video->id});";
+               
+            }
+            foreach($sqlarr as $sql)
+            {
+               sexhack_log($sql);
+               if($sql)
+				      $wpdb->query( $sql );  
+            }
+
             return $video;
 
          }
@@ -119,8 +155,18 @@ if(!class_exists('SH_Query')) {
 
          if(!$idtype) return false;
 
-         $sql = "DELETE FROM {$wpdb->prefix}".SH_PREFIX."videos WHERE {$idtype}=".intval($id);
-         return $wpdb->query( $sql );
+         $sqlarr = array();
+         $sqlarr[] = "DELETE FROM {$wpdb->prefix}".SH_PREFIX."videotags_assoc WHERE video_id IN (
+                         SELECT id FROM {$wpdb->prefix}".SH_PREFIX."videos
+                            WHERE {$idtype}=".intval($id)." );";
+         $sqlarr[] = "DELETE FROM {$wpdb->prefix}".SH_PREFIX."videocategory_assoc WHERE video_id IN (
+                         SELECT id FROM {$wpdb->prefix}".SH_PREFIX."videos
+                            WHERE {$idtype}=".intval($id)." );";
+         $sqlarr[] = "DELETE FROM {$wpdb->prefix}".SH_PREFIX."videos WHERE {$idtype}=".intval($id);
+         foreach($sqlarr as $sql)
+         {
+            $wpdb->query( $sql );
+         }
 
       }
 
@@ -172,7 +218,7 @@ if(!class_exists('SH_Query')) {
 
 			$results = array();
          //$sql = $wpdb->prepare("SELECT * from {$wpdb->prefix}{$prefix}videos");
-         $sql = "SELECT * from {$wpdb->prefix}".SH_PREFIX."videos";
+         $sql = "SELECT * FROM {$wpdb->prefix}".SH_PREFIX."videos";
          $dbres = $wpdb->get_results( $sql );
 		
          foreach($dbres as $row)
@@ -185,6 +231,77 @@ if(!class_exists('SH_Query')) {
 
       }
 
+
+      public static function get_Categories($id=false)
+      {
+         global $wpdb;
+
+         $sql = "SELECT * FROM {$wpdb->prefix}".SH_PREFIX."videocategory";
+         if($id && is_numeric($id)) 
+            $sql .= " WHERE id='".intval($id)."'";
+         $dbres = $wpdb->get_results( $sql );
+         return $dbres;
+      }
+
+
+      public static function get_Video_Categories($vid)
+      {
+         global $wpdb;
+
+
+         $sql = "SELECT * FROM {$wpdb->prefix}".SH_PREFIX."videocategory WHERE id IN ";
+         $sql .= "( SELECT cat_id FROM {$wpdb->prefix}".SH_PREFIX."videocategory_assoc WHERE video_id=".intval($vid)." );";
+         $dbres = $wpdb->get_results( $sql );
+         return $dbres;
+      }
+
+      public static function delete_Categories_assoc($id, $idtype)
+      {
+         global $wpdb;
+
+         if(!is_integer($id))
+            return;
+
+         $idtype=sanitize_idtype($idtype);
+
+         if(!in_array($idtype, array('id', 'cat_id', 'video_id'))) return false;
+
+         $sql = "DELETE FROM {$wpdb->prefix}".SH_PREFIX."videocategory_assoc WHERE {$idtpe}={$id}";
+
+         return $wpdb->query( $sql );
+
+      }
+
+      public static function get_Video_Tags($vid)
+      {
+         global $wpdb;
+
+
+         $sql = "SELECT * FROM {$wpdb->prefix}".SH_PREFIX."videotags WHERE id IN ";
+         $sql .= "( SELECT tag_id FROM {$wpdb->prefix}".SH_PREFIX."videotags_assoc WHERE video_id=".intval($vid)." );";
+         $dbres = $wpdb->get_results( $sql );
+         return $dbres;
+      }
+
+      public static function delete_Tags_assoc($id, $idtype)
+      {
+         global $wpdb;
+           
+         if(!is_integer($id))
+            return;
+
+         $idtype=sanitize_idtype($idtype);
+
+         if(!in_array($idtype, array('id', 'tag_id', 'video_id'))) return false;
+
+         $sql = "DELETE FROM {$wpdb->prefix}".SH_PREFIX."videotags_assoc WHERE {$idtpe}={$id}";
+
+         return $wpdb->query( $sql );
+
+      }
+
+
+      // XXX Deprecated TODO remove it
       public static function get_Products($vcat=false)
       {
          $filter=false;

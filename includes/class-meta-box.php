@@ -47,14 +47,15 @@ if(!class_exists('SH_MetaBox')) {
          // Video tags
          add_meta_box('video_tags', 'Video tags', 'wp_SexHackMe\SH_MetaBox::video_tags_meta_box', 'sexhack_video', 'side', 'default');
 
-         // XXX Remove Paid Member Subscription meta boxes
-         remove_meta_box( 'pms_post_content_restriction', 'sexhack_video', 'default');
-
-         // XXX Remove Members plugin meta box
-         remove_meta_box( 'members-cp', 'sexhack_video', 'default');
-
          // Re-add featured image thumbnail
          add_meta_box('video_postimagediv', 'Video Thumbnail', 'post_thumbnail_meta_box', 'sexhack_video', 'side', 'default');
+
+         // XXX Remove Paid Member Subscription meta boxes
+         remove_meta_box( 'pms_post_content_restriction', 'sexhack_video', 'normal');
+
+         // XXX Remove Members plugin meta box
+         remove_meta_box( 'members-cp', 'sexhack_video', 'advanced');
+
       }
 
       public static function main_metabox_video($post)
@@ -62,112 +63,60 @@ if(!class_exists('SH_MetaBox')) {
          wp_nonce_field('video_description_nonce','sh_video_description_nonce');
 
          $video = sh_get_video_from_post($post->ID);
-         if(!$video) $video = new SH_Video();
-         $video->post_id = $post->ID;
-         $video->post = $post;
+         if(!$video) 
+         {
+            $video = new SH_Video();
+            $video->post_id = $post->ID;
+            $video->post = $post;
+         }
          sh_get_template("admin/metabox_video.php", array('video' => $video, 'post' => $post));   
 
       }
 
       public static function model_select_meta_box( $post, $box ) {
-         sh_get_template("admin/metabox_model.php");
+         $video = sh_get_video_from_post($post->ID);
+         if(!$video) 
+         {
+            $video = new SH_Video();
+            $video->post_id = $post->ID;
+            $video->post = $post;
+         }
+         sh_get_template("admin/metabox_model.php", array('video' => $video, 'post' => $post));
       }
 
       public static function video_categories_meta_box( $post, $box ) {
-         sh_get_template("admin/metabox_videocategories.php");
+         $video = sh_get_video_from_post($post->ID);
+         if(!$video)
+         {
+            $video = new SH_Video();
+            $video->post_id = $post->ID;
+            $video->post = $post;
+         }
+         $cats = sh_get_categories();
+         sh_get_template("admin/metabox_videocategories.php", 
+                              array('video' => $video, 
+                                    'post' => $post,
+                                    'cats' => $cats,
+                                    ));
       }
 
       
 
 		public static function video_tags_meta_box( $post, $box ) {
-    		$user_can_assign_terms = true; //current_user_can( $taxonomy->cap->assign_terms );
-    		$comma                 = _x( ',', 'tag delimiter' );
-    		$terms_to_edit         = "prova,prova2,antani"; //get_terms_to_edit( $post->ID, $tax_name );
-    		if ( ! is_string( $terms_to_edit ) ) {
-        		$terms_to_edit = '';
-    		}
-			sh_get_template("admin/metabox_videotags.php", array('terms_to_edit' => $terms_to_edit, "comma" => $comma, 'user_can_assign_terms' => $user_can_assign_terms));
+         $video = sh_get_video_from_post($post->ID);
+         if(!$video)
+         {
+            $video = new SH_Video();
+            $video->post_id = $post->ID;
+            $video->post = $post;
+         }
+			sh_get_template("admin/metabox_videotags.php" , array('video' => $video, 'post' => $post));
 		}
 
 
       public static function save_meta_box_data($post_id)
       {
-         return SH_MetaBox::save_sexhack_video_meta_box_data($post_id);
-      }
-
-      public static function save_sexhack_video_meta_box_data( $post_id ) 
-      {
-
-
-         // Verify that the nonce is set and valid.
-         if (!isset( $_POST['sh_video_description_nonce'])
-            || !wp_verify_nonce( $_POST['sh_video_description_nonce'], 'video_description_nonce' ) ) {
-            return;
-         }
-
-         // If this is an autosave, our form has not been submitted, so we don't want to do anything.
-         if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
-            return;
-         }
-
-         // Check the user's permissions.
-         if ( isset( $_POST['post_type'] ) && 'page' == $_POST['post_type'] ) {
-
-            if ( ! current_user_can( 'edit_page', $post_id ) ) {
-               return;
-            }
-
-         }
-          else {
-            if ( ! current_user_can( 'edit_post', $post_id ) ) {
-               return;
-            }
-         }
-         /* OK, it's safe for us to save the data now. */
-
-         // Make sure that it is set.
-         if ( ! isset( $_POST['video_description'] ) ) {
-            return;
-         }
-         
-         $video = sh_get_video_from_post($post_id);
-         if(!$video) $video = new SH_Video();
-         $video->post_id = $post_id;
-         $post = $video->get_post();
-
-         // XXX TODO Sanitize inputs!
-         //
-         // Title and slug 
-         $video->title = $post->post_title;
-         $video->slug = $post->post_name;
-
-
-         // TODO Remove debug
-         sexhack_log("SAVE post object:");
-         sexhack_log($post);
-         sexhack_log('   - $POST:');
-         sexhack_log($_POST);
-
-         // Video description
-         $video->description = sanitize_text_field( $_POST['video_description'] );
-
-         // Video thumbnail
-         if(array_key_exists('video_thumbnail', $_POST) && sanitize_text_field($_POST['video_thumbnail']))
-            $video->thumbnail = sanitize_text_field( $_POST['video_thumbnail'] );
-         else if(array_key_exists('_thumbnail_id', $_POST)
-            && is_numeric($_POST['_thumbnail_id'])
-            && intval($_POST['_thumbnail_id']) > 0)
-         {
-            $video->thumbnail = intval($_POST['_thumbnail_id']);
-         }
-         else
-            $video->thumbnail = false;
-
-
-
-         // Save the video data in the database.
-         sh_save_video($video);
-
+         return save_sexhack_video_meta_box_data($post_id);
       }
 
    }

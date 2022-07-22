@@ -21,13 +21,22 @@
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit;
+
 ?>
    <div class="wrap">
          <table class="form-table">
             <tr align="top">
                <td>
-                  <label>Slug for gallery</label>
-                  <input type="text" name="vcategory" value="<?php echo get_option( 'sexhack_gallery_slug', "v" ) ?>" />
+                  <?php
+                     foreach($cats as $cat)
+                     {
+                        echo "<p><input type='checkbox' name='vcategory[]' value='".$cat->id."' ";
+                        if($video->has_category($cat->id)) echo "checked />";
+                        echo "<label>".$cat->category."</label></p>\n";
+
+                     }
+               
+                  ?>
                </td>
             </tr>
          </table>

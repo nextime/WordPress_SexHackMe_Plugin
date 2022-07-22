@@ -26,8 +26,18 @@ if ( ! defined( 'ABSPATH' ) ) exit;
          <table class="form-table">
             <tr align="top">
                <td>
-                  <label>Slug for gallery</label>
-                  <input type="text" name="vmodel" value="<?php echo get_option( 'sexhack_gallery_slug', "v" ) ?>" />
+                  <p><label>Select user</label></p>
+                  <?php // XXX When this will be with thousands of model will definely not scale! ?>
+                  <select name='video_model'>
+                  <?php
+                     $models = get_users( array( 'role__in' => array( 'model' ) ) );
+                     foreach($models as $user)
+                     {
+                        echo "<option value='".$user->ID."' ";
+                        if($video->user_id==$user->ID) echo "selected";
+                        echo '>'.$user->user_login." (id:".$user->ID.")</option>";
+                     } ?>
+                  </select>
                </td>
             </tr>
          </table>

@@ -75,5 +75,38 @@ function sh_get_video_from_product($p)
    return false;
 }
 
+function sh_get_categories($id=false)
+{
+   return SH_Query::get_Categories($id);
+}
+
+function sh_get_video_categories($v)
+{
+   if(is_numeric($v) and $v > 0) return SH_Query::get_Video_Categories($v);
+   else if(is_object($v)) return SH_Query::get_Video_Categories($v->id);
+   return false;
+}
+
+function sh_get_video_tags($v)
+{
+   if(is_numeric($v) and $v > 0) return SH_Query::get_Video_Tags($v);
+   else if(is_object($v)) return SH_Query::get_Video_Tags($v->id);
+   return false;
+}
+
+function sh_delete_tags_from_video($v)
+{
+   if(is_numeric($v) and $v > 0) return SH_Query::delete_Tags_assoc($v, 'video_id');
+   else if(is_object($v)) return SH_Query::get_Video_Tags($v->id, 'video_id');
+   return false;
+}
+
+function sh_delete_categories_from_video($v)
+{  
+   if(is_numeric($v) and $v > 0) return SH_Query::delete_Categories_assoc($v, 'video_id');
+   else if(is_object($v)) return SH_Query::get_Categories_Tags($v->id, 'video_id');
+   return false;
+}
+
 
 ?>

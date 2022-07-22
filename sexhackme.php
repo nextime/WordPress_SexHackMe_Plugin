@@ -238,7 +238,7 @@ if(!class_exists('SexHackMe_Plugin')) {
              id bigint(20) AUTO_INCREMENT NOT NULL,
              tag varchar(32) NOT NULL,
              PRIMARY KEY (id),
-             KEY tag (tag)
+             UNIQUE KEY tag (tag)
          ) {$charset_collate};
          CREATE TABLE {$wpdb->prefix}{$this->prefix}videoguests_assoc (
              id bigint(20) AUTO_INCREMENT NOT NULL,
@@ -399,9 +399,12 @@ if(!class_exists('SexHackMe_Plugin')) {
          $this->file_include('includes/functions-video.php');
          $this->file_include('includes/class-post_type-video.php');
 
+
          /* Video Gallery */
          $this->file_include('includes/class-videogallery.php');
 
+         /* Form posts functions */
+         $this->file_include('includes/functions-forms-save.php');
 
          /* Shortcodes */
          $this->file_include('includes/class-shortcodes.php');
@@ -469,7 +472,7 @@ if(!class_exists('SexHackMe_Plugin')) {
              add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ) );
 
          // Initialize Custom post_types 
-         add_action( 'init', array( 'wp_SexHackMe\SH_PostTypes', 'init') );
+         add_action( 'init', array( 'wp_SexHackMe\SH_PostTypes', 'init'));
 
          // Initialize shortcodes
          add_action( 'init', array( 'wp_SexHackMe\SH_Shortcodes', 'init' ) );
@@ -642,8 +645,8 @@ if(!class_exists('SexHackMe_Plugin')) {
 if( WP_DEBUG === true ){
    // only matched?
    //add_action("the_post", 'wp_SexHackMe\debug_rewrite_rules');
-   sexhack_log("REQUEST: ".$_SERVER['REQUEST_URI']." QUERY: ".$_SERVER['QUERY_STRING']. "POST:");
-   sexhack_log($_POST);
+   //sexhack_log("REQUEST: ".$_SERVER['REQUEST_URI']." QUERY: ".$_SERVER['QUERY_STRING']. "POST:");
+   //sexhack_log($_POST);
 }
 
 

@@ -30,16 +30,28 @@ echo '<style>div#visibility.misc-pub-section.misc-pub-visibility{display:none}</
       <textarea style="width:100%" id="video_description" name="video_description"><?php  echo esc_attr( $video->description ); ?></textarea>
    </p>
    <p>
+      <h4>Status:</h4>
+      <select name='video_status'>
+         <option value='creating' <?php if($video->status=='creating') echo "selected"; ?>>Creating</option>
+         <option value='uploading' <?php if($video->status=='uploading') echo "selected"; ?>>Uploading</option>
+         <option value='processing' <?php if($video->status=='processing') echo "selected"; ?>>Processing</option>
+         <option value='ready' <?php if($video->status=='ready') echo "selected"; ?>>Ready</option>
+         <option value='published' <?php if($video->status=='published') echo "selected"; ?>>Published</option>
+         <option value='error' <?php if($video->status=='error') echo "selected"; ?>>Error</option>
+      </select>
+   </p>
+
+   <p>
       <h4>Privacy:</h4>
       <p>
          <label> * Show video in public gallery?</label>
-         <input type='radio' name='video_visible' value='Y'>Yes</input>
-         <input type='radio' name='video_visible' value='N'>No</input>
+         <input type='radio' name='video_visible' value='Y' <?php if($video->visible=='Y') echo "checked"; ?>>Yes</input>
+         <input type='radio' name='video_visible' value='N' <?php if($video->visible=='N') echo "checked"; ?>>No</input>
       </p>
       <p>
          <label> * Show video in profile gallery?</label>
-         <input type='radio' name='video_private' value='N'>Yes</input>
-         <input type='radio' name='video_private' value='Y'>No</input>
+         <input type='radio' name='video_private' value='N' <?php if($video->private=='N') echo "checked"; ?>>Yes</input>
+         <input type='radio' name='video_private' value='Y' <?php if($video->private=='Y') echo "checked"; ?>>No</input>
       </p>
    </p>
    <p>
@@ -62,15 +74,16 @@ echo '<style>div#visibility.misc-pub-section.misc-pub-visibility{display:none}</
       <h4>Virtual Reality</h4>
       <p>
          <label> * VR Video?:</label>
-         <input type='radio' name='video_type' value='VR'>Yes</input>
-         <input type='radio' name='video_type' value='FLAT'>No</input>
+         <input type='radio' name='video_type' value='VR' <?php if($video->video_type=='VR') echo "checked"; ?>>Yes</input>
+         <input type='radio' name='video_type' value='FLAT' <?php if($video->video_type=='FLAT') echo "checked"; ?>>No</input>
       </p>
       <p>
          <label> * VR Projection</label>
          <select name='video_vr_projection'>
-            <option value='VR180_LR'>Equirectangular 180 LR</option>
-            <option value='VR360_LR'>Equirectangular 360 LR</option>
+            <option value='VR180_LR' <?php if($video->video_vr_projection=='VR180_LR') echo "selected"; ?>>Equirectangular 180 LR</option>
+            <option value='VR360_LR' <?php if($video->video_vr_projection=='VR360_LR') echo "selected"; ?>>Equirectangular 360 LR</option>
          </select>
+         <label>(ignored for non VR videos)</option>
       </p>
    </p>
    <p>

@@ -245,6 +245,16 @@ function trim_text_preview($text, $len=340, $fill=false)
    return $text;
 }
 
+function check_url_or_path($url)
+{
+   if (strncmp($url, "/", 1) === 0)
+      return 'path';
+   else if(filter_var($url, FILTER_VALIDATE_URL))
+      return 'uri';
+
+   return false;
+}
+
 function html2text($html)
 {
     // remove comments and any content found in the the comment area (strip_tags only removes the actual tags).

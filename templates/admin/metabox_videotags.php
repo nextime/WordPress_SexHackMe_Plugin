@@ -22,13 +22,24 @@
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit;
 ?>
+<p>
 <div id="shvtags">
-  <span>amateur</span>
-  <span>sexhackme</span>
+<?php
+foreach($video->get_tags() as $tag)
+{
+   echo "  <span>".$tag->tag."</span>\n";
+}
+?>
   <input type="text" value="" placeholder="Add a tag" />
 </div>
-
-<div>
+</p>
+<p>
+<div width="100%">
+<br><br><br>
 <p class="howto" id="new-tag-video_tags-desc">Insert tag, confirm with enter or comma</p>
 </div>
+</p>
+<div id="vtagsdata"></div>
+<!--
 <p class="hide-if-no-js"><button type="button" class="button-link tagcloud-link" id="link-video_tags" aria-expanded="false">Choose from the most used tags</button></p>
+-->

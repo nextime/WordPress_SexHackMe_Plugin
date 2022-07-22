@@ -41,7 +41,7 @@ if(!class_exists('SH_Video')) {
          'visible' => 'Y',
          'title' => '',
          'description' => '', 
-         'uploaded' => false,
+         'created' => false,
          'updated' => false,
          'slug' => '', 
          'price' => 0,
@@ -62,6 +62,12 @@ if(!class_exists('SH_Video')) {
          'format_public' => false,
          'format_members' => false,
          'format_premium' => false,
+         'codec_public' => 'h264',
+         'codec_members' => 'h264',
+         'codec_premium' => 'h264',
+         'acodec_public' => 'h264',
+         'acodec_members' => 'h264',
+         'acodec_premium' => 'h264',
          'duration_public' => false,
          'duration_members' => false,
          'duration_premium' => false,
@@ -122,6 +128,55 @@ if(!class_exists('SH_Video')) {
          return isset($this->attributes['key']);
       }
 
+      public function get_tags()
+      {
+         if(isset($this->attributes['tags'])) return $this->tags;
+         $tags = sh_get_video_tags($this->id);
+         $this->tags = array();
+         $this->tagsnames = array();
+         $tags_indexed = array();
+         $tagsnames = array();
+         if($tags)
+         {
+            foreach($tags as $tag) {
+               $tags_indexed[$tag->id] = $tag;
+               $tagsnames[] = $tag->tag;
+            }
+            $this->tags = $tags_indexed;
+            $this->tagsnames = $tagsnames;
+         }
+         return $this->tags;
+      }
+
+      public function get_tags_names()
+      {
+         if(isset($this->attributes['tagsnames'])) return $this->tagsnames;
+         $this->get_tags();
+         return $this->tagsnames;
+      }
+
+      public function get_categories()
+      {
+         if(isset($this->attributes['categories'])) return $this->categories;
+         $cats = sh_get_video_categories($this->id);
+         $this->categories = array();
+         $cats_indexed = array();
+         if($cats)
+         {
+            foreach($cats as $cat)
+               $cats_indexed[$cat->id] = $cat;
+            $this->categories = $cats_indexed;
+         }
+         return $this->categories;
+      }
+
+      public function has_category($cat_id)
+      {
+         if(!isset($this->attributes['categories'])) $this->get_categories();
+         if(in_array($cat_id, array_keys($this->categories))) return true;
+         return false;
+      }
+
       public function get_post()
       {
          if(isset($this->attributes['post'])) return $this->post;
@@ -163,7 +218,7 @@ if(!class_exists('SH_Video')) {
          $r = array();
          foreach($this->attributes as $k => $v)
          {
-            if(($v) && !in_array($k, array('post', 'product')) ) $r[$k] = $v;
+            if(($v) && !in_array($k, array('id', 'post', 'product', 'tags','categories', 'tagsnames')) ) $r[$k] = $v;
          }
          return $r;
       }
