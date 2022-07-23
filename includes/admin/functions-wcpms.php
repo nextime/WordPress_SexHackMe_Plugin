@@ -40,5 +40,9 @@ function settings_wcpms_section_email()
    echo "<h2>WooCommerce Checkout Email endpoint</h2>";
 }
 
+function settings_wcpms_section_prodcat()
+{
+   echo "<h2>WooCommerce auto-roducts for Videos</h2>";
+}
 
 ?>

@@ -33,12 +33,18 @@ if(!class_exists("SH_VideoProducts")) {
       {
          //add_action('sh_save_video_after_query', array($this, 'sync_product_from_video'), 1, 10);
          add_filter('video_before_save', array($this, 'sync_product_from_video'));
+
+         add_action('sh_delete_video', array($this, 'delete_video_product'), 1, 10);
+      }
+
+      public function delete_video_product($video)
+      {
+         if($video->product_id > 0) return sh_wc_deleteProduct($video->product_id, true);
+         return false;
       }
 
       public function sync_product_from_video($video)
       {
-         sexhack_log("PRODUUUUUUCT");
-         sexhack_log($video);
 
          $prod = false;
 
@@ -66,12 +72,13 @@ if(!class_exists("SH_VideoProducts")) {
 
          // Product status.
          if($video->status == 'published')
-            $prod->set_status('published');
+            $prod->set_status('publish');
          else
             $prod->set_status('draft');
 
-         // Not visible in catalog
-         $prod->set_catalog_visibility('hidden');
+         // Catalog visibility
+         if(get_option('sexhack_wcpms-prodvisible', false)) $prod->set_catalog_visibility('visible');
+         else $prod->set_catalog_visibility('hidden');
 
          // Set the product as virtual and downloadable
          $prod->set_virtual(true);
@@ -129,6 +136,23 @@ if(!class_exists("SH_VideoProducts")) {
          }  
 
 			$prod->set_downloads( $wcdowns );
+
+
+         // Categories. If not configured try to search
+         // for a category named "Video", if not present 
+         // just take the last one in list, if no categories
+         // exists just don't set anything and will remain in 
+         // Uncategorized.
+         $cat_id = get_option('sexhack_wcpms-prodcat', false);
+         if($cat_id) $prod->set_category_ids(array($cat_id));
+         else {
+            $cat = false;
+            foreach( get_categories(array('taxonomy' => 'product_cat')) as $cat)
+            {
+               if($cat->name == 'Video') break;
+            }
+            if($cat) $prod->set_category_ids(array($cat->term_id));
+         }
 
 
 		   $prod->save();

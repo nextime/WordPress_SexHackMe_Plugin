@@ -160,9 +160,13 @@ if(!class_exists('SH_Query')) {
          if(!is_integer($id))
             return;
 
+         $video = SH_Query::get_Video($id, $idtype);
          $idtype=sanitize_idtype($idtype);
 
          if(!$idtype) return false;
+
+         do_action('sh_delete_video', $video);
+
 
          $sqlarr = array();
          $sqlarr[] = "DELETE FROM {$wpdb->prefix}".SH_PREFIX."videotags_assoc WHERE video_id IN (

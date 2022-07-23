@@ -78,6 +78,32 @@ $plans = wp_SexHackMe\sh_get_subscription_plans();
                </td>
             </tr>
           </table>
+          <?php do_settings_sections( 'sexhackme-wcpms-settings-prodcat' ); ?>
+         <table class="form-table">
+            <tr align="top">
+               <td>
+                    <select id="sexhackme_wcpms-prodcat" name="sexhack_wcpms-prodcat" class="widefat">
+                        <option value="-1">Choose...</option>
+                        <?php
+                        $opt=get_option("sexhack_wcpms-prodcat");
+                        foreach( get_categories(array('taxonomy' => 'product_cat')) as $cat)
+                        {
+                           echo '<option value="' . esc_attr( $cat->term_id ) . '"';
+                           if ($opt == $cat->term_id) { echo "selected";}
+                           echo '>' . esc_html( $cat->name ) . ' ( ID: ' . esc_attr( $cat->term_id) . ')' . '</option>';
+                        }  ?>
+
+                     </select>
+                     <p class="description">Select default woocommerce product category for auto-product creation</p>
+               </td>
+            </tr>
+            <tr align="top">
+               <td>
+                  <input type='checkbox' name='sexhack_wcpms-prodvisible' <?php if(get_option('sexhack_wcpms-prodvisible', false)) echo "checked"?> />
+                  <p class="description">Show products auto-created in shop?</p>
+               </td>
+            </tr>
+          </table>
          <?php submit_button(); ?>
          </form>
    </div>

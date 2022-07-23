@@ -50,6 +50,12 @@ if(!class_exists('SH_Admin')) {
             }
             add_settings_section('sexhackme-wcpms-settings', ' ', 'wp_SexHackMe\settings_wcpms_section_email', 'sexhackme-wcpms-settings-email');
             register_setting('sexhackme-wcpms-settings', 'sexhack_registration_mail_endpoint');
+
+            add_settings_section('sexhackme-wcpms-settings', ' ', 'wp_SexHackMe\settings_wcpms_section_prodcat', 'sexhackme-wcpms-settings-prodcat');
+            register_setting('sexhackme-wcpms-settings', 'sexhack_wcpms-prodcat');
+            register_setting('sexhackme-wcpms-settings', 'sexhack_wcpms-prodvisible');
+
+
          }
 
          // Add Advertising settings
