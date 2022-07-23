@@ -59,10 +59,10 @@ if(!class_exists("SH_VideoProducts")) {
 
          // main product settings
          $prod->set_name($video->title);
-         $prod->set_slug($video->slug); // XXX TODO Compose slug with username too to avoid name collisions?
+         $prod->set_slug($video->slug); 
 
          // Product description.
-			$video_link=site_url().'/'.get_option('gallery_slug', 'v')."/"; // XXX TODO Get the right product link
+			$video_link=site_url().'/'.get_option('gallery_slug', 'v')."/".$video->slug."/"; 
          $prod->set_short_description('<p>Whach me <a href="'.$video_link.'">ONLINE HERE</a></p>');
          $prod->set_description($video->description);
 

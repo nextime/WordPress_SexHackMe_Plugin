@@ -81,13 +81,13 @@ function save_sexhack_video_meta_box_data( $post_id )
    //
    // Title and slug 
    $video->title = $post->post_title;
-   $video->slug = $post->post_name;
+   $video->slug = uniqidReal()."-".$post->post_name;
 
    // TODO Remove debug
-   sexhack_log("SAVE post object:");
-   sexhack_log($post);
-   sexhack_log('   - $POST:');
-   sexhack_log($_POST);
+   //sexhack_log("SAVE post object:");
+  // sexhack_log($post);
+  // sexhack_log('   - $POST:');
+  // sexhack_log($_POST);
 
 	// Model
 	if(array_key_exists('video_model', $_POST) && is_numeric($_POST['video_model']) && intval($_POST['video_model']) > 0)

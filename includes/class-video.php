@@ -184,7 +184,6 @@ if(!class_exists('SH_Video')) {
       public function get_guests($usedb=true)
       {
          if(isset($this->attributes['guests'])) return $this->guests;
-         sexhack_log("(TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
          $this->attributes['guests'] = array();
          if($usedb)
          {

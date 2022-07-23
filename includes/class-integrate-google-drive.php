@@ -36,6 +36,7 @@ if(!class_exists('SH_GDrive')) {
 
       function get_download_url($file)
       {
+         if(!($file && is_string($file) && strlen($file)>3)) return $file;
          if ( function_exists( 'igd_fs' ) )
          {
             // Integrate Google Drive Plugin is installed and active, so, filter it!
@@ -47,12 +48,11 @@ if(!class_exists('SH_GDrive')) {
                $gparts = explode('/', $gpath);
                if(count($gparts) > 0)
                {
-
+                  
                   $parent=false;
                   $gfile=false;
                   $success=false; 
                   $igd = \IGD\App::instance();
-
                   // Try root first
                   foreach($gparts as $k => $part)
                   {
@@ -100,12 +100,11 @@ if(!class_exists('SH_GDrive')) {
                         	if($g['name']==$part)
                         	{
                            	$parent=$g['id'];
-                           	$gf=$g;
+                              $gf=$g;
                         	}
 								}
                      }  
 						}
-
 
                   if(count($gparts)-1 == $k) $success=true;
 
