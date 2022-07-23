@@ -174,6 +174,31 @@ if(!class_exists('SH_Video')) {
          return true;
       }
 
+      public function add_guest($guest)
+      {
+         if(!is_object($guest)) return false;
+         if(!isset($this->attributes['guests'])) $this->attributes['guests'] = array();
+         $this->attributes['guests'][$guest->ID] = $guest;
+      }
+
+      public function get_guests($usedb=true)
+      {
+         if(isset($this->attributes['guests'])) return $this->guests;
+         sexhack_log("(TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
+         $this->attributes['guests'] = array();
+         if($usedb)
+         {
+            $guests = sh_get_video_guests($this->id);
+            if($guests)
+            {
+               foreach($guests as $guest)
+                  $this->attributes['guests'][$guest->ID] = $cat;
+
+            }
+         }
+         return $this->guests;
+      }
+
       public function get_categories($usedb=true)
       {
          if(isset($this->attributes['categories'])) return $this->categories;
@@ -239,7 +264,7 @@ if(!class_exists('SH_Video')) {
          foreach($this->attributes as $k => $v)
          {
             if(($v!==false) && !in_array($k, array('id','post','product','tags',
-               'categories','tagsnames','created','updated','sells',
+               'categories','tagsnames','created','updated','sells','guests',
                'views_public','views_members','views_premium')) ) $r[$k] = $v;
          }
          return $r;

@@ -94,6 +94,9 @@ if(!class_exists('SH_Query')) {
                           {$fields}
 								WHERE
                            id = {$video->id};";
+               $sqlarr[] = "DELETE FROM {$wpdb->prefix}".SH_PREFIX."videoguests_assoc
+                        WHERE
+                            video_id = {$video->id};";
                $sqlarr[] = "DELETE FROM {$wpdb->prefix}".SH_PREFIX."videotags_assoc 
                         WHERE
                            video_id = {$video->id};";
@@ -140,6 +143,13 @@ if(!class_exists('SH_Query')) {
                }
                
             }
+            foreach($video->get_guests() as $guest)
+            {
+               $sqlarr[] =  "INSERT INTO {$wpdb->prefix}".SH_PREFIX."videoguests_assoc
+                                 (user_id, video_id)
+                           VALUES
+                              ('{$guest->ID}', '{$video->id}');";
+            }
             foreach($sqlarr as $sql)
             {
                //sexhack_log($sql);
@@ -148,6 +158,8 @@ if(!class_exists('SH_Query')) {
             }
             do_action("sh_save_video_after_query", $video);
 
+            //sexhack_log($video);
+            //sexhack_log($sqlarr);
             return $video;
 
          }
@@ -169,6 +181,9 @@ if(!class_exists('SH_Query')) {
 
 
          $sqlarr = array();
+         $sqlarr[] = "DELETE FROM {$wpdb->prefix}".SH_PREFIX."videoguests_assoc WHERE video_id IN (
+                         SELECT id FROM {$wpdb->prefix}".SH_PREFIX."videos
+                            WHERE {$idtype}=".intval($id)." );";
          $sqlarr[] = "DELETE FROM {$wpdb->prefix}".SH_PREFIX."videotags_assoc WHERE video_id IN (
                          SELECT id FROM {$wpdb->prefix}".SH_PREFIX."videos
                             WHERE {$idtype}=".intval($id)." );";
@@ -275,6 +290,41 @@ if(!class_exists('SH_Query')) {
             }
          }
          return false;
+      }
+
+      public static function get_Video_Guests($vid)
+      {
+         global $wpdb;
+         $sql = "SELECT user_id FROM {$wpdb->prefix}".SH_PREFIX."videoguests_assoc WHERE video_id=".intval($vid)." ;";
+         $dbres = $wpdb->get_results( $sql );
+         $guests = array();
+         if($dbres && count($dbres) > 0)
+         {
+            foreach($dbres as $ures)
+            {
+               $udata = get_userdata($ures->user_id);
+               if($udata) $guests[$uid] = $udata;
+            }
+         }
+         if(count($guests) > 0) return $guests;
+         return false;
+      }
+
+      public static function delete_Guests_assoc($id, $idtype)
+      {
+         global $wpdb;
+
+         if(!is_integer($id))
+            return;
+
+         $idtype=sanitize_idtype($idtype);
+
+         if(!in_array($idtype, array('id', 'user_id', 'video_id'))) return false;
+
+         $sql = "DELETE FROM {$wpdb->prefix}".SH_PREFIX."videoguests_assoc WHERE {$idtpe}={$id}";
+
+         return $wpdb->query( $sql );
+
       }
 
       public static function get_Video_Categories($vid)

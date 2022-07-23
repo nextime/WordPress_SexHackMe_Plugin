@@ -2,6 +2,7 @@ jQuery(document).ready(function($) {
     $("#sh_admin_tabs .hidden").removeClass('hidden');
     $("#sh_admin_tabs").tabs({'active': 0});
 
+
   // ::: TAGS BOX
   $("#shvtags input").on({
     focusout : function() {

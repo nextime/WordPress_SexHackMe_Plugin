@@ -47,6 +47,10 @@ function sanitize_idtype($idt=false)
    {
       case 'post':
       case 'product':
+      case 'cat':
+      case 'video':
+      case 'user':
+      case 'tag':
          return $idt."_id";
          break;
       case 'id':

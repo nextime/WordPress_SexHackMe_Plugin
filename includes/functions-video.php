@@ -31,6 +31,7 @@ function sh_save_video($video)
       // Get from database active if not cached already.
       $video->get_categories(true);
       $video->get_tags(true);
+      $video->get_guests(true);
       return SH_Query::save_Video($video);
    }
    return false;
@@ -94,6 +95,14 @@ function sh_get_video_categories($v)
    return false;
 }
 
+function sh_get_video_guests($v)
+{
+   if(is_numeric($v) and $v > 0) return SH_Query::get_Video_Guests($v);
+   else if(is_object($v)) return SH_Query::get_Video_Guests($v->ID);
+   return false;
+}
+
+
 function sh_get_video_tags($v)
 {
    if(is_numeric($v) and $v > 0) return SH_Query::get_Video_Tags($v);
@@ -109,14 +118,22 @@ function sh_get_tag_by_name($name, $create=false)
 function sh_delete_tags_from_video($v)
 {
    if(is_numeric($v) and $v > 0) return SH_Query::delete_Tags_assoc($v, 'video_id');
-   else if(is_object($v)) return SH_Query::get_Video_Tags($v->id, 'video_id');
+   else if(is_object($v)) return SH_Query::get_delete_Tags_assoc($v->id, 'video_id');
    return false;
 }
+
+function sh_delete_guests_from_video($v)
+{  
+   if(is_numeric($v) and $v > 0) return SH_Query::delete_Guests_assoc($v, 'video_id');
+   else if(is_object($v)) return SH_Query::delete_Guests_assoc($v->id, 'video_id');
+   return false;
+}  
+
 
 function sh_delete_categories_from_video($v)
 {  
    if(is_numeric($v) and $v > 0) return SH_Query::delete_Categories_assoc($v, 'video_id');
-   else if(is_object($v)) return SH_Query::get_Categories_Tags($v->id, 'video_id');
+   else if(is_object($v)) return SH_Query::delete_Categories_assoc($v->id, 'video_id');
    return false;
 }
 

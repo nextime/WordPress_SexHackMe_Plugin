@@ -24,6 +24,18 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 // This is a dirty trick to hide the Visibility section in the publish metabox.
 echo '<style>div#visibility.misc-pub-section.misc-pub-visibility{display:none}</style>';
+
+if($video->product_id > 0)
+{
+   //$prod = wc_get_product($video->product_id);
+   $wcprodlink = site_url()."/wp-admin/post.php?post=".$video->product_id."&action=edit";
+   ?>
+   <p>
+      <label>WooCommerce Product: </label>
+      <a href='<?php echo $wcprodlink; ?>'><?php echo $wcprodlink; ?></a>
+   </p>
+   <?php
+}
 ?>
    <p>
       <h4>Video description</h4>

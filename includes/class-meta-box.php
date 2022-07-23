@@ -80,6 +80,7 @@ if(!class_exists('SH_MetaBox')) {
             $video = new SH_Video();
             $video->post_id = $post->ID;
             $video->post = $post;
+            $video->get_guests(true);
          }
          sh_get_template("admin/metabox_model.php", array('video' => $video, 'post' => $post));
       }

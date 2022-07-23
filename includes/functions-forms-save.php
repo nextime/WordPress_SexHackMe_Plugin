@@ -183,6 +183,22 @@ function save_sexhack_video_meta_box_data( $post_id )
 	
 	}
 
+   // Video Guests
+   if(array_key_exists('vguests', $_POST) && is_array($_POST['vguests']))
+   {
+      foreach($_POST['vguests'] as $guest_id)
+      {
+         if(is_numeric($guest_id) && intval($guest_id) > 0)
+         {
+            $guest = get_userdata(intval($guest_id));
+            if($guest) $video->add_guest($guest);
+         }
+      }
+   }
+   // Make sure the guestss array is initialized
+	$video->get_guests(false);
+
+
    // Video Categories
    if(array_key_exists('vcategory', $_POST) && is_array($_POST['vcategory']))
    {
