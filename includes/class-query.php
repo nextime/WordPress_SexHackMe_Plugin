@@ -52,6 +52,8 @@ if(!class_exists('SH_Query')) {
          if(is_object($video))
          {
 
+
+            $video = apply_filters('video_before_save', $video);
             //sexhack_log($video);
             $fieldsarrayraw = $video->get_sql_array();
             $fieldsarray = array();

@@ -33,6 +33,14 @@ function save_sexhack_video_meta_box_data( $post_id )
       return;
    }
 
+   // We need to be executed only when post_type is set...
+   if(!isset($_POST['post_type'])) return;
+   // ... ant it's set to sexhack_video
+   if($_POST['post_type']!='sexhack_video') return;
+
+   // Make sure we don't get caught in any loop
+   unset($_POST['sh_video_description_nonce']);
+
    // If this is an autosave, our form has not been submitted, so we don't want to do anything.
    if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
       return;

@@ -78,7 +78,7 @@ if(!class_exists('SH_Video')) {
          'views_public' => 0,
          'views_members' => 0,
          'views_premium' => 0,
-         'sells' => 0 
+         'sales' => 0 
       );
       public function __construct($attr=false)
       {

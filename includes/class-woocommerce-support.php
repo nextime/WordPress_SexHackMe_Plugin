@@ -31,7 +31,8 @@ if(!class_exists("SH_VideoProducts")) {
 
       public function __construct()
       {
-         add_action('sh_save_video_after_query', array($this, 'sync_product_from_video'), 1, 10);
+         //add_action('sh_save_video_after_query', array($this, 'sync_product_from_video'), 1, 10);
+         add_filter('video_before_save', array($this, 'sync_product_from_video'));
       }
 
       public function sync_product_from_video($video)
@@ -39,10 +40,103 @@ if(!class_exists("SH_VideoProducts")) {
          sexhack_log("PRODUUUUUUCT");
          sexhack_log($video);
 
-         $download = apply_filters('sh_download_url_filter', $video->download_public);
-         sexhack_log($download);
+         $prod = false;
+
+         // Get product if already set in video
+         if(intval($video->product_id) > 0)
+            $prod = wc_get_product($video->product_id);
+
+         // Create a new one if not present
+         if(!$prod) {
+            $prod = new \WC_Product_Simple();
+         }
+
+         // main product settings
+         $prod->set_name($video->title);
+         $prod->set_slug($video->slug); // XXX TODO Compose slug with username too to avoid name collisions?
+
+         // Product description.
+			$video_link=site_url().'/'.get_option('gallery_slug', 'v')."/"; // XXX TODO Get the right product link
+         $prod->set_short_description('<p>Whach me <a href="'.$video_link.'">ONLINE HERE</a></p>');
+         $prod->set_description($video->description);
+
+         // Product image: XXX TODO and if it isn't numeric?
+         if(is_numeric($video->thumbnail))
+            $prod->set_image_id( intval($video->thumbnail ));
+
+         // Product status.
+         if($video->status == 'published')
+            $prod->set_status('published');
+         else
+            $prod->set_status('draft');
+
+         // Not visible in catalog
+         $prod->set_catalog_visibility('hidden');
+
+         // Set the product as virtual and downloadable
+         $prod->set_virtual(true);
+         $prod->set_downloadable(true);
+
+         // Price
+         $prod->set_regular_price(floatval($video->price));
+
+			// Prepare product attributes
+			$attrs = array();
+
+			// Videw Preview
+			$attribute = new \WC_Product_Attribute();
+			$attribute->set_name( 'video_preview' );
+			$attribute->set_options( array($video->preview) );
+			$attribute->set_visible( false );
+			$attribute->set_variation( false );
+
+			$attrs[] = $attribute;
+			
+			$prod->set_attributes($attrs);
+
+         // Download links
+         $download_public = apply_filters('sh_download_url_filter', $video->download_public);
+         $download_members = apply_filters('sh_download_url_filter', $video->download_members);
+         $download_premium = apply_filters('sh_download_url_filter', $video->download_premium);
+
+         $wcdowns = array();
+
+         if($download_public) 
+         {
+            $wcdownload = new \WC_Product_Download();
+            $wcdownload->set_name(basename($video->download_public));  // XXX Do we really want to use basename here?
+            $wcdownload->set_id( md5( $download_public ));
+            $wcdownload->set_file( $download_public );
+				$wcdowns[] = $wcdownload;
+         }
+
+         if($download_members)
+         {  
+            $wcdownload = new \WC_Product_Download();
+            $wcdownload->set_name(basename($video->download_members));  // XXX Do we really want to use basename here?
+            $wcdownload->set_id( md5( $download_members ));
+            $wcdownload->set_file( $download_members );
+				$wcdowns[] = $wcdownload;
+         }
+
+         if($download_premium)
+         {  
+            $wcdownload = new \WC_Product_Download();
+            $wcdownload->set_name(basename($video->download_premium));  // XXX Do we really want to use basename here?
+            $wcdownload->set_id( md5( $download_premium ));
+            $wcdownload->set_file( $download_premium );
+            $wcdowns[] = $wcdownload;
+         }  
+
+			$prod->set_downloads( $wcdowns );
 
 
+		   $prod->save();
+			$video->product_id = $prod->get_id();
+
+			//sexhack_log($video);
+
+			return $video;
       }
 
    }

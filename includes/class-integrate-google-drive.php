@@ -92,7 +92,6 @@ if(!class_exists('SH_GDrive')) {
                         } else {
                            $gdo = $igd->get_files(array('q'=> "name='{$part}"), $parent, false);
                         }
-                        sexhack_log($gdo);
                         if(!is_array($gdo) || (count($gdo) < 1) || array_key_exists('error', $gdo)) break;
 
 								$parent=false;

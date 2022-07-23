@@ -48,7 +48,7 @@ if(!class_exists('SH_MetaBox')) {
          add_meta_box('video_tags', 'Video tags', 'wp_SexHackMe\SH_MetaBox::video_tags_meta_box', 'sexhack_video', 'side', 'default');
 
          // Re-add featured image thumbnail
-         add_meta_box('video_postimagediv', 'Video Thumbnail', 'post_thumbnail_meta_box', 'sexhack_video', 'side', 'default');
+         add_meta_box('postimagediv', 'Video Thumbnail', 'post_thumbnail_meta_box', 'sexhack_video', 'side', 'default');
 
          // XXX Remove Paid Member Subscription meta boxes
          remove_meta_box( 'pms_post_content_restriction', 'sexhack_video', 'normal');

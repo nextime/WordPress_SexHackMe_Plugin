@@ -9,6 +9,7 @@ based on the ideas I planned for www.sexhack.me:
 
  - Version 0.0.3:
    * Integration of Ultimate Members plugin for user and model profiles
+   * 404 Not Found page with gallery instead of WC products
 
  - Version 0.0.4:
    * Upload Videos page for models

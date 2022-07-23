@@ -211,7 +211,7 @@ if(!class_exists('SexHackMe_Plugin')) {
              views_public bigint(32) NOT NULL DEFAULT '0',
              views_members bigint(32) NOT NULL DEFAULT '0',
              views_premium bigint(32) NOT NULL DEFAULT '0',
-             sells bigint(32) NOT NULL DEFAULT '0',
+             sales bigint(32) NOT NULL DEFAULT '0',
              PRIMARY KEY  (id),
              KEY user_id (user_id),
              KEY post_id (post_id),
@@ -649,8 +649,8 @@ if(!class_exists('SexHackMe_Plugin')) {
 if( WP_DEBUG === true ){
    // only matched?
    //add_action("the_post", 'wp_SexHackMe\debug_rewrite_rules');
-   //sexhack_log("REQUEST: ".$_SERVER['REQUEST_URI']." QUERY: ".$_SERVER['QUERY_STRING']. "POST:");
-   //sexhack_log($_POST);
+   sexhack_log("REQUEST: ".$_SERVER['REQUEST_URI']." QUERY: ".$_SERVER['QUERY_STRING']. "POST:");
+   sexhack_log($_POST);
 }
 
 
