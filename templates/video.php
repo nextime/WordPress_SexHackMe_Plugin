@@ -36,6 +36,12 @@ if(!$sh_video) {
 }
 
 $video = sh_get_video_from_slug($sh_video);
+if(!$video) 
+{
+    wp_redirect(get_permalink(get_option('sexhack_video404_page', '0')));
+   exit ;
+
+}
 
 get_header(); ?>
 
