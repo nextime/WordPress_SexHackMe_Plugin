@@ -19,8 +19,23 @@
  * along with SexHackMe Wordpress Plugin. If not, see <https://www.gnu.org/licenses/>.
  */
 
+
+namespace wp_SexHackMe;
+
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit;
+
+sexhack_log("PORCALAPUPAZZA");
+
+sexhack_log(get_query_var('sh_video', 'NONEEEEEEEEEEEEEE!!!'));
+
+$sh_video = get_query_var('sh_video', false);
+if(!$sh_video) {
+   wp_redirect(get_permalink(get_option('sexhack_video404_page', '0')));
+   exit ;
+}
+
+$video = sh_get_video_from_slug($sh_video);
 
 get_header(); ?>
 
@@ -31,7 +46,7 @@ get_header(); ?>
          <header class="page-header">
             <?php
                //the_archive_title( '<h1 class="page-title">', '</h1>' );
-               the_archive_description( '<div class="taxonomy-description">', '</div>' ); // XXX Check it? what it does?
+               //the_archive_description( '<div class="taxonomy-description">', '</div>' ); // XXX Check it? what it does
             ?>
          </header><!-- .page-header -->
 
@@ -47,54 +62,48 @@ get_header(); ?>
 
 
             $htmltags = '<span><b>TAGS: </b></span>';
-            $tags = get_the_terms( get_the_ID(), 'product_tag' );
+            $tags = $video->get_tags();
             if ( ! empty( $tags ) && ! is_wp_error( $tags ) )
             {
                foreach($tags as $tag) {
-                  $htmltags.="<span>#".$tag->name . '</span> ';
+                  $htmltags.="<span>#".$tag->tag . '</span> ';
                }  
             }  
 
             $videoslug = get_option('sexhack_gallery_slug', 'v');
-            $vurl = str_replace("/product/", "/".$videoslug."/", esc_url( get_the_permalink() ));            
+            $vurl = "/".$videoslug."/".$sh_video."/";    
 
-            $prod = wc_get_product(get_the_ID());
-            $hls = $prod->get_attribute("hls_public");
-            $hls_members = $prod->get_attribute("hls_members");
-            $hls_premium = $prod->get_attribute("hls_premium");
-            $video_preview = $prod->get_attribute("video_preview");
-            $gif_preview = $prod->get_attribute("gif_preview");
-            $vr_premium = $prod->get_attribute("vr_premium");
-            $vr_members = $prod->get_attribute("vr_members");
-            $vr_public = $prod->get_attribute("vr_public");
-            $vr_preview = $prod->get_attribute("vr_preview");
-            $categories = explode(", ", wp_SexHackMe\html2text( wc_get_product_category_list($id)));
+            $prod = $video->get_product();
 
-            if(($hls) AND wp_SexHackMe\starts_with('/', $hls)) $hls = site_url().$hls;
-            if(($hls_members) AND wp_SexHackMe\starts_with('/', $hls_members)) $hls_members = site_url().$hls_members;
-            if(($hls_premium) AND wp_SexHackMe\starts_with('/', $hls_premium)) $hls_premium = site_url().$hls_premium;
-            if(($video_preview) AND wp_SexHackMe\starts_with('/', $video_preview)) $video_preview = site_url().$video_preview;
-            if(($vr_public) AND wp_SexHackMe\starts_with('/', $vr_public)) $vr_public = site_url().$vr_public;
-            if(($vr_members) AND wp_SexHackMe\starts_with('/', $vr_members)) $vr_members = site_url().$vr_members;
-            if(($vr_premium) AND wp_SexHackMe\starts_with('/', $vr_premium)) $vr_premium = site_url().$vr_premium;
-            if(($vr_preview) AND wp_SexHackMe\starts_with('/', $vr_preview)) $vr_preview = site_url().$vr_preview;
+            $hls_public = $video->hls_public;
+            $hls_members = $video->hls_members;
+            $hls_premium = $video->hls_premium;
+            $video_preview = $video->video_preview;
+            $gif_preview = $video->gif_small;
+            $gif = $video->gif;
 
-            $thumb = wp_get_attachment_url($prod->get_image_id());
+
+            $categories = $video->get_categories(true);
+
+            if(($hls_public) AND starts_with('/', $hls_public)) $hls_public = site_url().$hls_public;
+            if(($hls_members) AND starts_with('/', $hls_members)) $hls_members = site_url().$hls_members;
+            if(($hls_premium) AND starts_with('/', $hls_premium)) $hls_premium = site_url().$hls_premium;
+            if(($video_preview) AND starts_with('/', $video_preview)) $video_preview = site_url().$video_preview;
+
+            $t = $video->thumbnail;
+            if(is_numeric($t) )
+               $thumb = wp_get_attachment_url($video->thumbnail);
+            else
+               $thumb = $t;
 
             $avail = array();
             $tabtext = array('subscribers' => 'Subscribers',
-               'vrsub' => 'Subscribers',
                'members' => 'Members',
-               'vrmem' => 'Members', 
-               'vrpub' => 'Public',
                'public' => 'Public');
 
-            if($hls || $video_preview ) $avail[] = 'public';
-            if($vr_public || $vr_preview) $avail[] = 'vrpub';
+            if($hls_public || $video_preview ) $avail[] = 'public';
             if($hls_members) $avail[] = 'members';
-            if($vr_members) $avail[] = 'vrmem';
             if($hls_premium) $avail[] = 'subscribers';
-            if($vr_premium) $avail[] = 'vrsub';               
 
             $videoaccess = get_query_var('videoaccess', false);
             if($videoaccess && in_array($videoaccess, $avail))
@@ -103,32 +112,26 @@ get_header(); ?>
             } 
             else 
             {
-                 if(wp_SexHackMe\user_has_premium_access()) {
+                 if(user_has_premium_access()) {
                     if($hls_premium) $tab = 'subscribers';
-                    elseif($vr_premium) $tab = 'vrsub';
                     elseif($hls_members) $tab = 'members';
-                    elseif($vr_members) $tab = 'vrmem';
-                    elseif($vr_public || $vr_preview) $tab = 'vrpub';
                     else $tab = 'public';
                  }
-                 elseif(wp_SexHackMe\user_has_member_access())  // free membership
+                 elseif(user_has_member_access())  // free membership
                  {
                     if($hls_members) $tab = 'members';
-                    elseif($vr_members) $tab = 'vrmem';
-                    elseif($vr_public) $tab = 'vrpub';
                     else $tab = 'public';
                  } 
                  else  // public
                  {
-                    if($vr_public) $tab = 'vrpub';
-                    else $tab = 'public';
+                    $tab = 'public';
                  }
             }
             ?>
              <article id="post-<?php echo get_the_ID();?>" class="post-<?php echo get_the_ID();?> product type-product">
                <header class="entry-header">
                   <h2 class="alpha entry-title sexhack_video_title"> 
-                     <?php the_title(); echo " (".$tabtext[$tab]." version)"; ?> 
+                     <?php echo $video->get_title(); echo " (".$tabtext[$tab]." version)"; ?> 
                   </h2>   
                </header><!-- .entry-header -->
                <div class="sexhack-video-container">
@@ -140,11 +143,10 @@ get_header(); ?>
                {
 
                   case "members":
-                  case "vrmem":
-                     if(wp_SexHackMe\user_has_member_access())
+                     if(user_has_member_access())
                      {
-                        if($hls_members) echo do_shortcode( "[sexhls url=\"".$hls_members."\" posters=\"".$thumb."\"]" );
-                        else if($vr_members) echo do_shortcode( "[sexvideo url=\"".$vr_members."\" posters=\"".$thumb."\"]" );
+                        if($hls_members && $video->video_type=="VR" ) echo do_shortcode( "[sexvideo url=\"".$hls_members."\" posters=\"".$thumb."\"]" );
+                        else if($hls_members) echo do_shortcode( "[sexhls url=\"".$hls_members."\" posters=\"".$thumb."\"]" );
                         else echo "<h3 class='sexhack-videonotify'>SOMETHING WENT BADLY WRONG. I CAN'T FIND THE VIDEO</h3>";
                      }
                      else
@@ -157,11 +159,10 @@ get_header(); ?>
                      break;
 
                   case "subscribers":
-                  case "vrsub":
-                     if(wp_SexHackMe\user_has_premium_access())
+                     if(user_has_premium_access())
                      {
-                        if($hls_premium) echo do_shortcode( "[sexhls url=\"".$hls_premium."\" posters=\"".$thumb."\"]" );
-                        else if($vr_premium) echo do_shortcode( "[sexvideo url=\"".$vr_premium."\" posters=\"".$thumb."\"]" );
+                        if($hls_premium && $video->video_type=="VR") echo do_shortcode( "[sexvideo url=\"".$hlt_premium."\" posters=\"".$thumb."\"]" );
+                        else if($hls_premium) echo do_shortcode( "[sexhls url=\"".$hls_premium."\" posters=\"".$thumb."\"]" );
                         else echo "<h3  class='sexhack-videonotify'>SOMETHING WENT BADLY WRONG. I CAN'T FIND THE VIDEO</h3>";
 
                      }
@@ -173,12 +174,9 @@ get_header(); ?>
                      }
                      break;
                   
-                  case "vrpub":
                   default:  // public too!
-                     if($hls) echo do_shortcode( "[sexhls url=\"".$hls."\" posters=\"".$thumb."\"]" );
-                       else if($vr_public) echo do_shortcode( "[sexvideo url=\"".$vr_public."\" posters=\"".$thumb."\"]" );
-                       else if($video_preview) echo '<video src='."'$video_preview'".' controls autoplay muted playsinline loop poster="'.$thumb.'"></video>';
-                       else if($vr_preview) echo do_shortcode( "[sexvideo url=\"".$vr_preview."\" posters=\"".$thumb."\"]" );
+                       if($hls_public && $video->video_type=='VR') echo do_shortcode( "[sexvideo url=\"".$hls_public."\" posters=\"".$thumb."\"]" );
+                       else if($hls_public)  echo do_shortcode( "[sexhls url=\"".$hls."\" posters=\"".$thumb."\"]" );
                        else if($gif_preview) echo '<img class="sexhack_videopreview" src="'.$gif_preview.'" loading="lazy"></img>';
                        else echo '<img class="sexhack_videopreview" src="'.$thumb.'" loading="lazy"></img>';
                }
@@ -186,7 +184,6 @@ get_header(); ?>
             else  // if(in_array($tab, $avail))
             {
                if($video_preview) echo '<video src='."'$video_preview'".' controls autoplay muted playsinline loop poster="'.$thumb.'"></video>';
-               else if($vr_preview) echo do_shortcode( "[sexvideo url=\"".$vr_preview."\" posters=\"".$thumb."\"]" );
                else if($gif_preview) echo '<img class="sexhack_videopreview" src="'.$gif_preview.'" loading="lazy"></img>';
                else echo '<img class="sexhack_videopreview" src="'.$thumb.'" loading="lazy"></img>';
                ?>
@@ -221,7 +218,7 @@ get_header(); ?>
          echo $htmltags;
          ?>
 
-            <h3><a href="<?php echo get_the_permalink(); ?>">Download the full lenght hi-res version of this video</a><h3>
+            <h3><a href="<?php echo get_permalink($video->product_id); ?>">Download the full lenght hi-res version of this video</a><h3>
 
          <hr>
 <?php

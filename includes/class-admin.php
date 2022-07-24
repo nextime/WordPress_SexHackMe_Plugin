@@ -72,8 +72,40 @@ if(!class_exists('SH_Admin')) {
          {
              include_once SH_PLUGIN_DIR_PATH . 'includes/admin/functions-gallery.php';
              add_settings_section('sexhackme-gallery-settings', ' ','wp_SexHackMe\gallery_settings_section', 'sexhackme-gallery-settings');
-             register_setting('sexhackme-gallery-settings', 'sexhack_gallery_slug');
+             register_setting('sexhackme-gallery-settings', 'sexhack_video_page');
+             register_setting('sexhackme-gallery-settings', 'sexhack_gallery_page');
+             register_setting('sexhackme-gallery-settings', 'sexhack_video404_page');
+             add_action('update_option', '\wp_SexHackMe\SH_Admin::update_gallery_slug', 10, 3);
+             //register_setting('sexhackme-gallery-settings', 'sexhack_gallery_slug');
          }
+      }
+
+      public static function update_gallery_slug($option, $old, $new)
+      {
+         switch($option)
+         {
+            case 'sexhack_video_page':
+               if(!is_int($new)) break;
+               $page = get_post($new);
+               set_option('sexhack_gallery_slug', $page->post_name);
+               update_option('need_rewrite_flush', 1);
+               break;
+
+            case 'sexhack_gallery_page':
+               update_option('need_rewrite_flush', 1);
+               break;
+            case 'sexhack_video404_page':
+               update_option('need_rewrite_flush', 1);
+               break;
+
+
+            default:
+               break;
+         }
+
+         sexhack_log("UPDATE OPTIONS: ".$option." OLD $old NEW $new");
+         sexhack_log(get_option('neew_rewrite_flush', 'NOT SET'));
+
       }
 
       public static function menu()

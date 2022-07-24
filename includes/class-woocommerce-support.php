@@ -34,7 +34,7 @@ if(!class_exists("SH_VideoProducts")) {
          //add_action('sh_save_video_after_query', array($this, 'sync_product_from_video'), 1, 10);
          add_filter('video_before_save', array($this, 'sync_product_from_video'));
 
-         add_action('sh_delete_video', array($this, 'delete_video_product'), 1, 10);
+         add_action('sh_delete_video', array($this, 'delete_video_product'), 9, 1);
       }
 
       public function delete_video_product($video)

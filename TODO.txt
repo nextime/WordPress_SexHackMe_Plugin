@@ -1,17 +1,10 @@
 This is a very rough plan for this plugin
 based on the ideas I planned for www.sexhack.me:
 
-
- - Version 0.0.2:
-   * Proper functioning Video post type page for Videos (with initial rough admin editing interface).
-   * use WC products only for downloads and memberships.
-   * Database table dedicated for Video pages.
-
  - Version 0.0.3:
    * Integration of Ultimate Members plugin for user and model profiles
    * Show thumbnail in video post list in admin
    * 404 Not Found page with gallery instead of WC products
-   * Fix caching problems with "integrate google drive"
 
  - Version 0.0.4:
    * Upload Videos page for models
@@ -21,6 +14,10 @@ based on the ideas I planned for www.sexhack.me:
  - Version 0.0.5:
    * Better Video Page
    * Tag filtering/support
+   * Proper installation dependencies management,
+
+ - Version 0.0.9:
+   * Remove integrate google drive plugin support and implement internal gdrive api
 
  - Version 0.1.0:
    * Fixes of all the features on the previous versions

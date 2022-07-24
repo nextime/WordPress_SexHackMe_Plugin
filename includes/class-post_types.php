@@ -94,24 +94,56 @@ if(!class_exists('SH_PostTypes')) {
             'supports' => array('title', 'thumbnail'), //'editor','excerpt','trackbacks','custom-fields','comments','revisions','author','page-attributes'),
             'taxonomies' => array(), //'category','post_tag'), // TODO  Shouldn't we have a "video_type" taxonomy for VR or flat?
          ));
-         $DEFAULTSLUG = get_option('sexhack_gallery_slug', 'v');
-         $projects_structure = '/'.$DEFAULTSLUG.'/%wooprod%/';
+
+
          $rules = $wp_rewrite->wp_rewrite_rules();
+
+			$DEFAULTSLUG = get_option('sexhack_gallery_slug', 'v');
+
+
+         //sexhack_log($rules);
          if(!array_key_exists($DEFAULTSLUG.'/([^/]+)/?$', $rules)) {
-         //   sexhack_log("REWRITE: rules OK: ".$DEFAULTSLUG.'/([^/]+)/?$ => '.$rules[$DEFAULTSLUG.'/([^/]+)/?$']);
-         //} else {
-            sexhack_log("REWRITE: Need to add and flush our rules!");
-            $wp_rewrite->add_rewrite_tag("%wooprod%", '([^/]+)', "post_type=sexhack_video&wooprod=");
-            $wp_rewrite->add_rewrite_tag("%videoaccess%", '([^/]+)', "videoaccess=");
-            $wp_rewrite->add_permastruct($DEFAULTSLUG, $projects_structure, false);
-            $wp_rewrite->add_permastruct($DEFAULTSLUG, $projects_structure."%videoaccess%/", false);
-            update_option('need_rewrite_flush', 1);
+				update_option('need_rewrite_flush', 1);
+				sexhack_log("REWRITE: Need to add and flush our rules!");
+			}
+		}
 
-         }
+		public static function add_rewrites()
+		{
+				global $wp_rewrite;
 
+
+				$DEFAULTSLUG = get_option('sexhack_gallery_slug', 'v');
+            sexhack_log("REWRITE: ADDING RULES");
+            //flush_rewrite_rules();
+
+            $pid = get_option('sexhack_video_page', false);
+            if($pid) $redir = "page_id=$pid";
+            else 
+               $redir = "pagename=$DEFAULTSLUG";
+
+
+            add_rewrite_rule($DEFAULTSLUG.'/([^/]+)/([^/]+)/page/?([0-9]{1,})/?$', 
+                                  'index.php?'.$redir.'&sh_video=$matches[1]&videoaccess=$matches[2]&paged=$matches[3]', 'top');
+            add_rewrite_rule($DEFAULTSLUG.'/([^/]+)/([^/]+)/?$',
+                                  'index.php?'.$redir.'&sh_video=$matches[1]&videoaccess=$matches[2]', 'top');
+            add_rewrite_rule($DEFAULTSLUG.'/([^/]+)/page/?([0-9]{1,})/?$',
+                                  'index.php?'.$redir.'&sh_video=$matches[1]&paged=$matches[2]', 'top');
+            add_rewrite_rule($DEFAULTSLUG.'/([^/]+)/?$',
+                                  'index.php?'.$redir.'&sh_video=$matches[1]','top');
+
+
+            $vg_id = get_option('sexhack_video404_page', false);
+            //if(is_int($vg_id) && $vg_id>0)
+               add_rewrite_rule($DEFAULTSLUG.'/?$',
+                  'index.php?page_id='.strval($vg_id), 'top');
+
+
+            //update_option('need_rewrite_flush', 1);
+            sexhack_log($wp_rewrite->wp_rewrite_rules());
 
       }
-
+	
 
    }
 }

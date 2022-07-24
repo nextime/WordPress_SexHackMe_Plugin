@@ -54,6 +54,7 @@ function sanitize_idtype($idt=false)
          return $idt."_id";
          break;
       case 'id':
+      case 'slug':
          return $idt;
          break;
       default:

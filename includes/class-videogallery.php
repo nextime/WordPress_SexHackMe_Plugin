@@ -37,11 +37,11 @@ if(!class_exists('SH_VideoGallery')) {
 
          // TODO What an horrible and inefficient way to cache the query result.
          //     Think about moving it in session and with a better data structure.
-         $this->productlist = false;
+         $this->videolist = false;
 
          // Register Query Vars
          add_filter("query_vars", array($this, "query_vars"));
-         //add_filter('page_template', array($this, 'sexhack_video_template'));
+         add_filter('page_template', array($this, 'sexhack_video_template'));
          add_filter('archive_template', array($this, 'sexhack_video_template'));
 
          add_action('pre_get_posts', array($this, 'fix_video_query'), 1, 1);
@@ -51,31 +51,32 @@ if(!class_exists('SH_VideoGallery')) {
 
       public function query_vars($vars)
       {
-         $vars[] = 'wooprod';
+         $vars[] = 'sh_video';
          $vars[] = 'videoaccess';
          return $vars;
       }
 
       public function sexhack_video_template($template) 
       {
-         $template='video.php';
-         if(isset($_GET['SHDEV'])) $template='newvideo.php';
-         $is_sexhack_video = get_query_var('wooprod', false);
+         if(isset($_GET['SHDEV'])) $templ='newvideo.php';
+         $is_sexhack_video = get_query_var('sh_video', false);
          if($is_sexhack_video ) {
+            $templ='video.php';
             set_query_var( 'post_type', 'sexhack_video' );
-            if ( file_exists( plugin_dir_path(__DIR__) . '/templates/'.$template)) {
-               return plugin_dir_path(__DIR__) . '/templates/'.$template;
+            if ( file_exists( plugin_dir_path(__DIR__) . '/templates/'.$templ)) {
+               return plugin_dir_path(__DIR__) . '/templates/'.$templ;
             }
-          }
-          return $template;
+         }
+
+         return $template;
       }
 
 
       public function fix_video_query($query)
       {  
          if($query->get('post_type')=='sexhack_video') {
-            $wooprod = $query->get('wooprod', false);
-            if($wooprod) {
+            $sh_video = $query->get('sh_video', false);
+            if($sh_video) {
                $query->query['post_type'] = 'sexhack_video';
                $query->set('name', esc_sql($wooprod));
                $query->set('post_type', 'any');
@@ -84,58 +85,65 @@ if(!class_exists('SH_VideoGallery')) {
          }
       }
 
-      public function getProducts($vcat=false) {
-   
-         if(!$this->productlist && !$vcat) $this->productlist = SH_Query::get_Products($vcat); //$this->_getProducts($vcat);
-         else if($vcat) return SH_Query::get_Products($vcat); //$this->_getProducts($vcat);
+      public function get_videos($vcat=false) {
+         // XXX TODO Only published videos!
 
-         return $this->productlist;
+         if(!$this->videolist && !$vcat) $this->videolist = sh_get_videos($vcat); //SH_Query::get_Videos($vcat); //$this->_getProducts($vcat);
+         else if($vcat) return sh_get_videos($vcat);  //SH_Query::get_Videos($vcat); //$this->_getProducts($vcat);
+
+         return $this->videolist;
 
       }
       
-      public function get_video_thumb()
+      public function get_video_thumb($video=false)
       {
 
          $DEFAULTSLUG = get_option('sexhack_gallery_slug', 'v');
 
-         $id = get_the_ID();
-         $prod = wc_get_product($id);
-         $image = get_the_post_thumbnail($id, "medium", array("class" => "sexhack_thumbnail")); //array("class" => "alignleft sexhack_thumbnail"));
+         $post_id = get_the_ID();
+         if(!$video) $video=sh_get_video_from_post($post_id);
+         if(is_numeric($video->thumbnail))
+         {
+            //$image = get_post_thumbnail_id($video->thumbnail);
+            //$image = wp_get_attachment_link($video->thumbnail);
+            $image=wp_get_attachment_image($video->thumbnail, "320x160"); // XXX Seriously fixed size?
+         }
+         else
+            $image = $video->thumbnail;
 
-         $hls = $prod->get_attribute("hls_public");
-         $hls_member = $prod->get_attribute("hls_members");
-         $hls_premium = $prod->get_attribute("hls_premium");
-         $video_preview = $prod->get_attribute("video_preview");
-         $gif_preview = $prod->get_attribute("gif_preview");
-         $vr_premium = $prod->get_attribute("vr_premium");
-         $vr_member = $prod->get_attribute("vr_members");
-         $vr_public = $prod->get_attribute("vr_public");
-         $vr_preview = $prod->get_attribute("vr_preview");
-         $categories = explode(", ", html2text( wc_get_product_category_list($id)));
+         $hls_public = $video->hls_public;
+         $hls_member = $video->hls_members;
+         $hls_premium = $video->hls_premium;
+         $video_preview = $video->video_preview;
+         $gif_preview = $video->gif_small;
+
+         sexhack_log($video);
+
+         $categories = $video->get_categories(true);
 
 
          //print_r($categories);
 
-         $gif = $prod->get_attribute("gif_thumbnail");
-         if(!$gif) $gif = $gif_preview;
-         if($gif) $image .= "<img src='$gif' class='alignleft sexhack_thumb_hover' loading='lazy' />";
+         $gif = $video->gif;
+
+         if(!$gif_preview) $gif_preview = $gif;
+         if($gif_preview) $image .= "<img src='$gif_preview' class='alignleft sexhack_thumb_hover' loading='lazy' />";
 
          $html = '<li class="product type-product sexhack_thumbli">';
-         $vurl = str_replace("/product/", "/".$DEFAULTSLUG."/", esc_url( get_the_permalink() ));
-         $vtitle = esc_html( get_the_title() );
+         
+         $vurl = site_url().esc_url( "/".$DEFAULTSLUG."/".$video->slug )."/";
+         if(isset($_GET['SHDEV'])) $vurl.="?SHDEV=true";
+         $vtitle = $video->get_title();
          $vtags=array();
 
          $downtag ='';
-         if((!$hls) AND (!$hls_member) AND (!$hls_premium) AND (($video_preview) OR ($vr_preview))) $vtags[] = '<label class="sexhack_vtag sexhack_preview" style="*LEFT*">preview</label>';
-         if(($hls) OR ($vr_public)) $vtags[] = '<label class="sexhack_vtag sexhack_public" style="*LEFT*">public</label>';
-         if(($hls_member) OR ($vr_member))$vtags[] = '<label class="sexhack_vtag sexhack_members" style="*LEFT*">members</label>';
-         if(($hls_premium) OR ($vr_premium))$vtags[] = '<label class="sexhack_vtag sexhack_premium" style="*LEFT*">premium</label>';
+         if((!$hls_public) AND (!$hls_member) AND (!$hls_premium) AND ($video_preview) ) $vtags[] = '<label class="sexhack_vtag sexhack_preview" style="*LEFT*">preview</label>';
+         if($hls_public) $vtags[] = '<label class="sexhack_vtag sexhack_public" style="*LEFT*">public</label>';
+         if($hls_member)$vtags[] = '<label class="sexhack_vtag sexhack_members" style="*LEFT*">members</label>';
+         if($hls_premium)$vtags[] = '<label class="sexhack_vtag sexhack_premium" style="*LEFT*">premium</label>';
 
-         if(count($prod->get_downloads()) > 0) $html .= '<label class="sexhack_vtag sexhack_download"">download</label>';
-         if(($vr_premium) OR ($vr_member) OR ($vr_public) OR ($vr_preview) 
-            OR ((count($prod->get_downloads()) > 0) 
-            AND (in_array("VR180", $categories) 
-            OR in_array("VR360", $categories)))) $html .= '<label class="sexhack_vtag sexhack_VR"">VR/3D</label>';         
+         if($video->has_downloads()) $html .= '<label class="sexhack_vtag sexhack_download"">download</label>';
+         if($video->video_type == 'VR') $html .= '<label class="sexhack_vtag sexhack_VR"">VR/3D</label>';
 
          $html .= "<a href=\"$vurl\" class=\"woocommerce-LoopProduct-link woocommerce-loop-product__link\">";
          $html .= "<div class='sexhack_thumb_cont'>".$image."</div>";

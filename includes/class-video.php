@@ -66,9 +66,9 @@ if(!class_exists('SH_Video')) {
          'codec_public' => 'h264',
          'codec_members' => 'h264',
          'codec_premium' => 'h264',
-         'acodec_public' => 'h264',
-         'acodec_members' => 'h264',
-         'acodec_premium' => 'h264',
+         'acodec_public' => 'AAC',
+         'acodec_members' => 'AAC',
+         'acodec_premium' => 'AAC',
          'duration_public' => false,
          'duration_members' => false,
          'duration_premium' => false,
@@ -84,6 +84,18 @@ if(!class_exists('SH_Video')) {
       {
          $this->attributes['uploaded'] = date('Y-m-d H:i:s');
          if(is_array($attr)) $this->setAttributes($attr);
+      }
+
+
+      public function get_title()
+      {
+         return $this->attributes['title'];
+      }
+
+      public function has_downloads()
+      {
+         if($this->download_public OR $this->download_members OR $this->download_premium) return true;
+         return false;
       }
 
 

@@ -29,10 +29,50 @@ if ( ! defined( 'ABSPATH' ) ) exit;
          <table class="form-table">
             <tr align="top">
                <td>
-                  <label>Slug for gallery</label>
-                  <input type="text" name="sexhack_gallery_slug" value="<?php echo get_option( 'sexhack_gallery_slug', "v" ) ?>" />
+                     <select id="sexhack_video_page" name="sexhack_video_page" class="widefat">
+                         <option value="-1">Choose...</option>
+                         <?php
+                         $opt=get_option("sexhack_video_page");
+                         foreach( get_pages() as $page ) {
+                            echo '<option value="' . esc_attr( $page->ID ) . '"';
+                            if ($opt == $page->ID) { echo "selected";}
+                            echo '>' . esc_html( $page->post_title ) . ' ( ID: ' . esc_attr( $page->ID ) . ')' . '</option>';
+                         }  ?>
+                      </select>
+                     <p class="description">Select Video page</p>
                </td>
             </tr>
+            <tr align="top">
+               <td>
+                     <select id="sexhack_gallery_page" name="sexhack_gallery_page" class="widefat">
+                         <option value="-1">Choose...</option>
+                         <?php
+                         $opt=get_option("sexhack_gallery_page");
+                         foreach( get_pages() as $page ) {
+                            echo '<option value="' . esc_attr( $page->ID ) . '"';
+                            if ($opt == $page->ID) { echo "selected";}
+                            echo '>' . esc_html( $page->post_title ) . ' ( ID: ' . esc_attr( $page->ID ) . ')' . '</option>';
+                         }  ?>
+                      </select>
+                     <p class="description">Select Gallery page</p>
+               </td>
+            </tr>
+            <tr align="top">
+               <td>
+                     <select id="sexhack_video404_page" name="sexhack_video404_page" class="widefat">
+                         <option value="-1">Choose...</option>
+                         <?php
+                         $opt=get_option("sexhack_video404_page");
+                         foreach( get_pages() as $page ) {
+                            echo '<option value="' . esc_attr( $page->ID ) . '"';
+                            if ($opt == $page->ID) { echo "selected";}
+                            echo '>' . esc_html( $page->post_title ) . ' ( ID: ' . esc_attr( $page->ID ) . ')' . '</option>';
+                         }  ?>
+                      </select>
+                     <p class="description">Select Gallery page</p>
+               </td>
+            </tr>
+
          </table>
          <?php submit_button(); ?>
          </form>

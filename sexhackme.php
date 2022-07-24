@@ -463,8 +463,8 @@ if(!class_exists('SexHackMe_Plugin')) {
 
 
          // Check if we need to flush rewrite rules
-         add_action('init', array($this, 'register_flush'), 10);
-         add_action('init', array($this, 'flush_rewrite'), 900);
+         add_action('init', array($this, 'register_flush'), 10 );
+         add_action('init', array($this, 'flush_rewrite'), 11);
 
          // Enqueue scripts on the front end side. Priority 200 because of WooCommerce.
          add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_front_end_scripts' ), 200 );
@@ -477,6 +477,7 @@ if(!class_exists('SexHackMe_Plugin')) {
 
          // Initialize Custom post_types 
          add_action( 'init', array( 'wp_SexHackMe\SH_PostTypes', 'init'));
+         add_action( 'sh_rewrite_flushed', array( 'wp_SexHackMe\SH_PostTypes', 'add_rewrites') );
 
          // Initialize shortcodes
          add_action( 'init', array( 'wp_SexHackMe\SH_Shortcodes', 'init' ) );
@@ -531,6 +532,7 @@ if(!class_exists('SexHackMe_Plugin')) {
       public function register_flush() 
       {
           register_setting('sexhackme-settings', 'need_rewrite_flush');
+          register_setting('sexhackme-settings', 'rewrite_flush_done');
       }
 
       public function flush_rewrite()
@@ -538,8 +540,10 @@ if(!class_exists('SexHackMe_Plugin')) {
          if( get_option('need_rewrite_flush'))
          {
              sexhack_log("FLUSHING REWRITE RULES");
-             flush_rewrite_rules(false);
+             //flush_rewrite_rules(false);
+             flush_rewrite_rules();
              update_option('need_rewrite_flush', 0);
+             do_action('sh_rewrite_flushed');
          }
 
       }
@@ -644,13 +648,12 @@ if(!class_exists('SexHackMe_Plugin')) {
 }
 
 
-
-// DEBUG REWRITE RULES
+//if(isset($_GET['SHDEV'])) {
 if( WP_DEBUG === true ){
    // only matched?
    //add_action("the_post", 'wp_SexHackMe\debug_rewrite_rules');
-   //sexhack_log("REQUEST: ".$_SERVER['REQUEST_URI']." QUERY: ".$_SERVER['QUERY_STRING']. "POST:");
-   //sexhack_log($_POST);
+   sexhack_log("REQUEST: ".$_SERVER['REQUEST_URI']." QUERY: ".$_SERVER['QUERY_STRING']. "POST:");
+   sexhack_log($_POST);
 }
 
 

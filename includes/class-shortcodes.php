@@ -125,10 +125,15 @@ if(!class_exists('SH_Shortcodes')) {
          $html = "<div class='sexhack_gallery'>"; //<h3>SexHack VideoGallery</h3>";
          if(isset($_GET['SHDEV'])) $html .= '<h3>DEVELOPEMENT MODE</h3>';
          $html .= '<ul class="products columns-4">';
-         $products = $sh_videogallery->getProducts();
-         while( $products->have_posts() ) {
-            $products->the_post();
-            $html .= $sh_videogallery->get_video_thumb();
+         $videos = $sh_videogallery->get_videos();
+         foreach($videos as $video)
+         {
+            if($video->status == 'published')
+            {
+               $post = $video->get_post();
+               if($post) setup_postdata($post);
+               $html .= $sh_videogallery->get_video_thumb($video);
+            }
          }
          wp_reset_postdata();
          $html .= "</ul></div>";

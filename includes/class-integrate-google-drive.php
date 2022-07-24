@@ -21,6 +21,10 @@
 
 namespace wp_SexHackMe;
 
+use \IGD\Account;
+use \IGD\App;
+
+
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -36,6 +40,11 @@ if(!class_exists('SH_GDrive')) {
 
       function get_download_url($file)
       {
+         $active = Account::get_active_account();
+         if(!$active) return $file;
+
+         $account_id = $active['id'];
+
          if(!($file && is_string($file) && strlen($file)>3)) return $file;
          if ( function_exists( 'igd_fs' ) )
          {
@@ -52,7 +61,7 @@ if(!class_exists('SH_GDrive')) {
                   $parent=false;
                   $gfile=false;
                   $success=false; 
-                  $igd = \IGD\App::instance();
+                  $igd = App::instance($account_id);
                   // Try root first
                   foreach($gparts as $k => $part)
                   {
@@ -91,6 +100,16 @@ if(!class_exists('SH_GDrive')) {
                            $gdo = $igd->get_files(array('q'=> "parents='' and  sharedWithMe=true and '{$part}' in name"), 'shared', false);
                         } else {
                            $gdo = $igd->get_files(array('q'=> "name='{$part}"), $parent, false);
+                        }
+                        if(!is_array($gdo) || (count($gdo) < 1) || array_key_exists('error', $gdo))
+                        {
+                           if($k == 0)
+                           {
+                              $gdo = $igd->get_files(array('q'=> "parents='' and  sharedWithMe=true and '{$part}' in name"), 'shared', true);
+                           } else {
+                              $gdo = $igd->get_files(array('q'=> "name='{$part}"), $parent, true);
+
+                           }
                         }
                         if(!is_array($gdo) || (count($gdo) < 1) || array_key_exists('error', $gdo)) break;
 

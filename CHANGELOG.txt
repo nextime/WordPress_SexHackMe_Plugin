@@ -1,2 +1,10 @@
 == Sat 16 July 2022, 11:35am ==
  - Released version 0.0.1
+
+== Mon 25 July 2022, 00:26am ==
+ - Released version 0.0.2
+   * Proper functioning Video post type page for Videos (with initial rough admin editing interface).
+   * use WC products only for downloads and memberships.
+   * Database table dedicated for Video pages.
+   * Support Gdrive download links through the plugin "Integrate Google Drive"
+

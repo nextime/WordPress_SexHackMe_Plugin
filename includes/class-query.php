@@ -198,6 +198,21 @@ if(!class_exists('SH_Query')) {
 
       }
 
+      public static function get_VideoFromSlug($slug)
+      {
+         global $wpdb;
+         
+         $slug = $wpdb->_real_escape($slug);
+         $sql = "SELECT * FROM {$wpdb->prefix}".SH_PREFIX."videos WHERE slug='".$slug."'";
+         $dbres = $wpdb->get_results( $sql );
+         if(is_array($dbres) && count($dbres) > 0)
+         {
+            return new SH_Video((array)$dbres[0]);
+         }
+         return false;
+
+      }
+
       public static function get_Video($id, $idtype='')
       {
          global $wpdb;  
@@ -247,13 +262,13 @@ if(!class_exists('SH_Query')) {
 			$results = array();
          //$sql = $wpdb->prepare("SELECT * from {$wpdb->prefix}{$prefix}videos");
          $sql = "SELECT * FROM {$wpdb->prefix}".SH_PREFIX."videos";
-         $dbres = $wpdb->get_results( $sql );
-		
+         $dbres = $wpdb->get_results( $sql, ARRAY_A );
+		   sexhack_log($dbres);
          foreach($dbres as $row)
          {
          	$results[] = new SH_Video($row);
          }
-
+         sexhack_log($results);
          return $results;
 
 
