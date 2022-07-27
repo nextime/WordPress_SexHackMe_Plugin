@@ -131,7 +131,8 @@ if(!class_exists('SH_GDrive')) {
 
                   if($gfile && ($gfile['type'] != 'application/vnd.google-apps.folder'))
                   {
-                    $file="https://drive.google.com/open?action=igd-wc-download&id=".$gfile['id'];
+                    $file="https://drive.google.com/uc?export=download&confirm=t&id=".$gfile['id'];
+                    //$file="https://drive.google.com/open?action=igd-wc-download&id=".$gfile['id'];
                   }
 
                }

@@ -35,7 +35,7 @@ if(!class_exists('SH_StoreFront')) {
          remove_action( 'storefront_header', 'storefront_product_search', 40);
 
          // Remove StoreFront credits
-         add_filter('storefront_credit_link', false);
+         add_filter('storefront_credit_link', 'wp_SexHackMe\SH_StoreFront::credits');
 
          // add footer disclaimer
          //add_action('storefront_footer', 'wp_SexHackMe\sh_get_disclaimer')); // XXX I don't like positioning this way. Fix in CSS or sobstitute footer theme file?
@@ -43,6 +43,11 @@ if(!class_exists('SH_StoreFront')) {
          // Re add the cart in the right position
          add_action( 'storefront_header', 'storefront_header_cart', 40);
 
+      }
+
+      public static function credits($cred)
+      {
+         return '';
       }
 
    }

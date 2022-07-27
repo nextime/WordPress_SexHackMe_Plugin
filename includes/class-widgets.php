@@ -115,6 +115,8 @@ if(!class_exists('SH_GalleryWidget')) {
       {
          global $post;
 
+         if(!is_object($post)) return;
+
          $pattern = get_shortcode_regex();
 
          if (   preg_match_all( '/'. $pattern .'/s', $post->post_content, $matches )

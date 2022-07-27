@@ -182,7 +182,7 @@ get_header(); ?>
                   
                   default:  // public too!
                        if($hls_public && $video->video_type=='VR') echo do_shortcode( "[sexvideo url=\"".$hls_public."\" posters=\"".$thumb."\"]" );
-                       else if($hls_public)  echo do_shortcode( "[sexhls url=\"".$hls."\" posters=\"".$thumb."\"]" );
+                       else if($hls_public)  echo do_shortcode( "[sexhls url=\"".$hls_public."\" posters=\"".$thumb."\"]" );
                        else if($gif_preview) echo '<img class="sexhack_videopreview" src="'.$gif_preview.'" loading="lazy"></img>';
                        else echo '<img class="sexhack_videopreview" src="'.$thumb.'" loading="lazy"></img>';
                }

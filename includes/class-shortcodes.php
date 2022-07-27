@@ -80,7 +80,7 @@ if(!class_exists('SH_Shortcodes')) {
          extract( shortcode_atts(array(
             'site' => 'chaturbate',
             'model' => 'sexhackme',
-         ), $attributes));
+         ), $attr));
          $ret = LiveCamSite::getCamStream($site, $model);
          if($ret) return $ret;
          return '<p>CamStreamDL Error: wrong site option '.$site.'</p> ';

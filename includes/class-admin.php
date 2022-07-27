@@ -103,8 +103,6 @@ if(!class_exists('SH_Admin')) {
                break;
          }
 
-         sexhack_log("UPDATE OPTIONS: ".$option." OLD $old NEW $new");
-         sexhack_log(get_option('neew_rewrite_flush', 'NOT SET'));
 
       }
 
