@@ -69,7 +69,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                             echo '>' . esc_html( $page->post_title ) . ' ( ID: ' . esc_attr( $page->ID ) . ')' . '</option>';
                          }  ?>
                       </select>
-                     <p class="description">Select Gallery page</p>
+                     <p class="description">Select Video not found page</p>
                </td>
             </tr>
 

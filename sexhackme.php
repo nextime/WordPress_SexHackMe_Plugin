@@ -395,8 +395,8 @@ if(!class_exists('SexHackMe_Plugin')) {
          /* Unlock integration class */
          $this->file_include('includes/class-unlock-support.php');
 
-         /* integrate google drive plugin database support */
-         $this->file_include('includes/class-integrate-google-drive.php');
+         /* Rclone support for gdrive and other clouds */
+         $this->file_include('includes/class-rclone.php');
 
          /* Video */
          $this->file_include('includes/class-video.php');

@@ -78,6 +78,14 @@ if(!class_exists('SH_Admin')) {
              add_action('update_option', '\wp_SexHackMe\SH_Admin::update_gallery_slug', 10, 3);
              //register_setting('sexhackme-gallery-settings', 'sexhack_gallery_slug');
          }
+         if( file_exists(SH_PLUGIN_DIR_PATH . 'includes/admin/functions-rclone.php') )
+         {
+            include_once SH_PLUGIN_DIR_PATH . 'includes/admin/functions-rclone.php';
+            add_settings_section('sexhackme-rclone-settings', ' ','wp_SexHackMe\rclone_settings_section', 'sexhackme-rclone-settings');
+            register_setting('sexhackme-rclone-settings', 'sexhack_rclone_path'); 
+            register_setting('sexhackme-rclone-settings', 'sexhack_rclone_gdrive_name'); 
+            register_setting('sexhackme-rclone-settings', 'sexhack_rclone_gdrive_shared');
+         }
       }
 
       public static function update_gallery_slug($option, $old, $new)
@@ -154,6 +162,17 @@ if(!class_exists('SH_Admin')) {
                            'gallery',                              // slug
                            'wp_SexHackMe\gallery_adminpage');      // callback
 
+         }
+
+         // Add RClone interface
+         if (file_exists(SH_PLUGIN_DIR_PATH . 'includes/admin/functions-rclone.php') )
+         {
+               add_submenu_page( 'sexhackme-settings',
+                           'RClone',
+                           'RClone',
+                           'manage_options',
+                           'rclone',
+                           'wp_SexHackMe\rclone_adminpage');
          }
 
          // Add Video tags and categories subpages to Video edit menu
