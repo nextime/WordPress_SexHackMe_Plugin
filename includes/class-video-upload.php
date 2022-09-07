@@ -24,22 +24,34 @@ namespace wp_SexHackMe;
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-function pms_register_form_after_create_user($user_data)
-{
-   do_action('sh_register_form_after_create_user', $user_data);
+
+if(!class_exists('SH_StoreFront')) {
+   class SH_StoreFront
+   {
+      public static function init()
+      {
+         // Remove the cart and the product search 
+         remove_action( 'storefront_header', 'storefront_header_cart', 60 );
+         remove_action( 'storefront_header', 'storefront_product_search', 40);
+
+         // Remove StoreFront credits
+         add_filter('storefront_credit_link', 'wp_SexHackMe\SH_StoreFront::credits');
+
+         // add footer disclaimer
+         //add_action('storefront_footer', 'wp_SexHackMe\sh_get_disclaimer')); // XXX I don't like positioning this way. Fix in CSS or sobstitute footer theme file?
+
+         // Re add the cart in the right position
+         add_action( 'storefront_header', 'storefront_header_cart', 40);
+
+      }
+
+      public static function credits($cred)
+      {
+         return '';
+      }
+
+   }
 }
-add_action('pms_register_form_after_create_user', 'wp_SexHackMe\pms_register_form_after_create_user');
 
-
-// XXX In the docs of PMS they indicate to use add_action but they use a filter... uhmmm
-//add_action('pms_get_redirect_url', 'pms_get_redirect_url');
-add_filter('pms_get_redirect_url', 'wp_SexHackMe\pms_get_redirect_url', 100, 2);
-function pms_get_redirect_url($url, $location=false)
-{
-   if( !isset( $_POST['pay_gate'] ) || $_POST['pay_gate'] != 'manual' )
-      return $url;
-
-   return apply_filter('sh_get_redirect_url', $url, $location);
-}
 
 ?>

@@ -213,7 +213,17 @@ if(!class_exists('SH_Query')) {
 
       }
 
+      public static function get_Videos($id, $idtype='')
+      {
+         return SH_Query::_get_Videos($id, $idtype, false);
+      } 
+
       public static function get_Video($id, $idtype='')
+      {
+         return SH_Query::_get_Videos($id, $idtype, true);
+      }
+
+      public static function _get_Videos($id, $idtype='', $firstres=true)
       {
          global $wpdb;  
 
@@ -229,6 +239,14 @@ if(!class_exists('SH_Query')) {
          $dbres = $wpdb->get_results( $sql );
          if(is_array($dbres) && count($dbres) > 0)
          {
+            if($firstres) return new SH_Video((array)$dbres[0]);
+            else {
+               $videos = array();
+               foreach($dbres as $res) {
+                  $videos[] = new SH_Video((array)$res);
+               }
+               return $videos;
+            }
             return new SH_Video((array)$dbres[0]);
          }
          return false;
@@ -237,7 +255,7 @@ if(!class_exists('SH_Query')) {
       
 
 
-      public static function get_Videos($vcat=false)
+      public static function get_VideosCat($vcat=false)
       {
 
          global $wpdb;

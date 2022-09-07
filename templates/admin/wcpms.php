@@ -68,7 +68,7 @@ $plans = wp_SexHackMe\sh_get_subscription_plans();
                         <option value="-1">Choose...</option>
                         <?php
                         $opt=get_option("sexhack_registration_mail_endpoint");
-                        foreach( get_posts(array('post_type'  => 'page', 'parent' => 0)) as $page ) {
+                        foreach( get_posts(array('post_type'  => 'page', 'parent' => 0, 'numberposts' => -1)) as $page ) {
                            echo '<option value="' . esc_attr( $page->ID ) . '"';
                            if ($opt == $page->ID) { echo "selected";}
                            echo '>' . esc_html( $page->post_title ) . ' ( ID: ' . esc_attr( $page->ID ) . ')' . '</option>';

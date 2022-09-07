@@ -34,6 +34,13 @@ if(!class_exists('SH_Admin')) {
          // Add general settings section     
          add_settings_section('sexhackme-settings', ' ', 'wp_SexHackMe\sexhackme_settings_section', 'sexhackme-settings');
 
+         // Add General settings section
+         if( file_exists(SH_PLUGIN_DIR_PATH . 'includes/admin/functions-sexhackme.php') )
+         {
+            include_once(SH_PLUGIN_DIR_PATH . 'includes/admin/functions-sexhackme.php');
+            register_setting('sexhackme-settings', 'sexhack-model-role');
+         }
+
          // Add WC-PMS_Integration settings
          if( file_exists(SH_PLUGIN_DIR_PATH . 'includes/admin/functions-wcpms.php') )
          {
@@ -78,6 +85,8 @@ if(!class_exists('SH_Admin')) {
              add_action('update_option', '\wp_SexHackMe\SH_Admin::update_gallery_slug', 10, 3);
              //register_setting('sexhackme-gallery-settings', 'sexhack_gallery_slug');
          }
+
+         // RClone settings
          if( file_exists(SH_PLUGIN_DIR_PATH . 'includes/admin/functions-rclone.php') )
          {
             include_once SH_PLUGIN_DIR_PATH . 'includes/admin/functions-rclone.php';
@@ -125,31 +134,7 @@ if(!class_exists('SH_Admin')) {
                   'manage_options', 'sexhackme-settings');
 
          // TODO We don't have a main page yet, so, remove it.
-         remove_submenu_page( 'sexhackme-settings', 'sexhackme-settings' );
-
-         // Add page WC-PMS_Integration
-         if( file_exists(SH_PLUGIN_DIR_PATH . 'includes/admin/functions-wcpms.php') )
-         {
-         
-               add_submenu_page( 'sexhackme-settings',             // root slug
-                           'WC-PMS Integration',                   // title
-                           'WC-PMS Integration',                   // title
-                           'manage_options',                      // capabilities
-                           'pmswc-integration',                     // slug
-                           'wp_SexHackMe\wcpms_adminpage');         // callback
-         }
-
-         // Add Advertising settings
-         if( file_exists(SH_PLUGIN_DIR_PATH . 'includes/admin/functions-advert.php') )
-         {
-               add_submenu_page( 'sexhackme-settings',            // root slug
-                           'Advertising',                         // title
-                           'Advertising',                         // title
-                           'manage_options',                      // capabilities
-                           'advert',                              // slug
-                           'wp_SexHackMe\advert_adminpage');      // callback
-
-         }
+         //remove_submenu_page( 'sexhackme-settings', 'sexhackme-settings' );
 
 
          // Add Gallery settings page
@@ -160,7 +145,8 @@ if(!class_exists('SH_Admin')) {
                            'Gallery',                              // title
                            'manage_options',                       // capabilities
                            'gallery',                              // slug
-                           'wp_SexHackMe\gallery_adminpage');      // callback
+                           'wp_SexHackMe\gallery_adminpage',       // callback
+                           20);
 
          }
 
@@ -172,7 +158,34 @@ if(!class_exists('SH_Admin')) {
                            'RClone',
                            'manage_options',
                            'rclone',
-                           'wp_SexHackMe\rclone_adminpage');
+                           'wp_SexHackMe\rclone_adminpage',
+                           50);
+         }
+
+         // Add page WC-PMS_Integration
+         if( file_exists(SH_PLUGIN_DIR_PATH . 'includes/admin/functions-wcpms.php') )
+         {
+
+               add_submenu_page( 'sexhackme-settings',             // root slug
+                           'WC-PMS Integration',                   // title
+                           'WC-PMS Integration',                   // title
+                           'manage_options',                       // capabilities
+                           'pmswc-integration',                    // slug
+                           'wp_SexHackMe\wcpms_adminpage',         // callback
+                           60);                                    // position
+         }
+
+         // Add Advertising settings
+         if( file_exists(SH_PLUGIN_DIR_PATH . 'includes/admin/functions-advert.php') )
+         {
+               add_submenu_page( 'sexhackme-settings',            // root slug
+                           'Advertising',                         // title
+                           'Advertising',                         // title
+                           'manage_options',                      // capabilities
+                           'advert',                              // slug
+                           'wp_SexHackMe\advert_adminpage',       // callback
+                           80);
+
          }
 
          // Add Video tags and categories subpages to Video edit menu

@@ -50,6 +50,16 @@ function sh_account_subscription_content()
     echo do_shortcode( '[pms-payment-history]');
 }
 
+function sh_account_videomanager_content()
+{
+   echo do_shortcode( '[shvideomanager]' );
+}
+
+function sh_account_modelsettings_content()
+{
+   echo "Modelsettings";
+}
+
 function sh_genpass_register_form()
 {
      // Check nonce
@@ -138,5 +148,11 @@ function user_is_member($uid='')
 }
 
 
-
+function user_is_model($uid=false)
+{
+   if(!$uid) $uid = get_current_user_id();
+   $model = get_option('sexhack-model-role', false);
+   if(!$model) return false;
+   return user_has_role($uid, $model);
+}
 ?>

@@ -30,7 +30,8 @@ function sexhackme_settings_section() {
 }
 
 function sexhackme_admin_page()
-   sh_get_template('admin/sexhackme.php'));
+{
+   sh_get_template('admin/sexhackme.php');
 }
 
 ?>

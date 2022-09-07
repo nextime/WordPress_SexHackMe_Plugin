@@ -33,7 +33,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                         <option value="-1">Choose...</option>
                         <?php
                         $opt=get_option("sexadv_video_top");
-                        foreach( get_posts(array('post_type'  => 'sexhackadv', 'parent' => 0)) as $page ) {
+                        foreach( get_posts(array('post_type'  => 'sexhackadv', 'parent' => 0, 'numberposts' => -1)) as $page ) {
                            echo '<option value="' . esc_attr( $page->ID ) . '"';
                            if ($opt == $page->ID) { echo "selected";}
                            echo '>' . esc_html( $page->post_title ) . ' ( ID: ' . esc_attr( $page->ID ) . ')' . '</option>';

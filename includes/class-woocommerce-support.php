@@ -349,23 +349,25 @@ if(!class_exists('SH_WooCommerce_Registration_Integration')) {
                      
 
          // Register new endpoint (URL) for My Account page
-         add_action( 'init', array($this, 'add_subscriptions_endpoint'), 300 );
+         add_action( 'init', array($this, 'add_endpoints'), 300 );
 
          // Add new QUERY vars
-         add_filter( 'query_vars', array($this, 'subscriptions_query_vars'), 0 );
+         add_filter( 'query_vars', array($this, 'add_query_vars'), 0 );
 
-         //  Insert the new endpoint into the My Account menu
-         add_filter( 'woocommerce_account_menu_items', array($this, 'add_subscriptions_link_my_account') );
+         //  Insert the new endpoints into the My Account page from woocommerce and remove the unused ones
+         add_filter( 'woocommerce_account_menu_items', array($this, 'modify_my_account_page_tabs'), 99 );
 
          /* Add content to the new tab
           *  NOTE: add_action must follow 'woocommerce_account_{your-endpoint-slug}_endpoint' format */
          add_action( 'woocommerce_account_subscriptions_endpoint', array($this, 'subscriptions_content'), 50, 6 );
+         add_action( 'woocommerce_account_videomanager_endpoint', array($this, 'videomanager_content'), 50, 6 );
+         add_action( 'woocommerce_account_modelsettings_endpoint', array($this, 'modelsettings_content'), 50, 6 );
 
          /* Inject random generate pass as we don't send it from the registration form */
          add_action( 'init', array($this, 'gen_random_pwd'), 5); // This need to happen before PMS detect the form at "10" sequence firing
 
          // Sending email with link to set user password 
-         add_action("sh_register_form_after_create_user", array($this, "send_register_email_reset_password") );
+         add_action("sh_register_form_after_create_user", array($this, "send_register_email_reset_password"), 10, 1 );
 
 
          // Manage manual payments for Paid Member Subscriptions plugin 
@@ -399,28 +401,45 @@ if(!class_exists('SH_WooCommerce_Registration_Integration')) {
 
       // Register new endpoint (URL) for My Account page
       // Note: Re-save Permalinks or it will give 404 error
-      function add_subscriptions_endpoint()
+      function add_endpoints()
       {
          global $wp_rewrite;
          add_rewrite_endpoint( 'subscriptions', EP_ROOT | EP_PAGES );
+         add_rewrite_endpoint( 'videomanager', EP_ROOT | EP_PAGES );
+         add_rewrite_endpoint( 'modelsettings', EP_ROOT | EP_PAGES );
          $rules = $wp_rewrite->wp_rewrite_rules();
-         if(!array_key_exists('(.?.+?)/subscriptions(/(.*))?/?$', $rules))
+         if(!array_key_exists('(.?.+?)/subscriptions(/(.*))?/?$', $rules) 
+            || !array_key_exists('(.?.+?)/videomanager(/(.*))?/?$', $rules)
+            || !array_key_exists('(.?.+?)/modelsettings(/(.*))?/?$', $rules))
          {
             update_option('need_rewrite_flush', 1);
          }
       }
 
       // Add new QUERY vars
-      public function subscriptions_query_vars( $vars )
+      public function add_query_vars( $vars )
       {
          $vars[] = 'subscriptions';
          return $vars;
       }
 
       //  Insert the new endpoint into the My Account menu
-      public function add_subscriptions_link_my_account( $items )
+      public function modify_my_account_page_tabs( $items )
       {
+
+         // Add CSS for icons
+         wp_enqueue_style('sh_myaccount', SH_PLUGIN_DIR_URL.'css/sexhackme_myaccount.css', array(), SH_VERSION);
+
          $items['subscriptions'] = 'Subscriptions';
+         if(array_key_exists('edit-address', $items)) unset($items['edit-address']);
+         if(array_key_exists('payment-methods', $items)) unset($items['payment-methods']);
+
+         if(user_is_model()) 
+         {
+            $items['videomanager'] = 'My Videos';
+            $items['modelsettings'] = 'Model settings';
+         }
+
          return $items;
       }
 
@@ -431,6 +450,16 @@ if(!class_exists('SH_WooCommerce_Registration_Integration')) {
          sh_account_subscription_content();
       }
 
+      public function videomanager_content()
+      {
+         sh_account_videomanager_content();
+      }
+
+      public function modelsettings_content()
+      {
+         sh_account_modelsettings_content();
+      }
+
       public function send_register_email_reset_password($user_data)
       {
          $mailpage = get_option('sexhack_registration_mail_endpoint', false);
@@ -438,7 +467,9 @@ if(!class_exists('SH_WooCommerce_Registration_Integration')) {
             $page = get_page($mailpage);
             $mailpage = $page->post_name;
          }
-         send_changepwd_mail($user_data["user_login"], $mailpage);
+         $ulogin = $user_data;
+         if(is_array($user_data) OR is_object($user_data)) $ulogin = $user_data["user_login"];
+         send_changepwd_mail($ulogin, $mailpage);
       }
 
       public function gen_random_pwd()

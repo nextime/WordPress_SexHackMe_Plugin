@@ -85,11 +85,11 @@ if(!class_exists('SH_VideoGallery')) {
          }
       }
 
-      public function get_videos($vcat=false) {
+      public function get_videos_by_cat($vcat=false) {
          // XXX TODO Only published videos!
 
-         if(!$this->videolist && !$vcat) $this->videolist = sh_get_videos($vcat); //SH_Query::get_Videos($vcat); //$this->_getProducts($vcat);
-         else if($vcat) return sh_get_videos($vcat);  //SH_Query::get_Videos($vcat); //$this->_getProducts($vcat);
+         if(!$this->videolist && !$vcat) $this->videolist = sh_get_videos_by_cat(); 
+         else if($vcat) return sh_get_videos_by_cat($vcat);  
 
          return $this->videolist;
 

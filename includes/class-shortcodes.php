@@ -38,8 +38,9 @@ if(!class_exists('SH_Shortcodes')) {
             'sh_videohls'    => __CLASS__ . '::video_hls',
             'xfbp'           => __CLASS__ . '::xframe_bypass',
             'sexhacklive'    => __CLASS__ . '::sexhacklive',
-            'sexadv'           => __CLASS__ . '::adv_shortcode',
+            'sexadv'         => __CLASS__ . '::adv_shortcode',
             'sexgallery'     => __CLASS__ . '::videogallery_shortcode',
+            'shvideomanager' => __CLASS__ . '::video_manager_shortcode',
          );
 
          foreach( $shortcodes as $shortcode_tag => $shortcode_func ) {
@@ -125,7 +126,7 @@ if(!class_exists('SH_Shortcodes')) {
          $html = "<div class='sexhack_gallery'>"; //<h3>SexHack VideoGallery</h3>";
          if(isset($_GET['SHDEV'])) $html .= '<h3>DEVELOPEMENT MODE</h3>';
          $html .= '<ul class="products columns-4">';
-         $videos = $sh_videogallery->get_videos();
+         $videos = $sh_videogallery->get_videos_by_cat();
          foreach($videos as $video)
          {
             if($video->status == 'published')
@@ -140,6 +141,35 @@ if(!class_exists('SH_Shortcodes')) {
          return $html;
       }
 
+      public static function video_manager_shortcode($attr, $cont)
+      {
+         //$post = get_post();
+         //echo $post->post_name;
+         //echo get_permalink();
+         //echo $_SERVER['REQUEST_URI'];
+         if(isset($_GET['vedit'])) {
+            if(is_numeric($_GET['vedit']) && intval($_GET['vedit']) > 0) 
+            {
+               $video = sh_get_video(intval($_GET['vedit']));
+               if(is_object($video) && $video->user_id == get_current_user_id()) sh_get_template('edit_video.php', 
+                                                                                                      array(
+                                                                                                         'video' => $video,
+                                                                                                         'post' => get_post($video->post_id)
+                                                                                                       )
+                                                                                                );
+               else sh_get_template('video_access_negate.php');
+               return;
+            } else if($_GET['vedit'] == 'new') {
+               sh_get_template('new_video.php');
+               return;
+            } else {
+               sh_get_template('video_access_negate.php');
+               return;
+            }
+         }
+         sh_get_template('videomanager.php');
+         return;
+      }
 
    }
 }

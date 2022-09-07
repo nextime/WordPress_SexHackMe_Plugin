@@ -61,7 +61,7 @@ if(!class_exists('SH_PostTypes')) {
          // TODO: the idea is to have custom post type for models profiles and for videos.
          //       Ideally /$DEFAULTSLUG/nomevideo/ finisce sul corrispettivo prodotto woocommerce, 
          //       /$DEFAULTSLUG/modelname/nomevideo/ finisce sul corrispettivo page sexhackme_video quando show_in_menu e' attivo.
-            //
+         //
          //       Devo pero' verificare le varie taxonomy e attributi della pagina, vedere come creare un prodotto in wordpress
          //       per ogni pagina sexhack_video che credo, sincronizzare prodotti e video pagine, gestire prodotti con lo stesso nome
          //       ( credo si possa fare dandogli differenti slugs ) 

@@ -131,24 +131,29 @@ function get_proto(){
 
 function send_changepwd_mail($user_login, $baseurl=false){
    
-    global $wpdb, $wp_hasher;
+    global $wpdb; //, $wp_hasher;
     if(!is_object($user_login)) {
       $user_login = sanitize_text_field($user_login);
       if ( empty( $user_login) ) {
+         sexhack_log("EMPTY LOGIN");
         return false;
       } else if ( strpos( $user_login, '@' ) ) {
         $user_data = get_user_by( 'email', trim( $user_login ) );
         if ( empty( $user_data ) )
+        {
+           sexhack_log("EMPTY USER DATA");
            return false;
+        }
       } else {
         $login = trim($user_login);
         $user_data = get_user_by('login', $login);
       }
     }
-    
+
+
     do_action('lostpassword_post');
    
-    if ( !$user_data ) return false;
+    if ( !isset($user_data) ) return false;
     if ( !is_object($user_data) ) return false;
 
     // redefining user_login ensures we return the right case in the email
@@ -157,19 +162,22 @@ function send_changepwd_mail($user_login, $baseurl=false){
     do_action('retreive_password', $user_login);  // Misspelled and deprecated
     do_action('retrieve_password', $user_login);
     $allow = apply_filters('allow_password_reset', true, $user_data->ID);
+
     if ( ! $allow )
         return false;
     else if ( is_wp_error($allow) )
         return false;
 
+
+
     $key = pms_retrieve_activation_key( $user_login );
     //$key = get_password_reset_key( $user_data );
     do_action( 'retrieve_password_key', $user_login, $key );
 
-    if ( empty( $wp_hasher ) ) {
-        require_once ABSPATH . 'wp-includes/class-phpass.php';
-        $wp_hasher = new PasswordHash( 8, true );
-    }
+    //if ( empty( $wp_hasher ) ) {
+    //    require_once ABSPATH . 'wp-includes/class-phpass.php';
+    //    $wp_hasher = new \PasswordHash( 8, true );
+    //}
     //$hashed = $wp_hasher->HashPassword( $key );    
     //$wpdb->update( $wpdb->users, array( 'user_activation_key' => time().":".$hashed ), array( 'user_login' => $user_login ) );
     $message = __('Someone requested that the password be reset for the following account:') . "\r\n\r\n";
@@ -212,8 +220,10 @@ function send_changepwd_mail($user_login, $baseurl=false){
     $activation_keys[$user_data->ID]['time'] = time();
     update_option( 'pms_recover_password_activation_keys', $activation_keys );
 
+
     if ( $message && !wp_mail($user_email, $title, $message) )
         wp_die( __('The e-mail could not be sent.') . "<br />\n" . __('Possible reason: your host may have disabled the mail() function...') );
+    sexhack_log("SENT EMAIL TO ".$user_email);
 
    
 }
@@ -260,6 +270,13 @@ function check_url_or_path($url)
       return 'uri';
 
    return false;
+}
+
+function user_has_role($user_id, $role_name)
+{
+    $user_meta = get_userdata($user_id);
+    $user_roles = $user_meta->roles;
+    return in_array($role_name, $user_roles);
 }
 
 function uniqidReal($lenght = 13) {

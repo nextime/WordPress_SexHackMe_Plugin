@@ -42,7 +42,7 @@ function settings_wcpms_section_email()
 
 function settings_wcpms_section_prodcat()
 {
-   echo "<h2>WooCommerce auto-roducts for Videos</h2>";
+   echo "<h2>WooCommerce auto-products for Videos</h2>";
 }
 
 ?>

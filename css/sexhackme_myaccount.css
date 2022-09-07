@@ -1,0 +1,7 @@
+.woocommerce-MyAccount-navigation ul li.woocommerce-MyAccount-navigation-link--videomanager a::before {
+    content: "\f03d";
+}
+.woocommerce-MyAccount-navigation ul li.woocommerce-MyAccount-navigation-link--modelsettings a::before {
+    content: "\f2c2";
+}
+

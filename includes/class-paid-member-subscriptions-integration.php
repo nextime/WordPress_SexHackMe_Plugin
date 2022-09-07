@@ -203,7 +203,7 @@ if(!class_exists('SexhackPmsPasswordDataLeak')) {
                    $page = get_page($mailpage);
                    $mailpage = $page->post_name;
                 }
-                send_changepwd_mail($user, $mailpage);
+                send_changepwd_mail($username_email, $mailpage);
 
 
 

@@ -24,6 +24,12 @@ namespace wp_SexHackMe;
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit;
 
+function sh_get_my_videos()
+{
+    // XXX Get Only the first result
+   return SH_Query::get_Videos(get_current_user_id(), 'user');
+}
+
 function sh_save_video($video)
 {
    if(is_object($video)) {
@@ -59,9 +65,9 @@ function sh_delete_video_from_product($p)
 }
 
 
-function sh_get_videos($vcat=false)
+function sh_get_videos_by_cat($vcat=false)
 {
-   return SH_Query::get_Videos($vcat);
+   return SH_Query::get_VideosCat($vcat);
 }
 
 function sh_get_video($id)
