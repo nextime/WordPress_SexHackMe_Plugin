@@ -43,6 +43,20 @@ if(!class_exists('SH_StoreFront')) {
          // Re add the cart in the right position
          add_action( 'storefront_header', 'storefront_header_cart', 40);
 
+         // Replace 404 page if /404.php exists
+         if (is_readable($_SERVER['DOCUMENT_ROOT'].'/404.php')) {
+            add_action( 'template_redirect', 'wp_SexHackMe\SH_StoreFront::page404' );
+         }
+
+      }
+
+      public static function page404() 
+      {
+         if(is_404()) 
+         {
+            wp_redirect( home_url( '/404.php' ) );
+            die;
+         }
       }
 
       public static function credits($cred)

@@ -402,7 +402,7 @@ if(!class_exists('SexHackMe_Plugin')) {
          $this->file_include('includes/class-video.php');
          $this->file_include('includes/functions-video.php');
          $this->file_include('includes/class-post_type-video.php');
-
+         $this->file_include('includes/class-video-upload.php');
 
          /* Video Gallery */
          $this->file_include('includes/class-videogallery.php');

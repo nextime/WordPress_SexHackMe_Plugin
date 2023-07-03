@@ -22,6 +22,30 @@
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit;
 ?>
+<script language="javascript">
+jQuery(function($) {
+    $('body').on('change', '#file', function() {
+        $this = $(this);
+        file_data = $(this).prop('files')[0];
+        form_data = new FormData();
+        form_data.append('file', file_data);
+        form_data.append('action', 'file_upload');
+        form_data.append('security', '<?php echo wp_create_nonce( 'sh_video_upload' );?>');
+  
+        $.ajax({
+            url: '<?php echo admin_url( 'admin-ajax.php' );?>',
+            type: 'POST',
+            contentType: false,
+            processData: false,
+            data: form_data,
+            success: function (response) {
+                $this.val('');
+                alert('File uploaded successfully.');
+            }
+        });
+    });
+});
+</script>
 <form class="fileUpload" enctype="multipart/form-data">
     <div class="form-group">
         <label>Choose File:</label>

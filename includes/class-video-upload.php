@@ -25,32 +25,29 @@ namespace wp_SexHackMe;
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 
-if(!class_exists('SH_StoreFront')) {
-   class SH_StoreFront
+if(!class_exists('SH_VideoUpload')) {
+   class SH_VideoUpload
    {
-      public static function init()
+      public function __construct()
       {
-         // Remove the cart and the product search 
-         remove_action( 'storefront_header', 'storefront_header_cart', 60 );
-         remove_action( 'storefront_header', 'storefront_product_search', 40);
-
-         // Remove StoreFront credits
-         add_filter('storefront_credit_link', 'wp_SexHackMe\SH_StoreFront::credits');
-
-         // add footer disclaimer
-         //add_action('storefront_footer', 'wp_SexHackMe\sh_get_disclaimer')); // XXX I don't like positioning this way. Fix in CSS or sobstitute footer theme file?
-
-         // Re add the cart in the right position
-         add_action( 'storefront_header', 'storefront_header_cart', 40);
-
+         add_action('wp_ajax_file_upload', array($this, 'file_upload_callback'));
+         add_action('wp_ajax_nopriv_file_upload', array($this, 'file_upload_callback'));
       }
 
-      public static function credits($cred)
+      public function file_upload_callback()
       {
-         return '';
+    		check_ajax_referer('sh_video_upload', 'security');
+    		$arr_img_ext = array('image/png', 'image/jpeg', 'image/jpg', 'image/gif');
+    		if (in_array($_FILES['file']['type'], $arr_img_ext)) {
+        		$upload = wp_upload_bits($_FILES["file"]["name"], null, file_get_contents($_FILES["file"]["tmp_name"]));
+        		//$upload['url'] will gives you uploaded file path
+    		}
+    		wp_die();
       }
 
    }
+
+   new SH_VideoUpload;
 }
 
 
