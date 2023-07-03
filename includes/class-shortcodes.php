@@ -41,6 +41,7 @@ if(!class_exists('SH_Shortcodes')) {
             'sexadv'         => __CLASS__ . '::adv_shortcode',
             'sexgallery'     => __CLASS__ . '::videogallery_shortcode',
             'shvideomanager' => __CLASS__ . '::video_manager_shortcode',
+            'shincludepage'  => __CLASS__ . '::include_page_shortcode',
          );
 
          foreach( $shortcodes as $shortcode_tag => $shortcode_func ) {
@@ -169,6 +170,22 @@ if(!class_exists('SH_Shortcodes')) {
          }
          sh_get_template('videomanager.php');
          return;
+      }
+
+      public static function include_page_shortcode($attr, $cont)
+      {
+         extract( shortcode_atts(array(
+            "page" => '',
+				'level' => 'public',
+         ), $attr));
+			if(($attr['level'] == 'guestonly' && !is_user_logged_in()) || ($attr['level'] == 'public' or !$attr['level']) || (is_user_logged_in() && ($attr['level']=='members' || ($attr['level']=='premium' && user_is_premium()))))
+			{
+				$ipost = get_post($attr['page']);
+				if($ipost) {
+            	return $ipost->post_content;
+				}	
+			}
+			return;
       }
 
    }
