@@ -167,8 +167,6 @@ if(!class_exists('SexhackPmsPasswordDataLeak')) {
             else
                 $username_email = sanitize_text_field( $_POST['pms_username_email'] );
 
-
-
             if( empty( $username_email ) )
                 pms_errors()->add( 'pms_username_email', __( 'Please enter a username or email address.', 'paid-member-subscriptions' ) );
             else {
@@ -189,6 +187,7 @@ if(!class_exists('SexhackPmsPasswordDataLeak')) {
                     }
                     else $error=true;  
                 }
+
             }
 
             // Extra validation

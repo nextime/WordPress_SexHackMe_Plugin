@@ -170,9 +170,9 @@ function send_changepwd_mail($user_login, $baseurl=false){
 
 
 
-    $key = pms_retrieve_activation_key( $user_login );
-    //$key = get_password_reset_key( $user_data );
-    do_action( 'retrieve_password_key', $user_login, $key );
+    $genkey = pms_retrieve_activation_key( $user_login );
+    do_action( 'retrieve_password_key', $user_login, $genkey );
+    $key = get_password_reset_key( $user_data );
 
     //if ( empty( $wp_hasher ) ) {
     //    require_once ABSPATH . 'wp-includes/class-phpass.php';
