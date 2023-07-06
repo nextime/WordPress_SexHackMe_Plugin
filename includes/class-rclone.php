@@ -48,7 +48,7 @@ if(!class_exists('SH_RClone')) {
          }
 
          if($this->rclone && is_callable('shell_exec') && false === stripos(ini_get('disable_functions'), 'shell_exec')) {
-            add_filter('sh_download_url_filter', array($this, 'get_gdrive_download_url'));
+            add_filter('sh_download_url_filter', array($this, 'get_download_url'));
          }
       } 
 

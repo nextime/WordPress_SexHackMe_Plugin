@@ -18,7 +18,29 @@
  * along with SexHackMe Wordpress Plugin. If not, see <https://www.gnu.org/licenses/>.
  */
 
+.shm-side-by-side {
+	display: inline-block;
+	margin-left: 10px;
+	margin-right: 10px;
+	height: 50px;
+}
+
+#shm-socials-centered {
+	text-align:center;
+}
+
+
+.home.page:not(.page-template-template-homepage) .site-header {
+   margin-bottom: 0em;
+} 
+
+
 @media screen and (min-width: 768px) {
+
+    .site-header-cart .cart-contents {
+      padding: 1px;
+      padding-top: 10px;
+    }
 
     .col-full {
       max-width: 85em;
@@ -29,12 +51,15 @@
 		margin: 0 0 0.7em;
     }
 
+    .site-branding {
+		margin-bottom: 0em;
+	 }
 
 	 .main-navigation ul.menu>li>a, .main-navigation ul.nav-menu>li>a {
 			padding: 0.4em 0.5em;
     }
     .site-header {
-       padding-top: 0.3em;
+       padding-top: 0.2em;
     }
 
     .woocommerce-active .site-header .main-navigation {
@@ -59,4 +84,13 @@
  } */
 
 }
+@media screen and (max-width: 767px) {
+	.advbottom {
+		display:none;
+	}
 
+   .site-header {
+		padding-top: 0.2em;
+      padding-bottom: 0.2em;
+   }
+}

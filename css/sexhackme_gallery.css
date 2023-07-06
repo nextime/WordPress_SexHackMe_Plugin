@@ -148,7 +148,7 @@ ul.products li.sexhack_thumbli {
 @media screen and (min-width: 768px) {
 	
 	.site-main ul.products.columns-4 li.sexhack_thumbli {
-      width: 21%;
+      width: 20% !important;
       /* This to solve the different title lenght, combine with right trim and popup full title maybe, 
          and maybe not here but adding another container.
          I should also re-check the sexhack class naming...

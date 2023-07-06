@@ -43,6 +43,9 @@ if(!class_exists('SH_StoreFront')) {
          // Re add the cart in the right position
          add_action( 'storefront_header', 'storefront_header_cart', 40);
 
+         // Remove breadcrumb
+         remove_action( 'storefront_before_content', 'woocommerce_breadcrumb', 10 );
+
          // Replace 404 page if /404.php exists
          if (is_readable($_SERVER['DOCUMENT_ROOT'].'/404.php')) {
             add_action( 'template_redirect', 'wp_SexHackMe\SH_StoreFront::page404' );
@@ -63,6 +66,8 @@ if(!class_exists('SH_StoreFront')) {
       {
          return '';
       }
+
+      
 
    }
 }
