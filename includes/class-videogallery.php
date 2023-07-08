@@ -114,7 +114,7 @@ if(!class_exists('SH_VideoGallery')) {
          $hls_public = $video->hls_public;
          $hls_member = $video->hls_members;
          $hls_premium = $video->hls_premium;
-         $video_preview = $video->video_preview;
+         $video_preview = $video->preview;
          $gif_preview = $video->gif_small;
 
          sexhack_log($video);
@@ -137,8 +137,8 @@ if(!class_exists('SH_VideoGallery')) {
          $vtags=array();
 
          $downtag ='';
-         if((!$hls_public) AND (!$hls_member) AND (!$hls_premium) AND ($video_preview) ) $vtags[] = '<label class="sexhack_vtag sexhack_preview" style="*LEFT*">preview</label>';
          if($hls_public) $vtags[] = '<label class="sexhack_vtag sexhack_public" style="*LEFT*">public</label>';
+         elseif($video_preview) $vtags[] = '<label class="sexhack_vtag sexhack_preview" style="*LEFT*">preview</label>';
          if($hls_member)$vtags[] = '<label class="sexhack_vtag sexhack_members" style="*LEFT*">members</label>';
          if($hls_premium)$vtags[] = '<label class="sexhack_vtag sexhack_premium" style="*LEFT*">premium</label>';
 

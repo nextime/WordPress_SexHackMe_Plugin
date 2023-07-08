@@ -84,7 +84,7 @@ get_header(); ?>
             $hls_public = $video->hls_public;
             $hls_members = $video->hls_members;
             $hls_premium = $video->hls_premium;
-            $video_preview = $video->video_preview;
+            $video_preview = $video->preview;
             $gif_preview = $video->gif_small;
             $gif = $video->gif;
 
@@ -183,6 +183,12 @@ get_header(); ?>
                   default:  // public too!
                        if($hls_public && $video->video_type=='VR') echo do_shortcode( "[sexvideo url=\"".$hls_public."\" posters=\"".$thumb."\"]" );
                        else if($hls_public)  echo do_shortcode( "[sexhls url=\"".$hls_public."\" posters=\"".$thumb."\"]" );
+                       else if($video_preview) {
+                          //echo do_shortcode( "[sexvideo url=\"".$video_preview."\" posters=\"".$thumb."\"]" );
+                          // XXX BUG: sexvideo doesn't like google.drive.com/uc? videos for cross-site problems?
+                          echo '<video src='."'$video_preview'".' controls autoplay muted playsinline loop></video></div></div>';
+                          header("Access-Control-Allow-Origin: *");
+                       }
                        else if($gif_preview) echo '<img class="sexhack_videopreview" src="'.$gif_preview.'" loading="lazy"></img>';
                        else echo '<img class="sexhack_videopreview" src="'.$thumb.'" loading="lazy"></img>';
                }
