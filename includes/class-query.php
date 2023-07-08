@@ -264,15 +264,17 @@ if(!class_exists('SH_Query')) {
          // XXX TODO This filtering using a $_GET in the query class is SHIT.
          //     Move it in the gallery interface, and pass a fucking argument
          $filter=false;
-         if(isset($_GET['sexhack_vselect']))
+         if(isset($_GET['shvs']))
          {
-            switch($_GET['sexhack_vselect'])
+            switch($_GET['shvs'])
             {
                case 'premium':
                case 'members':
                case 'public':
+                  $filter="hls_".$_GET['shvs'];
+                  break;
                case 'preview':
-                  $filter=$_GET['sexhack_vselect'];
+                  $filter=$_GET['shvs'];
                   break;
             }
          }
@@ -280,6 +282,7 @@ if(!class_exists('SH_Query')) {
 			$results = array();
          //$sql = $wpdb->prepare("SELECT * from {$wpdb->prefix}{$prefix}videos");
          $sql = "SELECT * FROM {$wpdb->prefix}".SH_PREFIX."videos";
+         if($filter) $sql .= " WHERE ".$filter."!=''";
          $dbres = $wpdb->get_results( $sql, ARRAY_A );
 		   sexhack_log($dbres);
          foreach($dbres as $row)
@@ -421,15 +424,15 @@ if(!class_exists('SH_Query')) {
       public static function get_Products($vcat=false)
       {
          $filter=false;
-         if(isset($_GET['sexhack_vselect']))
+         if(isset($_GET['shvs']))
          {
-            switch($_GET['sexhack_vselect'])
+            switch($_GET['shvs'])
             {
                case 'premium':
                case 'members':
                case 'public':
                case 'preview':
-                  $filter=$_GET['sexhack_vselect'];
+                  $filter=$_GET['shvs'];
                   break;
             }
          }

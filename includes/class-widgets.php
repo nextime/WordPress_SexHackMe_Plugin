@@ -134,11 +134,11 @@ if(!class_exists('SH_GalleryWidget')) {
                echo $args['before_title'] . $title . $args['after_title'];
             ?>
                <ul>
-                  <li><a href="">All videos</a></li>
-                  <li><a href="?sexhack_vselect=public">Public videos</a></li>
-                  <li><a href="?sexhack_vselect=members">Members videos</a></li>
-                  <li><a href="?sexhack_vselect=premium">Premium videos</a></li>
-                  <li><a href="?sexhack_vselect=preview">Previews videos</a></li>
+                  <li><a href="?shvs=all">All videos</a></li>
+                  <li><a href="?shvs=public">Public videos</a></li>
+                  <li><a href="?shvs=members">Members videos</a></li>
+                  <li><a href="?shvs=premium">Premium videos</a></li>
+                  <li><a href="?shvs=preview">Previews videos</a></li>
                </ul>
             <?php
             echo $args['after_widget'];
