@@ -33,6 +33,12 @@ if(!class_exists('SH_StoreFront')) {
          // Remove the cart and the product search 
          remove_action( 'storefront_header', 'storefront_header_cart', 60 );
          remove_action( 'storefront_header', 'storefront_product_search', 40);
+         
+         // Remove primary navigation 
+         //remove_action( 'storefront_header', 'storefront_primary_navigation', 50 );
+
+         // readd primary navigation
+         //add_action( 'storefront_header', 'storefront_primary_navigation', 21 );
 
          // Remove StoreFront credits
          add_filter('storefront_credit_link', 'wp_SexHackMe\SH_StoreFront::credits');
