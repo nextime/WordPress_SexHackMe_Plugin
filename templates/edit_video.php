@@ -34,6 +34,6 @@ $post = $video->get_post();
 <form class="fileUpload" enctype="multipart/form-data">
     <div class="form-group">
         <label>Choose File:</label>
-        <input type="file" id="file" accept="image/*" />
+        <input type="file" id="file" accept="video/*" />
     </div>
 </form>

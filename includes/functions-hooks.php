@@ -38,8 +38,7 @@ function pms_get_redirect_url($url, $location=false)
 {
    if( !isset( $_POST['pay_gate'] ) || $_POST['pay_gate'] != 'manual' )
       return $url;
-   // XXX BUG apply_filter ont found??
-   return apply_filter('sh_get_redirect_url', $url, $location);
+   return apply_filters('sh_get_redirect_url', $url, $location);
 }
 
 ?>

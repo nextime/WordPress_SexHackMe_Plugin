@@ -117,7 +117,7 @@ if(!class_exists('SH_MetaBox')) {
 
       public static function save_meta_box_data($post_id)
       {
-         return save_sexhack_video_meta_box_data($post_id);
+         return save_sexhack_video_forms($post_id);
       }
 
    }

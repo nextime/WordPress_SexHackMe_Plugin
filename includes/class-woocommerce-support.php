@@ -32,8 +32,11 @@ if(!class_exists("SH_VideoProducts")) {
       public function __construct()
       {
          //add_action('sh_save_video_after_query', array($this, 'sync_product_from_video'), 1, 10);
+
+         // fired when saving SH videos to sync the product concurrently.
          add_filter('video_before_save', array($this, 'sync_product_from_video'));
 
+         // fired when deleting a video
          add_action('sh_delete_video', array($this, 'delete_video_product'), 9, 1);
       }
 
@@ -70,8 +73,9 @@ if(!class_exists("SH_VideoProducts")) {
          if(is_numeric($video->thumbnail))
             $prod->set_image_id( intval($video->thumbnail ));
 
-         // Product status.
-         if($video->status == 'published')
+         // Product status. Note we publish the product only 
+         // if is there a downloadable video.
+         if(($video->status == 'published') && ($video->has_downloads()))
             $prod->set_status('publish');
          else
             $prod->set_status('draft');

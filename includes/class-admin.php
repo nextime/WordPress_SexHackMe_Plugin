@@ -82,6 +82,16 @@ if(!class_exists('SH_Admin')) {
              register_setting('sexhackme-gallery-settings', 'sexhack_video_page');
              register_setting('sexhackme-gallery-settings', 'sexhack_gallery_page');
              register_setting('sexhackme-gallery-settings', 'sexhack_video404_page');
+             register_setting('sexhackme-gallery-settings', 'sexhack_shmdown');
+             register_setting('sexhackme-gallery-settings', 'sexhack_shmdown_uri');
+             register_setting('sexhackme-gallery-settings', 'sexhack_video_tmp_path');
+             register_setting('sexhackme-gallery-settings', 'sexhack_video_flat_path');
+             register_setting('sexhackme-gallery-settings', 'sexhack_video_vr_path');
+             register_setting('sexhackme-gallery-settings', 'sexhack_video_hls_storage');
+             register_setting('sexhackme-gallery-settings', 'sexhack_video_video_storage');
+             register_setting('sexhackme-gallery-settings', 'sexhack_video_photo_storage');
+             register_setting('sexhackme-gallery-settings', 'sexhack_video_gif_storage');
+             register_setting('sexhackme-gallery-settings', 'sexhack_video_vr_storage');
              add_action('update_option', '\wp_SexHackMe\SH_Admin::update_gallery_slug', 10, 3);
              //register_setting('sexhackme-gallery-settings', 'sexhack_gallery_slug');
          }
@@ -114,7 +124,6 @@ if(!class_exists('SH_Admin')) {
             case 'sexhack_video404_page':
                update_option('need_rewrite_flush', 1);
                break;
-
 
             default:
                break;

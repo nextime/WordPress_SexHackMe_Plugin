@@ -94,6 +94,11 @@ function sh_get_video_from_slug($slug)
    return SH_Query::get_VideoFromSlug($slug);
 }
 
+function sh_get_video_from_hls($vpath, $level="public")
+{
+   return SH_Query::get_VideoFromHLS($vpath, $level);
+}
+
 function sh_get_categories($id=false)
 {
    return SH_Query::get_Categories($id);

@@ -1,0 +1,70 @@
+{
+    "packages": [
+        {
+            "name": "flowjs/flow-php-server",
+            "version": "v1.2.0",
+            "version_normalized": "1.2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/flowjs/flow-php-server.git",
+                "reference": "fe8890c25e835d0b4f58d8bd91331326ab1808ba"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/flowjs/flow-php-server/zipball/fe8890c25e835d0b4f58d8bd91331326ab1808ba",
+                "reference": "fe8890c25e835d0b4f58d8bd91331326ab1808ba",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4"
+            },
+            "require-dev": {
+                "ext-mongodb": "*",
+                "fabpot/php-cs-fixer": "~2.2",
+                "league/phpunit-coverage-listener": "~1.1",
+                "mikey179/vfsstream": "v1.2.0",
+                "mongodb/mongodb": "^1.4.0",
+                "phpunit/phpunit": "4.*"
+            },
+            "suggest": {
+                "mongodb/mongodb": "Required to use this package with Mongo DB"
+            },
+            "time": "2022-08-26T15:50:37+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-0": {
+                    "Flow": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Aidas Klimas",
+                    "email": "aidaskk@gmail.com"
+                }
+            ],
+            "description": "PHP library for handling chunk uploads. Works with flow.js html5 file uploads.",
+            "keywords": [
+                "chunks",
+                "file upload",
+                "flow",
+                "flow.js",
+                "html5 file upload",
+                "resumable",
+                "resumable.js",
+                "upload"
+            ],
+            "support": {
+                "issues": "https://github.com/flowjs/flow-php-server/issues",
+                "source": "https://github.com/flowjs/flow-php-server/tree/v1.2.0"
+            },
+            "install-path": "../flowjs/flow-php-server"
+        }
+    ],
+    "dev": true,
+    "dev-package-names": []
+}

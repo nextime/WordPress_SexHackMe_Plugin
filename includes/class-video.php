@@ -92,8 +92,21 @@ if(!class_exists('SH_Video')) {
          return $this->attributes['title'];
       }
 
-      public function has_downloads()
+      public function has_downloads($level=false)
       {
+         switch($level) {
+            case 'premim':
+               return $this->download_premium;
+               break;
+            case 'members':
+               return $this->download_members;
+               break;
+            case 'public':
+               return $this->download_public;
+               break;
+            default:
+               return false;
+         }
          if($this->download_public OR $this->download_members OR $this->download_premium) return true;
          return false;
       }

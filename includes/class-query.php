@@ -205,10 +205,30 @@ if(!class_exists('SH_Query')) {
          $slug = $wpdb->_real_escape($slug);
          $sql = "SELECT * FROM {$wpdb->prefix}".SH_PREFIX."videos WHERE slug='".$slug."'";
          $dbres = $wpdb->get_results( $sql );
-         if(is_array($dbres) && count($dbres) > 0)
+         if(is_array($dbres) && count($dbres) > 0) return new SH_Video((array)$dbres[0]);
+         return false;
+
+      }
+
+      public static function get_VideosFromHLS($vpath, $level="public")
+      {
+         global $wpdb;
+
+         $vpath = $wpdb->_real_escape($vpath);
+         switch($level)
          {
-            return new SH_Video((array)$dbres[0]);
+            case "members":
+                  $level="hls_members";
+               break;
+            case "premium":
+                  $level="hls_premium";
+               break;
+            default:
+               $level="hls_public";
          }
+         $sql = "SELECT * FROM {$wpdb->prefix}".SH_PREFIX."videos WHERE ".$level."='".$vpath."'";
+         $dbres = $wpdb->get_results( $sql );
+         if(is_array($dbres) && count($dbres) > 0) return new SH_Video((array)$dbres[0]);
          return false;
 
       }

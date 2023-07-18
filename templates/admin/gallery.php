@@ -72,7 +72,67 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                      <p class="description">Select Video not found page</p>
                </td>
             </tr>
+               <tr>
+                  <td>
+                     <label> Use filter script for HLS?</label>
+                     <input type="checkbox" name="sexhack_shmdown" value='1' <?php if(get_option('sexhack_shmdown', false)) echo "checked"; ?>>
+                  </td>
 
+                  <td>
+                     <label>HLS Filter script URI</label>
+                     <input type='text' name='sexhack_shmdown_uri' value='<?php echo get_option('sexhack_shmdown_uri', ''); ?>'>
+                  </td>
+               </tr>
+               <tr>
+                  <td>
+                     <label>Video Upload TMP path</label>
+                     <input type='text' name='sexhack_video_tmp_path' value='<?php echo get_option('sexhack_video_tmp_path', '/tmp'); ?>'>
+                  </td>
+               </tr>
+            <tr>
+                  <td>
+                     <label>Video Upload FLAT path</label>
+                     <input type='text' name='sexhack_video_flat_path' value='<?php echo get_option('sexhack_video_flat_path', '/tmp'); ?>'>
+                  </td>
+               </tr>
+            <tr>
+                  <td>
+                     <label>Video Upload VR path</label>
+                     <input type='text' name='sexhack_video_vr_path' value='<?php echo get_option('sexhack_video_vr_path', '/tmp'); ?>'>
+                  </td>
+               </tr>
+            <tr>
+                  <td>
+                     <label>Video Storage HLS</label>
+                     <input type='text' name='sexhack_video_hls_storage' value='<?php echo get_option('sexhack_video_hls_storage', ABSPATH.'HLS'); ?>'>
+                  </td>
+               </tr>
+            <tr>
+                  <td>
+                     <label>Video Storage Video</label>
+                     <input type='text' name='sexhack_video_video_storage' value='<?php echo get_option('sexhack_video_video_storage', ABSPATH.'Videos'); ?>'>
+                  </td>
+               </tr>
+            <tr>
+                  <td>
+                     <label>Video Storage Photo</label>
+                     <input type='text' name='sexhack_video_photo_storage' value='<?php echo get_option('sexhack_video_photo_storage', ABSPATH.'Photos'); ?>'>
+                  </td>
+               </tr>
+            <tr>
+                  <td>
+                     <label>Video Storage GIF</label>
+                     <input type='text' name='sexhack_video_gif_storage' value='<?php echo get_option('sexhack_video_gif_storage', ABSPATH.'GIF'); ?>'>
+                  </td>
+               </tr>
+            <tr>
+                  <td>
+                     <label>Video Storage VR</label>
+                     <input type='text' name='sexhack_video_vr_storage' value='<?php echo get_option('sexhack_video_vr_storage', ABSPATH.'VR'); ?>'>
+                  </td>
+               </tr>
+
+            
          </table>
          <?php submit_button(); ?>
          </form>

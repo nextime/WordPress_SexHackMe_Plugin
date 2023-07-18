@@ -24,14 +24,19 @@ namespace wp_SexHackMe;
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-function save_sexhack_video_meta_box_data( $post_id )
+function save_sexhack_video_forms( $post_id )
 {
 
    // Verify that the nonce is set and valid.
-   if (!isset( $_POST['sh_video_description_nonce'])
-      || !wp_verify_nonce( $_POST['sh_video_description_nonce'], 'video_description_nonce' ) ) {
+   
+   if ((!isset( $_POST['sh_video_description_nonce']) || !wp_verify_nonce( $_POST['sh_video_description_nonce'], 'video_description_nonce' )) 
+      && (!isset( $_POST['sh_editvideo_nonce']) || !wp_verify_nonce( $_POST['sh_editvideo_nonce'], 'sh_editvideo')))
+   {
       return;
    }
+
+   $admin=false;
+   if(isset( $_POST['sh_video_description_nonce']) && wp_verify_nonce( $_POST['sh_video_description_nonce'], 'video_description_nonce' )) $admin=true;
 
    // We need to be executed only when post_type is set...
    if(!isset($_POST['post_type'])) return;
@@ -39,7 +44,8 @@ function save_sexhack_video_meta_box_data( $post_id )
    if($_POST['post_type']!='sexhack_video') return;
 
    // Make sure we don't get caught in any loop
-   unset($_POST['sh_video_description_nonce']);
+   if($admin) unset($_POST['sh_video_description_nonce']);
+   if(!$admin) unset($_POST['sh_editvideo_nonce']);
 
    // If this is an autosave, our form has not been submitted, so we don't want to do anything.
    if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
@@ -54,7 +60,7 @@ function save_sexhack_video_meta_box_data( $post_id )
       }
 
    }
-   else {
+   else { // XXX Add more specific permission for our pages?
       if ( ! current_user_can( 'edit_post', $post_id ) ) {
           return;
       }
@@ -85,28 +91,38 @@ function save_sexhack_video_meta_box_data( $post_id )
 
    // TODO Remove debug
    //sexhack_log("SAVE post object:");
-  // sexhack_log($post);
+ // sexhack_log($post);
   // sexhack_log('   - $POST:');
   // sexhack_log($_POST);
 
-	// Model
-	if(array_key_exists('video_model', $_POST) && is_numeric($_POST['video_model']) && intval($_POST['video_model']) > 0)
-		$video->user_id = intval($_POST['video_model']);
+   // Model
+   if($admin) {
+   	if(array_key_exists('video_model', $_POST) && is_numeric($_POST['video_model']) && intval($_POST['video_model']) > 0)
+         $video->user_id = intval($_POST['video_model']);
+   } else {
+      $video->user_id = get_current_user_id();
+   }
 
    // Video description
  	$video->description = sanitize_text_field( $_POST['video_description'] );
 
    // Video thumbnail
-   if(array_key_exists('video_thumbnail', $_POST) && sanitize_text_field($_POST['video_thumbnail']))
-      $video->thumbnail = sanitize_text_field( $_POST['video_thumbnail'] );
-   else if(array_key_exists('_thumbnail_id', $_POST)
-      && is_numeric($_POST['_thumbnail_id'])
-      && intval($_POST['_thumbnail_id']) > 0)
-   {
-      $video->thumbnail = intval($_POST['_thumbnail_id']);
+   if($admin) {
+      if(array_key_exists('video_thumbnail', $_POST) && sanitize_text_field($_POST['video_thumbnail']))
+         $video->thumbnail = sanitize_text_field( $_POST['video_thumbnail'] );
+      else if(array_key_exists('_thumbnail_id', $_POST)
+         && is_numeric($_POST['_thumbnail_id'])
+         && intval($_POST['_thumbnail_id']) > 0)
+      {
+         $video->thumbnail = intval($_POST['_thumbnail_id']);
+      }
+      else
+         $video->thumbnail = false;
+   } else {
+      // Shoudn't we move it somewhere?
+      if(isset($_POST['filename_thumb'])) $video->thumbnail = sanitize_text_field($_POST['filename_thumb']);
+      else $video->thumbnail = false;
    }
-   else
-      $video->thumbnail = false;
 
    // Video status
    $validstatuses = array('creating','uploading','queue','processing','ready','published','error');
@@ -133,6 +149,8 @@ function save_sexhack_video_meta_box_data( $post_id )
 	// VR Projection
 	if(array_key_exists('video_vr_projection', $_POST) && in_array($_POST['video_vr_projection'], array('VR180_LR','VR360_LR')))
 		$video->vr_projection = $_POST['video_vr_projection'];
+
+   // XXX Arrivato qui
 
 	// Preview video
 	if(array_key_exists('video_preview', $_POST) && check_url_or_path(sanitize_text_field($_POST['video_preview'])))

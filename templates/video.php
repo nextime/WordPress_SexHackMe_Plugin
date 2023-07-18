@@ -25,6 +25,7 @@ namespace wp_SexHackMe;
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit;
 
+
 sexhack_log("PORCALAPUPAZZA");
 
 sexhack_log(get_query_var('sh_video', 'NONEEEEEEEEEEEEEE!!!'));
@@ -142,7 +143,8 @@ get_header(); ?>
                </header><!-- .entry-header -->
                <div class="sexhack-video-container">
             <?php
-
+            $filterurl=false;
+            if(get_option('sexhack_shmdown', false)) $filterurl=get_option('sexhack_shmdown_uri', false);
             if(in_array($tab, $avail)) 
             {
                switch($tab)
@@ -181,8 +183,14 @@ get_header(); ?>
                      break;
                   
                   default:  // public too!
-                       if($hls_public && $video->video_type=='VR') echo do_shortcode( "[sexvideo url=\"".$hls_public."\" posters=\"".$thumb."\"]" );
-                       else if($hls_public)  echo do_shortcode( "[sexhls url=\"".$hls_public."\" posters=\"".$thumb."\"]" );
+                       if($filterurl && $hls_public && $video->video_type=='VR') 
+                          echo do_shortcode( "[sexvideo url=\"".wp_nonce_url($filterurl.$sh_video."/public/".basename($hls_public), 'shm_public_video-'.$video->id)."\" posters=\"".$thumb."\"]" );
+                       else if($hls_public && $video->video_type=='VR') 
+                          echo do_shortcode( "[sexvideo url=\"".$hls_public."\" posters=\"".$thumb."\"]" );
+                       else if($filterurl && $hls_public) 
+                          echo do_shortcode( "[sexhls url=\"".wp_nonce_url($filterurl.$sh_video."/public/".basename($hls_public), 'shm_public_video-'.$video->id)."\" posters=\"".$thumb."\"]" );
+                       else if($hls_public)  
+                          echo do_shortcode( "[sexhls url=\"".$hls_public."\" posters=\"".$thumb."\"]" );
                        else if($video_preview) {
                           //echo do_shortcode( "[sexvideo url=\"".$video_preview."\" posters=\"".$thumb."\"]" );
                           // XXX BUG: sexvideo doesn't like google.drive.com/uc? videos for cross-site problems?
@@ -229,9 +237,9 @@ get_header(); ?>
          <?php 
          echo $htmltags;
          ?>
-
+         <?php if($video->has_downloads()) { ?>
             <h3><a href="<?php echo get_permalink($video->product_id); ?>">Download the full lenght hi-res version of this video</a><h3>
-
+         <?php } ?>
          <hr>
 <?php
                echo do_shortcode("[sexadv adv=".get_option('sexadv_video_bot')."]");      
