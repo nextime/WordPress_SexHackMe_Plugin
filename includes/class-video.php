@@ -216,7 +216,7 @@ if(!class_exists('SH_Video')) {
             if($guests)
             {
                foreach($guests as $guest)
-                  $this->attributes['guests'][$guest->ID] = $cat;
+                  $this->attributes['guests'][$guest->ID] = $guest;
 
             }
          }

@@ -65,6 +65,7 @@ if(!class_exists('SH_PostTypes')) {
          //       Devo pero' verificare le varie taxonomy e attributi della pagina, vedere come creare un prodotto in wordpress
          //       per ogni pagina sexhack_video che credo, sincronizzare prodotti e video pagine, gestire prodotti con lo stesso nome
          //       ( credo si possa fare dandogli differenti slugs ) 
+
          register_post_type('sexhack_video', array(
              'labels'        => array(
                 'name'                  => 'Videos',
@@ -95,7 +96,20 @@ if(!class_exists('SH_PostTypes')) {
             'taxonomies' => array(), //'category','post_tag'), // TODO  Shouldn't we have a "video_type" taxonomy for VR or flat?
          ));
 
-
+         $statuses = array('creating','uploading','queue','processing','ready','published','error');
+         foreach($statuses as $status) {
+            register_post_status( $status, array(
+                    'label'                     => $status,
+                    'public'                    => true,
+                    'label_count'               => _n_noop( $status.' <span class="count">(%s)</span>', $status.' <span class="count">(%s)</span>', 'sexhackme-domain' ),
+                    'post_type'                 => array( 'sexhack_video' ), // Define one or more post types the status can be applied to.
+                    'show_in_admin_all_list'    => true,
+                    'show_in_admin_status_list' => true,
+                    'show_in_metabox_dropdown'  => true,
+                    'show_in_inline_dropdown'   => true,
+                    'dashicon'                  => 'dashicons-businessman',
+				));
+         }
          $rules = $wp_rewrite->wp_rewrite_rules();
 
 			$DEFAULTSLUG = get_option('sexhack_gallery_slug', 'v');

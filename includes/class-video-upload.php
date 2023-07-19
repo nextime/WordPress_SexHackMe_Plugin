@@ -48,11 +48,11 @@ if(!class_exists('SH_VideoUpload')) {
 			$config = new \Flow\Config();
 			$config->setTempDir("/tmp");
          $request = new \Flow\Request();
-         if(isset($_POST['uniqid'])) $uniqid = $_POST['uniqid'];
+         if(isset($_POST['uniqid'])) $uniqid = sanitize_text_field($_POST['uniqid']);
          else $uniqid = uniqid();
 
          $uploadFolder = get_option('sexhack_video_tmp_path', '/tmp');
-			$uploadFileName = $uniqid . "_" . $request->getFileName();
+			$uploadFileName = $uniqid . "_" . sanitize_text_field($request->getFileName());
          $uploadPath = $uploadFolder."/".$uploadFileName;
 
 			if (\Flow\Basic::save($uploadPath, $config, $request)) {
@@ -72,13 +72,10 @@ if(!class_exists('SH_VideoUpload')) {
 
       public function edit_video_callback()
       {
-         sexhack_log("PORCODIOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
-         sexhack_log($_POST);
-         sexhack_log($_GET);
-			
-			// XXX Sanitize $_POST['title']
+         //sexhack_log($_POST);
+         //sexhack_log($_GET);
 			if(!isset($_POST['title'])) return;
-			$title = $_POST['title'];
+			$title = sanitize_text_field($_POST['title']);
 
 			$post_id = wp_insert_post(array (
    			'post_type' => 'sexhack_video',

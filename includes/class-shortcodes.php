@@ -178,6 +178,7 @@ if(!class_exists('SH_Shortcodes')) {
             "page" => '',
 				'level' => 'public',
          ), $attr));
+         if(!array_key_exists('level', $attr)) $attr['level'] = 'public';
 			if(($attr['level'] == 'guestonly' && !is_user_logged_in()) || ($attr['level'] == 'public' or !$attr['level']) || (is_user_logged_in() && ($attr['level']=='members' || ($attr['level']=='premium' && user_is_premium()))))
 			{
 				$ipost = get_post($attr['page']);

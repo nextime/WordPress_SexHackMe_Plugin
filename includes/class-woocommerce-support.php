@@ -142,11 +142,19 @@ if(!class_exists("SH_VideoProducts")) {
 			$prod->set_downloads( $wcdowns );
 
 
-         // Categories. If not configured try to search
-         // for a category named "Video", if not present 
-         // just take the last one in list, if no categories
-         // exists just don't set anything and will remain in 
-         // Uncategorized.
+         // Categories.
+         // XXX We don't access categories of products, so, just put them in "videos"
+         /*
+         $catsids = array();
+         if(count($video->get_categories(false)) > 0)
+         {
+            $cats = array();
+            foreach($video->get_categories(false) as $cat) {
+               $cats[$cat->id] = $cat->category;
+            }
+            wp_set_object_terms($prod->get_id(),$cats, 'product_cat');
+         }
+         */
          $cat_id = get_option('sexhack_wcpms-prodcat', false);
          if($cat_id) $prod->set_category_ids(array($cat_id));
          else {
@@ -158,7 +166,16 @@ if(!class_exists("SH_VideoProducts")) {
             if($cat) $prod->set_category_ids(array($cat->term_id));
          }
 
+         // Sync tags with Video
+         if(count($video->get_tags(false)) > 0) {
+            $tags = array();
+            foreach($video->get_tags(false) as $tag) {
+               $tags[$tag->id] = $tag->tag;
+            }
+            wp_set_object_terms($prod->get_id(), $tags, 'product_tag');
+         }
 
+         // Save the product
 		   $prod->save();
 			$video->product_id = $prod->get_id();
 

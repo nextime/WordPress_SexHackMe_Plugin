@@ -46,6 +46,7 @@ if($video->product_id > 0)
       <select name='video_status'>
          <option value='creating' <?php if($video->status=='creating') echo "selected"; ?>>Creating</option>
          <option value='uploading' <?php if($video->status=='uploading') echo "selected"; ?>>Uploading</option>
+         <option value='queue' <?php if($video->status=='queue') echo "selected"; ?>>Queue</option>
          <option value='processing' <?php if($video->status=='processing') echo "selected"; ?>>Processing</option>
          <option value='ready' <?php if($video->status=='ready') echo "selected"; ?>>Ready</option>
          <option value='published' <?php if($video->status=='published') echo "selected"; ?>>Published</option>

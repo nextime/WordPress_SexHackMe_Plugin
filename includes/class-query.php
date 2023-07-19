@@ -359,7 +359,7 @@ if(!class_exists('SH_Query')) {
             foreach($dbres as $ures)
             {
                $udata = get_userdata($ures->user_id);
-               if($udata) $guests[$uid] = $udata;
+               if($udata) $guests[$ures->user_id] = $udata;
             }
          }
          if(count($guests) > 0) return $guests;

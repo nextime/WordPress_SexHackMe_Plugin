@@ -330,7 +330,10 @@ jQuery(function($) {
   });
 
   $('#send').on('click', function() {
-     console.log('uhmm');
+     console.log('sending...');
+     document.getElementById('send').disabled=true;
+     document.getElementById('send').value='Sending...';
+
      formdata = new FormData();
      formdata.append('action', 'sh_editvideo');
      formdata.append('uniqid', '<?php echo $uniqid ?>');
@@ -342,17 +345,35 @@ jQuery(function($) {
      formdata.append('video_type', $('input[name="video_type"]:checked').val());
      formdata.append('video_vr_projection', $('#video_vr_projection').find(":selected").val());
      formdata.append('video_price', $('input[name="video_price"]').val());
-     formdata.append('public_isdownload', $('input[name="video_isdownload_public"]').val());
-     formdata.append('members_isdownload', $('input[name="video_isdownload_members"]').val());
-     formdata.append('premium_isdownload', $('input[name="video_isdownload_premium"]').val());
-     formdata.append('categories',  $("#catstable input:checkbox:checked").map(function(){ return $(this).val();}).get());
+     formdata.append('public_isdownload', $('input[name="video_isdownload_public"]:checked').val());
+     formdata.append('members_isdownload', $('input[name="video_isdownload_members"]:checked').val());
+     formdata.append('premium_isdownload', $('input[name="video_isdownload_premium"]:checked').val());
+
+     //formdata.append('vcategory',  $("#catstable input:checkbox:checked").map(function(){ return $(this).val();}).get());
+     var vcats = $("#catstable input:checkbox:checked").map(function(){ return $(this).val();}).get();
+     for (var i = 0; i < vcats.length; i++) {
+        formdata.append('vcategory[]', vcats[i]);
+     }
+
      var guestar = $('.guest_list p select[name="vguests[]"]').find(':selected').map(function() { if($(this).val() > 0) return $(this).val()}).get();
-     formdata.append('guests', guestar.filter((item, index) => guestar.indexOf(item) === index));
-     formdata.append('tags', $('input[name="video_tags[]"]').map(function(){ return $(this).val()}).get());
+     var gaf = guestar.filter((item, index) => guestar.indexOf(item) === index);
+	  for (var i = 0; i < gaf.length; i++) {
+		  formdata.append('vguests[]', gaf[i]);
+	  } 
+     //formdata.append('vguests', guestar.filter((item, index) => guestar.indexOf(item) === index));
+
+     ///formdata.append('video_tags', $('input[name="video_tags[]"]').map(function(){ return $(this).val()}).get());
+	  var vtags = $('input[name="video_tags[]"]').map(function(){ return $(this).val()});
+     for (var i = 0; i < vtags.length; i++) {
+        formdata.append('video_tags[]', vtags[i]);
+     }
+
+
+
      formdata.append('post_type', 'sexhack_video');
 <?php
    foreach(array('public','members','premium','preview','thumb','gif','gif_small') as $level) { ?>
-      formdata.append('filename_<?php echo $level; ?>', $('input[name="filename_<?php echo $level; ?>"]').val());
+      formdata.append('video_<?php echo $level; ?>', $('input[name="filename_<?php echo $level; ?>"]').val());
    <?php } ?>
 
      $.ajax({url: '<?php echo admin_url( 'admin-ajax.php' );?>',
@@ -361,7 +382,8 @@ jQuery(function($) {
             processData: false,
             data: formdata,
             success: function(response) {
-               alert('saved');
+               document.getElementById('send').value='Success!';
+               window.location=window.location.pathname;
      }
   });
 });
@@ -436,8 +458,9 @@ jQuery(function($) {
       if(flowuploads) flowuploads--;
       console.log('CI SIAMO');
       ppid=fileslot.parentElement.parentElement.id;
-      if(ppid=='newvideo_members_list' || ppid=='newvideo_public_list' || ppid=='newvideo_premium_list') needsupload++;
       $('#'+ppid).parent().find('input[type="hidden"]').val('<?php echo $uniqid."_"; ?>'+file.name);
+      if(ppid=='newvideo_members_list' || ppid=='newvideo_public_list' || ppid=='newvideo_premium_list') needsupload++;
+      if(flowuploads) flowuploads--;
       canbesaved();
     });
  

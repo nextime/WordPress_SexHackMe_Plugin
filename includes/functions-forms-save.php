@@ -120,7 +120,7 @@ function save_sexhack_video_forms( $post_id )
          $video->thumbnail = false;
    } else {
       // Shoudn't we move it somewhere?
-      if(isset($_POST['filename_thumb'])) $video->thumbnail = sanitize_text_field($_POST['filename_thumb']);
+      if(isset($_POST['video_thumb'])) $video->thumbnail = get_option('sexhack_video_tmp_path', '/tmp')."/".sanitize_text_field($_POST['video_thumb']);
       else $video->thumbnail = false;
    }
 
@@ -128,6 +128,7 @@ function save_sexhack_video_forms( $post_id )
    $validstatuses = array('creating','uploading','queue','processing','ready','published','error');
    if(array_key_exists('video_status', $_POST) && in_array(sanitize_text_field($_POST['video_status']), $validstatuses))
       $video->status = sanitize_text_field($_POST['video_status']);
+   else if(!$admin)  $video->status = get_post_status($post_id);
 
    // Video private
    if(array_key_exists('video_private', $_POST) && in_array($_POST['video_private'], array('Y','N')))
@@ -150,53 +151,73 @@ function save_sexhack_video_forms( $post_id )
 	if(array_key_exists('video_vr_projection', $_POST) && in_array($_POST['video_vr_projection'], array('VR180_LR','VR360_LR')))
 		$video->vr_projection = $_POST['video_vr_projection'];
 
-   // XXX Arrivato qui
-
 	// Preview video
-	if(array_key_exists('video_preview', $_POST) && check_url_or_path(sanitize_text_field($_POST['video_preview'])))
+	if($admin && array_key_exists('video_preview', $_POST) && check_url_or_path(sanitize_text_field($_POST['video_preview'])))
       $video->preview = sanitize_text_field($_POST['video_preview']);
+   elseif(!$admin && array_key_exists('video_preview', $_POST) &&
+      sanitize_text_field($_POST['video_preview']))
+      $video->preview = sanitize_text_field(get_option('sexhack_video_tmp_path', '/tmp')."/".$_POST['video_preview']);
    else
       $video->preview = false;
 
 	// Animated gif path
-	if(array_key_exists('video_gif', $_POST) && check_url_or_path(sanitize_text_field($_POST['video_gif'])))
+	if($admin &&  array_key_exists('video_gif', $_POST) && check_url_or_path(sanitize_text_field($_POST['video_gif'])))
       $video->gif = sanitize_text_field($_POST['video_gif']);
+   elseif(!$admin &&  array_key_exists('video_gif', $_POST) &&
+      sanitize_text_field($_POST['video_gif']))
+      $video->gif = sanitize_text_field(get_option('sexhack_video_tmp_path', '/tmp')."/".$_POST['video_gif']);
    else
       $video->gif = false;
 
    // Small Animated gif path
-   if(array_key_exists('video_gif_small', $_POST) && check_url_or_path(sanitize_text_field($_POST['video_gif_small'])))
+   if($admin && array_key_exists('video_gif_small', $_POST) && check_url_or_path(sanitize_text_field($_POST['video_gif_small'])))
       $video->gif_small = sanitize_text_field($_POST['video_gif_small']);
+   elseif(!$admin && array_key_exists('video_gif_small', $_POST) &&
+      sanitize_text_field($_POST['video_gif_small']))
+      $video->gif_small = sanitize_text_field(get_option('sexhack_video_tmp_path', '/tmp')."/".$_POST['video_gif_small']);
    else
       $video->gif_small = false;
 
 
 	// Differenciated content for access levels
 	foreach(array('public','members','premium') as $vt)
-	{
+   {
 		// HLS playlist 
-		if(array_key_exists('video_hls_'.$vt, $_POST) && 
+		if($admin &&array_key_exists('video_hls_'.$vt, $_POST) && 
 			check_url_or_path(sanitize_text_field($_POST['video_hls_'.$vt])) &&
 			(strncasecmp(strrev(sanitize_text_field($_POST['video_hls_'.$vt])), '8u3m', 4) === 0)) 
 		{
 			$video->__set('hls_'.$vt, sanitize_text_field($_POST['video_hls_'.$vt]));
-		} else $video->__set('hls_'.$vt, false);
+      }
+      else if(!$admin &&  array_key_exists('video_'.$vt, $_POST) && 
+         sanitize_text_field($_POST['video_'.$vt])) 
+      {
+         $video->__set('hls_'.$vt, get_option('sexhack_video_tmp_path', '/tmp')."/".sanitize_text_field($_POST['video_'.$vt]));
+      }
+      else $video->__set('hls_'.$vt, false);
 	
       // Download 
-      if(array_key_exists('video_download_'.$vt, $_POST) &&
+      if($admin && array_key_exists('video_download_'.$vt, $_POST) &&
          check_url_or_path(sanitize_text_field($_POST['video_download_'.$vt])))
       {  
          $video->__set('download_'.$vt, sanitize_text_field($_POST['video_download_'.$vt]));
-      } else $video->__set('download_'.$vt, false);
+      }
+      else if(!$admin && array_key_exists($vt.'_isdownload', $_POST) &&  
+         in_array($_POST[$vt.'_isdownload'], array('Y','N')) && array_key_exists('video_'.$vt, $_POST) && 
+         sanitize_text_field($_POST['video_'.$vt])) 
+            $video->__set('download_'.$vt, get_option('sexhack_video_tmp_path', '/tmp')."/".sanitize_text_field($_POST['video_'.$vt]));
+      else $video->__set('download_'.$vt, false);
   
 		// Text only data
-		foreach(array('size','format','codec','acodec','duration','resolution') as $key)
-		{
-      	if(array_key_exists('video_'.$key.'_'.$vt, $_POST) &&
-         	sanitize_text_field($_POST['video_'.$key.'_'.$vt]))
-      	{  
-         	$video->__set($key.'_'.$vt, sanitize_text_field($_POST['video_'.$key.'_'.$vt]));
-      	} else $video->__set($key.'_'.$vt, false);
+      if($admin) {
+		   foreach(array('size','format','codec','acodec','duration','resolution') as $key)
+		   {
+      	   if(array_key_exists('video_'.$key.'_'.$vt, $_POST) &&
+         	   sanitize_text_field($_POST['video_'.$key.'_'.$vt]))
+      	   {  
+         	   $video->__set($key.'_'.$vt, sanitize_text_field($_POST['video_'.$key.'_'.$vt]));
+      	   } else $video->__set($key.'_'.$vt, false);
+         }
 		} 
 	
 	}
@@ -208,8 +229,10 @@ function save_sexhack_video_forms( $post_id )
       {
          if(is_numeric($guest_id) && intval($guest_id) > 0)
          {
-            $guest = get_userdata(intval($guest_id));
-            if($guest) $video->add_guest($guest);
+            if($admin || (!$admin && intval($guest_id) != get_current_user_id())) {
+               $guest = get_userdata(intval($guest_id));
+               if($guest) $video->add_guest($guest);
+            }
          }
       }
    }
