@@ -104,8 +104,6 @@ if(!class_exists('SH_Video')) {
             case 'public':
                return $this->download_public;
                break;
-            default:
-               return false;
          }
          if($this->download_public OR $this->download_members OR $this->download_premium) return true;
          return false;

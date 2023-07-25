@@ -34,6 +34,14 @@
    margin-bottom: 0em;
 } 
 
+.woocommerce-MyAccount-navigation ul li .is-active {
+   border: 10px solid #F3856b !important;
+}
+
+#pms-paygates-inner input:checked + span {
+	box-shadow: 0 10px 25px 0 #F3856b !important;
+}
+
 @media screen and (min-width: 768px) {
 
     .site-header-cart .cart-contents {

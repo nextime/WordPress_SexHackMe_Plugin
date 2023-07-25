@@ -153,8 +153,14 @@ get_header(); ?>
                   case "members":
                      if(user_has_member_access())
                      {
-                        if($hls_members && $video->video_type=="VR" ) echo do_shortcode( "[sexvideo url=\"".$hls_members."\" posters=\"".$thumb."\"]" );
-                        else if($hls_members) echo do_shortcode( "[sexhls url=\"".$hls_members."\" posters=\"".$thumb."\"]" );
+                        if($filterurl && $hls_members && $video->video_type=="VR" )
+                           echo do_shortcode( "[sexvideo url=\"".wp_nonce_url($filterurl.$sh_video."/members/".basename($hls_members), 'shm_members_video-'.$video->id)."\" posters=\"".$thumb."\"]" );
+                        else if($hls_members && $video->video_type=="VR" ) 
+                           echo do_shortcode( "[sexvideo url=\"".$hls_members."\" posters=\"".$thumb."\"]" );
+                        else if($filterurl && $hls_members)
+                           echo do_shortcode( "[sexhls url=\"".wp_nonce_url($filterurl.$sh_video."/members/".basename($hls_members), 'shm_members_video-'.$video->id)."\" posters=\"".$thumb."\"]" );
+                        else if($hls_members) 
+                           echo do_shortcode( "[sexhls url=\"".$hls_members."\" posters=\"".$thumb."\"]" );
                         else echo "<h3 class='sexhack-videonotify'>SOMETHING WENT BADLY WRONG. I CAN'T FIND THE VIDEO</h3>";
                      }
                      else
@@ -169,8 +175,14 @@ get_header(); ?>
                   case "subscribers":
                      if(user_has_premium_access())
                      {
-                        if($hls_premium && $video->video_type=="VR") echo do_shortcode( "[sexvideo url=\"".$hlt_premium."\" posters=\"".$thumb."\"]" );
-                        else if($hls_premium) echo do_shortcode( "[sexhls url=\"".$hls_premium."\" posters=\"".$thumb."\"]" );
+                        if($filterurl && $hls_premium && $video->video_type=="VR")
+                           echo do_shortcode( "[sexvideo url=\"".wp_nonce_url($filterurl.$sh_video."/premium/".basename($hls_premium), 'shm_premium_video-'.$video->id)."\" posters=\"".$thumb."\"]" );
+                        else if($hls_premium && $video->video_type=="VR") 
+                           echo do_shortcode( "[sexvideo url=\"".$hls_premium."\" posters=\"".$thumb."\"]" );
+                        else if($filterurl && $hls_premium) 
+                           echo do_shortcode( "[sexhls url=\"".wp_nonce_url($filterurl.$sh_video."/premium/".basename($hls_premium), 'shm_premium_video-'.$video->id)."\" posters=\"".$thumb."\"]" );
+                        else if($hls_premium) 
+                           echo do_shortcode( "[sexhls url=\"".$hls_premium."\" posters=\"".$thumb."\"]" );
                         else echo "<h3  class='sexhack-videonotify'>SOMETHING WENT BADLY WRONG. I CAN'T FIND THE VIDEO</h3>";
 
                      }
