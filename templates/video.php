@@ -219,21 +219,20 @@ get_header(); ?>
                else if($gif_preview) echo '<img class="sexhack_videopreview" src="'.$gif_preview.'" loading="lazy"></img>';
                else echo '<img class="sexhack_videopreview" src="'.$thumb.'" loading="lazy"></img>';
                ?>
-                  <h2 class='sexhack-videonotify'><b>PUBLIC VIDEO NOT AVAILABLE</b></h2>
+                  <h2 class='sexhack-videonotify' style="padding:5%;"><b>PUBLIC VIDEO NOT AVAILABLE</b></h2>
+                  
                <?php
-/*
                if($hls_members) {
                ?>
-                  <h3><a href="">members version here!</a></h3>
+                  <h3 class='sexhack-videonotify' style="padding:1px;"><a href="/register/">Register for free and watch members version!</a></h3>
                <?php
                }
 
                if($hls_premium) {
                ?>
-                  <h3><a href="">Premium users version here!</a></h3>
+                  <h3 class='sexhack-videonotify' style="padding:1px;"><a href="">Register to watch premium version!</a></h3>
                <?php
                }
-*/
             }
          ?>
          </div> <!-- video container -->

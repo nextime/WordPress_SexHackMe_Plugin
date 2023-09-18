@@ -257,7 +257,7 @@ if(!class_exists('SH_Query')) {
 
          if(!$idtype) return false;
 
-         $sql = "SELECT * FROM {$wpdb->prefix}".SH_PREFIX."videos WHERE {$idtype}=".intval($id);
+         $sql = "SELECT * FROM {$wpdb->prefix}".SH_PREFIX."videos WHERE {$idtype}=".intval($id)." ORDER BY created DESC";
          $dbres = $wpdb->get_results( $sql );
          if(is_array($dbres) && count($dbres) > 0)
          {

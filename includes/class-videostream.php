@@ -44,7 +44,7 @@ class SH_VideoStream
     {
        $this->path = $filePath;
        $this->filename = basename($filePath);
-       $this->myme_type = sh_mime_type($filePath);
+       $this->mime_type = sh_mime_type($filePath);
        $this->download_type = $download;
     }
 

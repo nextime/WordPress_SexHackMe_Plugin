@@ -74,12 +74,12 @@ function sh_genpass_register_form()
 
 function sh_hls_player($video_url, $posters='')
 {
-    echo SH_VideoPlayer::addPlayer('hls', $video_url, $posters);
+    SH_VideoPlayer::addPlayer('hls', $video_url, $posters);
 }
 
 function sh_xr_player($video_url, $posters='', $projection='180_LR')
 {
-    echo SH_VideoPlayer::addPlayer('xr', $video_url, $posters, $projection);
+    SH_VideoPlayer::addPlayer('xr', $video_url, $posters, $projection);
 }
 
 function sh_fix_user_with_no_plan($userid)

@@ -357,6 +357,13 @@ function sh_mime_type($filename) {
       'qt' => 'video/quicktime',
       'mov' => 'video/quicktime',
       'm3u8' => 'application/vnd.apple.mpegurl',
+      'm4v' => "video/mp4",
+      'mp4' => "video/mp4",
+      'm4a' => "audio/mp4",
+      'm4s' => "video/iso.segment",
+      'init' => "video/mp4",
+      'header' => "video/mp4",
+      'ts' => "video/MP2T",
 
       // adobe
       'pdf' => 'application/pdf',
