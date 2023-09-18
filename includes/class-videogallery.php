@@ -85,11 +85,11 @@ if(!class_exists('SH_VideoGallery')) {
          }
       }
 
-      public function get_videos_by_cat($vcat=false) {
+      public function get_videos_by_cat($vcat=false, $filtering=false) {
          // XXX TODO Only published videos!
 
-         if(!$this->videolist && !$vcat) $this->videolist = sh_get_videos_by_cat(); 
-         else if($vcat) return sh_get_videos_by_cat($vcat);  
+         if(!$this->videolist && !$vcat) $this->videolist = sh_get_videos_by_cat(filtering:$filtering); 
+         else if($vcat) return sh_get_videos_by_cat($vcat, filtering:$filtering);  
 
          return $this->videolist;
 
@@ -117,7 +117,7 @@ if(!class_exists('SH_VideoGallery')) {
          $video_preview = $video->preview;
          $gif_preview = $video->gif_small;
 
-         sexhack_log($video);
+         //sexhack_log($video);
 
          $categories = $video->get_categories(true);
 

@@ -117,7 +117,7 @@ foreach(array('public','members','premium') as $level) { ?>
       <p>
          <label> Include in Download?</label>
          <input type='radio' name='video_isdownload_<?php echo $level; ?>' value='Y' <?php if($video->has_downloads($level)) echo "checked"; ?>>Yes</input>
-         <input type='radio' name='video_isdownload <?php echo $level; ?>' value='N' <?php if(!$video->has_downloads($level)) echo "checked"; ?>>No</input>
+         <input type='radio' name='video_isdownload_<?php echo $level; ?>' value='N' <?php if(!$video->has_downloads($level)) echo "checked"; ?>>No</input>
       </p>
 </p>
 <?php 
@@ -393,8 +393,9 @@ jQuery(function($) {
   foreach(array('public','members','premium','preview','thumb','gif','gif_small') as $level) { ?>
   var flow_<?php echo $level; ?> = new Flow({
     target: '<?php  echo admin_url( 'admin-ajax.php' ); ?>',
-    chunkSize: 1024*1024, // 1MB
+    chunkSize: 1024*1024*8, // 8MB
     uploadMethod:'POST',
+    simultaneousUploads: 4,
     testChunks:false,
     query:{action:'file_upload', uniqid:'<?php echo $uniqid ?>', security:'<?php echo wp_create_nonce( 'sh_video_upload');?>', level:'<?php echo $level; ?>'},
     singleFile: true

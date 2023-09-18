@@ -119,7 +119,7 @@ get_header(); ?>
             } 
             else 
             {
-                 if(user_has_premium_access()) {
+                 if(user_has_premium_access() || $video->user_bought_video()) {
                     if($hls_premium) $tab = 'subscribers';
                     elseif($hls_members) $tab = 'members';
                     else $tab = 'public';
@@ -151,7 +151,7 @@ get_header(); ?>
                {
 
                   case "members":
-                     if(user_has_member_access())
+                     if(user_has_member_access() || $video->user_bought_video())
                      {
                         if($filterurl && $hls_members && $video->video_type=="VR" )
                            echo do_shortcode( "[sexvideo url=\"".wp_nonce_url($filterurl.$sh_video."/members/".basename($hls_members), 'shm_members_video-'.$video->id)."\" posters=\"".$thumb."\"]" );
@@ -167,13 +167,13 @@ get_header(); ?>
                      {
                         if($gif_preview) echo '<img class="sexhack_videopreview" src="'.$gif_preview.'" loading="lazy"></img>';
                         else echo '<img class="sexhack_videopreview" src="'.$thumb.'" loading="lazy"></img>';
-                        echo "<h3 class='sexhack-videonotify'><a href='/login'>YOU NEED TO LOGIN TO ACCESS THIS VIDEO</a></h3>";
+                        echo "<h3 class='sexhack-videonotify'><a href='/login'>YOU NEED FREE MEMBER, PREMUM LOGIN or BUY DOWLOAD TO ACCESS THIS VIDEO</a></h3>";
                         echo "<div style='width: 80%; margin-left: 10%;' >".do_shortcode('[pms-login redirect_url="/account" ]')."</div>";
                      }
                      break;
 
                   case "subscribers":
-                     if(user_has_premium_access())
+                     if(user_has_premium_access() || $video->user_bought_video())
                      {
                         if($filterurl && $hls_premium && $video->video_type=="VR")
                            echo do_shortcode( "[sexvideo url=\"".wp_nonce_url($filterurl.$sh_video."/premium/".basename($hls_premium), 'shm_premium_video-'.$video->id)."\" posters=\"".$thumb."\"]" );
@@ -190,7 +190,7 @@ get_header(); ?>
                      {
                         if($gif_preview) echo '<img class="sexhack_videopreview" src="'.$gif_preview.'" loading="lazy"></img>';
                         else echo '<img class="sexhack_videopreview" src="'.$thumb.'" loading="lazy"></img>';
-                        echo "<h3 class='sexhack-videonotify'><a href='/product-category/subscriptions/'>YOU NEED A SUBSCRIPTION TO ACCESS THIS VIDEO</a></h3>";
+                        echo "<h3 class='sexhack-videonotify'><a href='/product-category/subscriptions/'>YOU NEED A SUBSCRIPTION OR BUY DOWNLOAD TO ACCESS THIS VIDEO</a></h3>";
                      }
                      break;
                   
@@ -221,6 +221,19 @@ get_header(); ?>
                ?>
                   <h2 class='sexhack-videonotify'><b>PUBLIC VIDEO NOT AVAILABLE</b></h2>
                <?php
+/*
+               if($hls_members) {
+               ?>
+                  <h3><a href="">members version here!</a></h3>
+               <?php
+               }
+
+               if($hls_premium) {
+               ?>
+                  <h3><a href="">Premium users version here!</a></h3>
+               <?php
+               }
+*/
             }
          ?>
          </div> <!-- video container -->

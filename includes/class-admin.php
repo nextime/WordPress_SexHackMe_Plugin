@@ -88,10 +88,18 @@ if(!class_exists('SH_Admin')) {
              register_setting('sexhackme-gallery-settings', 'sexhack_video_flat_path');
              register_setting('sexhackme-gallery-settings', 'sexhack_video_vr_path');
              register_setting('sexhackme-gallery-settings', 'sexhack_video_hls_storage');
+             register_setting('sexhackme-gallery-settings', 'sexhack_video_hls_uri');
              register_setting('sexhackme-gallery-settings', 'sexhack_video_video_storage');
+             register_setting('sexhackme-gallery-settings', 'sexhack_video_video_uri');
              register_setting('sexhackme-gallery-settings', 'sexhack_video_photo_storage');
+             register_setting('sexhackme-gallery-settings', 'sexhack_video_photo_uri');
              register_setting('sexhackme-gallery-settings', 'sexhack_video_gif_storage');
+             register_setting('sexhackme-gallery-settings', 'sexhack_video_gif_uri');
              register_setting('sexhackme-gallery-settings', 'sexhack_video_vr_storage');
+             register_setting('sexhackme-gallery-settings', 'sexhack_video_vr_uri');
+             register_setting('sexhackme-gallery-settings', 'sexhack_thumbnail_storage');
+             register_setting('sexhackme-gallery-settings', 'sexhack_thumbnail_uri');
+             register_setting('sexhackme-gallery-settings', 'sexhack_socialpost_storage');
              add_action('update_option', '\wp_SexHackMe\SH_Admin::update_gallery_slug', 10, 3);
              //register_setting('sexhackme-gallery-settings', 'sexhack_gallery_slug');
          }

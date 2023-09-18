@@ -45,13 +45,14 @@ if(!class_exists('SH_Query')) {
       }
 
 
-      public static function save_Video($video)
+      public static function save_Video($video, $source=false)
       {
          global $wpdb;
 
+
+         if($source) sexhack_log("save_Video called from $source");
          if(is_object($video))
          {
-
 
             $video = apply_filters('video_before_save', $video);
             //sexhack_log($video);
@@ -120,7 +121,8 @@ if(!class_exists('SH_Query')) {
 
 				$wpdb->query( $sql );
             if($updateid) $video->id = $wpdb->insert_id;
-            //sexhack_log($sql);
+            if($source) sexhack_log("QUERY FOR  save_Video called from $source");
+            sexhack_log($sql);
 
             foreach($video->get_categories() as $cat)
             {  
@@ -275,7 +277,7 @@ if(!class_exists('SH_Query')) {
       
 
 
-      public static function get_VideosCat($vcat=false)
+      public static function get_VideosCat($vcat=false, $filtering=false)
       {
 
          global $wpdb;
@@ -302,14 +304,21 @@ if(!class_exists('SH_Query')) {
 			$results = array();
          //$sql = $wpdb->prepare("SELECT * from {$wpdb->prefix}{$prefix}videos");
          $sql = "SELECT * FROM {$wpdb->prefix}".SH_PREFIX."videos";
+
          if($filter) $sql .= " WHERE ".$filter."!=''";
+
+         if($filter && $filtering) $sql .= " AND "; 
+         else if(!$filter && $filtering) $sql .= " WHERE ";
+
+         if($filtering) $sql .= " ".$filtering." ";
+
          $dbres = $wpdb->get_results( $sql, ARRAY_A );
-		   sexhack_log($dbres);
+		   //sexhack_log($dbres);
          foreach($dbres as $row)
          {
          	$results[] = new SH_Video($row);
          }
-         sexhack_log($results);
+         //sexhack_log($results);
          return $results;
 
 

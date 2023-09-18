@@ -212,6 +212,7 @@ if(!class_exists('SexHackMe_Plugin')) {
              views_members bigint(32) NOT NULL DEFAULT '0',
              views_premium bigint(32) NOT NULL DEFAULT '0',
              sales bigint(32) NOT NULL DEFAULT '0',
+             socialpost bigint(32) NOT NULL DEFAULT '0',
              PRIMARY KEY  (id),
              KEY user_id (user_id),
              KEY post_id (post_id),

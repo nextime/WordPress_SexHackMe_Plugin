@@ -78,7 +78,8 @@ if(!class_exists('SH_Video')) {
          'views_public' => 0,
          'views_members' => 0,
          'views_premium' => 0,
-         'sales' => 0 
+         'sales' => 0,
+         'socialpost' => 0
       );
       public function __construct($attr=false)
       {
@@ -266,6 +267,20 @@ if(!class_exists('SH_Video')) {
          return false;
       } 
 
+
+      public function user_bought_video($uid=False)
+      {
+         if(!isset($this->attributes['product_id'])) return false;
+         if(!$uid && get_current_user_id())
+         {
+            if(wc_customer_bought_product( '', get_current_user_id(), $this->attributes['product_id'])) return true;
+         } 
+         else if($uid && intval($uid)) 
+         {
+            if(wc_customer_bought_product( '', $uid, $this->attributes['product_id'])) return true;
+         } 
+         return false;
+      }
 
       // Repopulate the object from $post or $post->ID
       public function  update_video_from_post($p)

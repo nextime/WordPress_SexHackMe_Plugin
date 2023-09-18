@@ -46,6 +46,11 @@ if(!class_exists('SH_StoreFront')) {
          // add footer disclaimer
          //add_action('storefront_footer', 'wp_SexHackMe\sh_get_disclaimer')); // XXX I don't like positioning this way. Fix in CSS or sobstitute footer theme file?
 
+         // add footer navigation menu
+         register_nav_menu('shm-footer-menu',__( 'Sexhackme Footer Menu' ));
+         add_action( 'storefront_footer', 'wp_SexHackMe\SH_StoreFront::footer_menu', 15);
+
+
          // Re add the cart in the right position
          add_action( 'storefront_header', 'storefront_header_cart', 40);
 
@@ -66,6 +71,13 @@ if(!class_exists('SH_StoreFront')) {
             wp_redirect( home_url( '/404.php' ) );
             die;
          }
+      }
+
+      public static function footer_menu()
+      {
+         echo '<nav class=\'secondary-navigation\' role=\'navigation\' aria-label=\'Secondary Navigation\' >';
+         wp_nav_menu(array('theme_location' => 'shm-footer-menu'));
+         echo '</nav>';
       }
 
       public static function credits($cred)

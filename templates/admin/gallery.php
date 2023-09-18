@@ -106,29 +106,71 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                      <label>Video Storage HLS</label>
                      <input type='text' name='sexhack_video_hls_storage' value='<?php echo get_option('sexhack_video_hls_storage', ABSPATH.'HLS'); ?>'>
                   </td>
+                  <td>
+                     <label>Video URI HLS</label>
+                     <input type='text' name='sexhack_video_hls_uri' value='<?php echo get_option('sexhack_video_hls_uri', '/HLS/'); ?>'>
+                  </td>
+
                </tr>
             <tr>
                   <td>
                      <label>Video Storage Video</label>
                      <input type='text' name='sexhack_video_video_storage' value='<?php echo get_option('sexhack_video_video_storage', ABSPATH.'Videos'); ?>'>
                   </td>
+                  <td>
+                     <label>Video URI Video</label>
+                     <input type='text' name='sexhack_video_video_uri' value='<?php echo get_option('sexhack_video_video_uri', '/Videos/'); ?>'>
+                  </td>
+
                </tr>
             <tr>
                   <td>
                      <label>Video Storage Photo</label>
                      <input type='text' name='sexhack_video_photo_storage' value='<?php echo get_option('sexhack_video_photo_storage', ABSPATH.'Photos'); ?>'>
                   </td>
+                  <td>
+                     <label>Video URI Photo</label>
+                     <input type='text' name='sexhack_video_photo_uri' value='<?php echo get_option('sexhack_video_photo_uri', '/Photos/'); ?>'>
+                  </td>
+
                </tr>
             <tr>
                   <td>
                      <label>Video Storage GIF</label>
                      <input type='text' name='sexhack_video_gif_storage' value='<?php echo get_option('sexhack_video_gif_storage', ABSPATH.'GIF'); ?>'>
                   </td>
+                  <td>
+                     <label>Video URI GIF</label>
+                     <input type='text' name='sexhack_video_gif_uri' value='<?php echo get_option('sexhack_video_gif_uri', '/GIF/'); ?>'>
+                  </td>
+
                </tr>
             <tr>
                   <td>
                      <label>Video Storage VR</label>
                      <input type='text' name='sexhack_video_vr_storage' value='<?php echo get_option('sexhack_video_vr_storage', ABSPATH.'VR'); ?>'>
+                  </td>
+                  <td>
+                     <label>Video URI VR</label>
+                     <input type='text' name='sexhack_video_vr_uri' value='<?php echo get_option('sexhack_video_vr_uri', '/VR/'); ?>'>
+                  </td>
+
+               </tr>
+            <tr>
+                  <td>
+                     <label>Thumbnail Storage</label>
+                     <input type='text' name='sexhack_thumbnail_storage' value='<?php echo get_option('sexhack_thumbnail_storage', ABSPATH.'Thumbs'); ?>'>
+                  </td>
+                  <td>
+                     <label>Thumbnail URI</label>
+                     <input type='text' name='sexhack_thumbnail_uri' value='<?php echo get_option('sexhack_thumbnail_uri', '/Thumbs/'); ?>'>
+                  </td>
+
+               </tr>
+            <tr>
+                  <td>
+                     <label>Social Post Storage</label>
+                     <input type='text' name='sexhack_socialpost_storage' value='<?php echo get_option('sexhack_socialpost_storage', ABSPATH.'SOCIALPOSTS'); ?>'>
                   </td>
                </tr>
 

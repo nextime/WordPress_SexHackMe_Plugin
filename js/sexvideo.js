@@ -19,9 +19,11 @@
  */
 
 function SexVideoPlayer(vuid){
-  var vtag = videojs(vuid);
+  var vtag = videojs(vuid, {autoplay: true});
   vtag.ready(function() {
-      myPlayer.volume(0.5); 
+      vtag.play();
+      vtag.volume(0.5); 
+      
   });
   return vtag;
 }

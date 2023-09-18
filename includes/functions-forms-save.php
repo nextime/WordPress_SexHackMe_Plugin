@@ -24,7 +24,7 @@ namespace wp_SexHackMe;
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-function save_sexhack_video_forms( $post_id )
+function save_sexhack_video_forms( $post_id)
 {
 
    // Verify that the nonce is set and valid.
@@ -42,6 +42,10 @@ function save_sexhack_video_forms( $post_id )
    if(!isset($_POST['post_type'])) return;
    // ... ant it's set to sexhack_video
    if($_POST['post_type']!='sexhack_video') return;
+
+   // ... what if we are saving the wrong post?
+   if(get_post_type($post_id) != 'sexhack_video') return;
+
 
    // Make sure we don't get caught in any loop
    if($admin) unset($_POST['sh_video_description_nonce']);
@@ -73,7 +77,11 @@ function save_sexhack_video_forms( $post_id )
    }
 
    // Get $video object
+   $setslug = false;
    $video = sh_get_video_from_post($post_id);
+   if(!$video) sexhack_log("Video object not initialized, new video?? (form passed \"$post_id\" \$post_id");
+   if(!$video) sexhack_log($video);
+   if(!$video) $setslug = true;
    if(!$video) $video = new SH_Video();
 
 
@@ -87,7 +95,8 @@ function save_sexhack_video_forms( $post_id )
    //
    // Title and slug 
    $video->title = $post->post_title;
-   $video->slug = uniqidReal()."-".$post->post_name;
+   if(!$video->slug || $setslug) $video->slug = uniqidReal()."-".$post->post_name;
+
 
    // TODO Remove debug
    //sexhack_log("SAVE post object:");
@@ -120,7 +129,8 @@ function save_sexhack_video_forms( $post_id )
          $video->thumbnail = false;
    } else {
       // Shoudn't we move it somewhere?
-      if(isset($_POST['video_thumb'])) $video->thumbnail = get_option('sexhack_video_tmp_path', '/tmp')."/".sanitize_text_field($_POST['video_thumb']);
+      if(isset($_POST['video_thumb']) 
+         && !empty($_POST['video_thumb'])) $video->thumbnail = get_option('sexhack_video_tmp_path', '/tmp')."/".sanitize_text_field($_POST['video_thumb']);
       else $video->thumbnail = false;
    }
 
@@ -261,6 +271,7 @@ function save_sexhack_video_forms( $post_id )
    {
       foreach($_POST['video_tags'] as $tag_name)
       {
+         $tag_name = str_replace("#", "", $tag_name);
          $vtags = $video->get_tags(false);
          if(sanitize_text_field(strtolower($tag_name)))
          {
@@ -276,7 +287,9 @@ function save_sexhack_video_forms( $post_id )
 
 
    // Save the video data in the database.
-   sh_save_video($video);
+   //sexhack_log("SAVING VIDEO FROM FORM");
+   //sexhack_log($video);
+   sh_save_video($video, 'FORM');
 
 }
 

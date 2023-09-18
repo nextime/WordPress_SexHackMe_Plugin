@@ -50,7 +50,7 @@ if(!class_exists('SH_PostType_Video')) {
          if(!is_object($post) || ($post->post_type!='sexhack_video')) 
             return;
 
-         //sexhack_log("STATUS CHANGE: post ".$post->ID." changed from $old to $new");
+         sexhack_log("STATUS CHANGE: post ".$post->ID." changed from $old to $new");
          if($old===$new) return;
 
          $video = sh_get_video_from_post($post);
@@ -59,10 +59,10 @@ if(!class_exists('SH_PostType_Video')) {
             $vold = $video->status;
             if($new=='publish' && $video->status == 'ready') $video->status = 'published';
             else if($new!='publish' && $video->status == 'published') $video->status = 'ready';
+            
+            sexhack_log("    *  video ".$video->id." is ".$video->status." (was $vold)");
 
-            //sexhack_log("    *  video ".$video->id." is ".$video->status." (was $vold)");
-
-            if($vold!=$video->status) sh_save_video($video);
+            if($vold!=$video->status) sh_save_video($video, 'POST_TYPE');
          }
       }
 

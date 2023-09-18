@@ -32,7 +32,7 @@ function SexHLSPlayer(url, vuid){
         hls.autoLevelEnabled = true;
         //hls.loadLevel = 4;
         hls.startLoad();
-        //vtag.play(); // XXX Autoplay doesn't work apparently atm
+        vtag.play(); // XXX Autoplay doesn't work apparently atm
       });
       //document.title = url
     }

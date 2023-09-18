@@ -30,7 +30,7 @@ function sh_get_my_videos()
    return SH_Query::get_Videos(get_current_user_id(), 'user');
 }
 
-function sh_save_video($video)
+function sh_save_video($video, $source=false)
 {
    if(is_object($video)) {
       // Initialize categories and tags is they are not.
@@ -38,7 +38,7 @@ function sh_save_video($video)
       $video->get_categories(true);
       $video->get_tags(true);
       $video->get_guests(true);
-      return SH_Query::save_Video($video);
+      return SH_Query::save_Video($video, $source);
    }
    return false;
 }
@@ -65,9 +65,21 @@ function sh_delete_video_from_product($p)
 }
 
 
-function sh_get_videos_by_cat($vcat=false)
+function sh_get_videos_by_status($status="published") 
 {
-   return SH_Query::get_VideosCat($vcat);
+   if(!in_array($status, array('published', 'queue', 'creating','uploading','processing','ready','error'))) $status='published';
+   return sh_get_videos_by_cat(filtering: "status='$status'");
+}
+
+function sh_get_videos_by_socialpost($socialpost=0)
+{
+   if(!is_numeric($socialpost)) return 'KO';
+   return sh_get_videos_by_cat(filtering: "socialpost='$socialpost' AND status='published'");
+}
+
+function sh_get_videos_by_cat($vcat=false, $filtering=false)
+{
+   return SH_Query::get_VideosCat($vcat, $filtering);
 }
 
 function sh_get_video($id)

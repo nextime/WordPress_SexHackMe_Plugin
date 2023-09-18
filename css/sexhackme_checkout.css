@@ -30,6 +30,10 @@
 .woocommerce-form-row--last + div + p {
 	display: none;
 }
+
+label.wc-stripe-label-payment-type {
+   color: #939191 !important;
+}
 /*.col-full{ */
  /* max-width:66%; */
  /* margin-left: 0;

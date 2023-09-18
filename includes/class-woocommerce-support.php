@@ -38,6 +38,27 @@ if(!class_exists("SH_VideoProducts")) {
 
          // fired when deleting a video
          add_action('sh_delete_video', array($this, 'delete_video_product'), 9, 1);
+
+         // Add filter for download product uri fix
+         add_filter('woocommerce_download_product_filepath', array($this, 'fix_download_uri'));
+      }
+
+      public function fix_download_uri($path)
+      {
+         $vr_storage = get_option('sexhack_video_vr_storage', false);
+         $vr_uri = get_option('sexhack_video_vr_uri', '/VR/');
+         $video_storage = get_option('sexhack_video_video_storage', false);
+         $video_uri = get_option('sexhack_video_video_uri', '/Videos/');
+         $gif_storage = get_option('sexhack_video_gif_storage', false);
+         $gif_uri = get_option('sexhack_video_gif_uri', '/GIF/');
+         $photo_storage = get_option('sexhack_video_photo_storage', false);
+         $photo_uri = get_option('sexhack_video_photo_uri', '/Photos/');
+
+         if($vr_storage && starts_with($vr_storage, $path)) return str_replace($vr_storage, $vr_uri, $path);
+         if($gif_storage && starts_with($gif_storage, $path)) return str_replace($gif_storage, $gif_uri, $path);
+         if($video_storage && starts_with($video_storage, $path)) return str_replace($video_storage, $video_uri, $path);
+         if($photo_storage && starts_with($photo_storage, $path)) return str_replace($photo_storage, $photo_uri, $path);
+         return $path;
       }
 
       public function delete_video_product($video)
@@ -503,4 +524,6 @@ if(!class_exists('SH_WooCommerce_Registration_Integration')) {
    new SH_WooCommerce_Registration_Integration;
 
 }
+
+
 ?>
