@@ -51,6 +51,18 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                          }  ?>
                       </select>
                      <p class="description">Select ADV for bottom Videogallery</p>
+                     <select id="sexadv_video_native" name="sexadv_video_native" class="widefat">
+                         <option value="-1">Choose...</option>
+                         <?php
+                         $opt=get_option("sexadv_video_native");
+                         foreach( get_posts(array('post_type'  => 'sexhackadv', 'parent' => 0)) as $page ) {
+                            echo '<option value="' . esc_attr( $page->ID ) . '"';
+                            if ($opt == $page->ID) { echo "selected";}
+                            echo '>' . esc_html( $page->post_title ) . ' ( ID: ' . esc_attr( $page->ID ) . ')' . '</option>';
+                         }  ?>
+                      </select>
+                     <p class="description">Select ADV for native Videogallery thumbs</p>
+
                </td>
             </tr>
           </table>

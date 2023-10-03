@@ -72,6 +72,7 @@ if(!class_exists('SH_Admin')) {
             add_settings_section('sexhackme-advert-settings', ' ', 'wp_SexHackMe\settings_advert_section', 'sexhackme-advert-settings');
             register_setting('sexhackme-advert-settings', 'sexadv_video_top');
             register_setting('sexhackme-advert-settings', 'sexadv_video_bot');
+            register_setting('sexhackme-advert-settings', 'sexadv_video_native');
          }
 
          // Gallery settings

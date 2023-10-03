@@ -44,6 +44,9 @@ function sh_disclaimer()
 
 function sh_account_subscription_content()
 {
+    // Re-add scripts for stripe in PMS
+    pms_stripe_enqueue_front_end_scripts();
+
     echo '<h3>Subscriptions</h3>';
     echo do_shortcode( '[pms-account show_tabs="no"]' );
     echo "<h3>Payment History:</h3>";
@@ -155,4 +158,10 @@ function user_is_model($uid=false)
    if(!$model) return false;
    return user_has_role($uid, $model);
 }
+
+function sh_del_job($id)
+{
+   return SH_Query::del_job($id);
+}
+
 ?>

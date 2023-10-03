@@ -42,11 +42,26 @@ if(!class_exists('SH_Shortcodes')) {
             'sexgallery'     => __CLASS__ . '::videogallery_shortcode',
             'shvideomanager' => __CLASS__ . '::video_manager_shortcode',
             'shincludepage'  => __CLASS__ . '::include_page_shortcode',
+            'sh_register'    => __CLASS__ . '::register',
          );
 
          foreach( $shortcodes as $shortcode_tag => $shortcode_func ) {
             add_shortcode( $shortcode_tag, $shortcode_func );
          }
+
+      }
+
+      public static function register($attr, $cont)
+      {
+         pms_stripe_enqueue_front_end_scripts();
+         $before = "<style> .pms-pass1-field, .pms-pass2-field, .pms-first-name-field, .pms-last-name-field {display: none;} </style>";
+         $after = '<script>
+            $(".pms-pass1-field").remove();
+            $(".pms-pass2-field").remove();
+            $(".pms-first-name-field").remove();
+            $(".pms-last-name-field").remove();
+            </script>';
+         return $before.do_shortcode( '[pms-register]').$after;
 
       }
 
@@ -122,6 +137,7 @@ if(!class_exists('SH_Shortcodes')) {
          global $sh_videogallery;
          extract( shortcode_atts(array(
             "category" => "all",
+            "adv" => "4,16"
          ), $attr));
 
          $html = "<div class='sexhack_gallery'>"; //<h3>SexHack VideoGallery</h3>";
@@ -129,8 +145,23 @@ if(!class_exists('SH_Shortcodes')) {
          $html .= '<ul class="products columns-4">';
          $videos = $sh_videogallery->get_videos_by_cat(filtering: "status='published' ORDER BY created DESC");
          $sep=1;
+         $vcount=1;
+         if(isset($attr['adv'])) $adv=explode(",", $attr['adv']);
+         else $adv=array("4");
+         $advid=get_option('sexadv_video_native', false);
+
          foreach($videos as $video)
          {
+            if(in_array(strval($vcount), $adv)) // && !user_is_premium() && $advid && is_numeric($advid) && intval($advid)>0)
+            {
+               $html .= '<li class="product type-product sexhack_thumbli">';
+               $html .= do_shortcode("[sexadv adv=$advid]");
+               if($sep==4) $html .= '<li class="product type-product sexhack_thumbli" style="width:100% !important; margin-bottom: 1px !important;"> </li>';
+               $html .= '</li>';
+               $sep=$sep+1;
+               if($sep==5) $sep=1;
+               $vcount=$vcount+1;
+            } 
             //if($video->status == 'published')
             //{
                $post = $video->get_post();
@@ -139,6 +170,7 @@ if(!class_exists('SH_Shortcodes')) {
                if($sep==4) $html .= '<li class="product type-product sexhack_thumbli" style="width:100% !important; margin-bottom: 1px !important;"> </li>';
                $sep=$sep+1;
                if($sep==5) $sep=1;
+               $vcount=$vcount+1;
             //}
          }
          wp_reset_postdata();

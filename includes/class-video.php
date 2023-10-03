@@ -307,6 +307,11 @@ if(!class_exists('SH_Video')) {
          return $r;
       }
 
+      public function new_view($level='public') 
+      {
+         return;
+      }
+
    }
    $GLOBALS['sh_video'] = new SH_Video();
    do_action('sh_video_ready');

@@ -167,8 +167,6 @@ get_header(); ?>
                      {
                         if($gif_preview) echo '<img class="sexhack_videopreview" src="'.$gif_preview.'" loading="lazy"></img>';
                         else echo '<img class="sexhack_videopreview" src="'.$thumb.'" loading="lazy"></img>';
-                        echo "<h3 class='sexhack-videonotify'><a href='/login'>YOU NEED FREE MEMBER, PREMUM LOGIN or BUY DOWLOAD TO ACCESS THIS VIDEO</a></h3>";
-                        echo "<div style='width: 80%; margin-left: 10%;' >".do_shortcode('[pms-login redirect_url="/account" ]')."</div>";
                      }
                      break;
 
@@ -190,7 +188,6 @@ get_header(); ?>
                      {
                         if($gif_preview) echo '<img class="sexhack_videopreview" src="'.$gif_preview.'" loading="lazy"></img>';
                         else echo '<img class="sexhack_videopreview" src="'.$thumb.'" loading="lazy"></img>';
-                        echo "<h3 class='sexhack-videonotify'><a href='/product-category/subscriptions/'>YOU NEED A SUBSCRIPTION OR BUY DOWNLOAD TO ACCESS THIS VIDEO</a></h3>";
                      }
                      break;
                   
@@ -222,17 +219,6 @@ get_header(); ?>
                   <h2 class='sexhack-videonotify' style="padding:5%;"><b>PUBLIC VIDEO NOT AVAILABLE</b></h2>
                   
                <?php
-               if($hls_members) {
-               ?>
-                  <h3 class='sexhack-videonotify' style="padding:1px;"><a href="/register/">Register for free and watch members version!</a></h3>
-               <?php
-               }
-
-               if($hls_premium) {
-               ?>
-                  <h3 class='sexhack-videonotify' style="padding:1px;"><a href="">Register to watch premium version!</a></h3>
-               <?php
-               }
             }
          ?>
          </div> <!-- video container -->
@@ -261,10 +247,24 @@ get_header(); ?>
          <?php 
          echo $htmltags;
          ?>
+         <?php if(!user_has_member_access()) { ?>
+                 <div class='sexhack-videonotify' style="padding:1px; margin: 0 auto;">
+                     <a href="/register/">
+                     <img src="<?php echo plugin_dir_url(__FILE__)."/img/cropped-sexhack_members-300x99.jpg";?>"  alt="Register for free and watch members version!" />
+                     </a>
+                  </div>
+         <?php } ?>
+
+
          <?php if($video->has_downloads()) { ?>
             <h3><a href="<?php echo get_permalink($video->product_id); ?>">Download the full lenght hi-res version of this video</a><h3>
          <?php } ?>
+			<?php
+				if(!is_user_logged_in())
+				 echo "<div style='width: 80%; margin-left: 10%;' >".do_shortcode('[pms-login redirect_url="/account" ]')."</div>";
+			?>
          <hr>
+
 <?php
                echo do_shortcode("[sexadv adv=".get_option('sexadv_video_bot')."]");      
          endwhile;

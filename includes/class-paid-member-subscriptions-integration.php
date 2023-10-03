@@ -33,6 +33,15 @@ if(!class_exists('SH_PMS_Support')) {
          $this->plans = false;
       }
 
+      public static function remove_stripe_js()
+      {
+         // We remove it here to speedup the website, but we re-add in class-shortcodes in sh_register and in 
+         // functions-core to add the account/subscription page
+         //add_action('wp_footer', '\pms_stripe_enqueue_front_end_scripts');
+         remove_action( 'wp_footer', 'pms_stripe_enqueue_front_end_scripts' );
+         //pms_stripe_enqueue_front_end_scripts();
+      }
+
       private function set_pms_plans()
       {
           $plans = array(
@@ -124,6 +133,8 @@ if(!class_exists('SH_PMS_Support')) {
 
    // Create the sh_pms object
    add_action('wp', 'wp_SexHackMe\instance_SH_PMS_Support');
+
+   add_action('wp_footer', 'wp_SexHackMe\SH_PMS_Support::remove_stripe_js', 1);
 }
 
 if(!class_exists('SexhackPmsPasswordDataLeak')) {

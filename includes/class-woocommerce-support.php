@@ -210,6 +210,65 @@ if(!class_exists("SH_VideoProducts")) {
 }
 
 
+/* Class woocommerce add-to-checkout management */
+if(!class_exists('SexhackWoocommerceCheckout')) {
+
+   class SexhackWoocommerceCheckout
+   {
+      public function __construct()
+      {
+         //add_action( 'woocommerce_before_checkout_form', array($this, 'empty_cart'), 1);
+			add_action( 'woocommerce_add_to_cart_validation', array($this, 'empty_cart'), 1);
+
+
+         add_action( 'woocommerce_simple_add_to_cart', array($this, 'oneclick_checkout'));
+         add_action( 'woocommerce_after_shop_loop_item', array($this, 'product_loop_oneclick'), 9);
+
+         add_action( 'template_redirect', array($this, 'header_buffer_start'), 1);
+         add_action( 'wp_head', array($this, 'header_buffer_stop'), 1);
+
+      }
+
+      public function empty_cart() {
+         if(isset($_GET['shm_direct_checkout']) && is_numeric($_GET['shm_direct_checkout'])) {
+            global $woocommerce;
+            $woocommerce->cart->empty_cart();
+				//WC()->session->set('cart', array());
+            $woocommerce->cart->add_to_cart(intval($_GET['shm_direct_checkout']), 1);
+         }
+      }
+
+      public function header_buffer_start() { ob_start(array($this, "header_buffer_callback")); }
+
+      public function header_buffer_stop() { ob_end_flush(); }
+
+      public function header_buffer_callback($buffer) {
+         if(is_ssl()) $buffer = str_replace("http://", "https://", $buffer);
+         
+         return $buffer;
+      }
+
+      public function product_loop_oneclick() {
+   		global $product;
+      	echo '<div class="custom-add-to-cart">';
+			remove_action( 'woocommerce_after_shop_loop_item', 'woocommerce_template_loop_add_to_cart');
+      	//woocommerce_template_loop_add_to_cart();
+			echo '<a class="button" href="'.wc_get_checkout_url()."?add-to-cart=".$product->get_id()."&shm_direct_checkout=".$product->get_id().'">Buy now!</a>';
+      	echo '</div>';
+      }
+
+      public function oneclick_checkout() {
+         global $product;
+
+			echo '<a class="button" href="'.wc_get_checkout_url()."?add-to-cart=".$product->get_id()."&shm_direct_checkout=".$product->get_id().'">Buy now!</a>';
+
+         remove_action('woocommerce_'.$product->get_type().'_add_to_cart', 'woocommerce_'.$product->get_type().'_add_to_cart', 30);
+      }
+   }
+   new SexhackWoocommerceCheckout;
+}
+
+
 /* Class to add Video to product page instead of image */
 if(!class_exists('SexhackWoocommerceProductVideos')) {
    class SexhackWoocommerceProductVideos
@@ -435,7 +494,8 @@ if(!class_exists('SH_WooCommerce_Registration_Integration')) {
             else $wcprods = get_wc_subscription_products_priced($subscription_plan->price, $subscription_plan->id);
             if(count($wcprods) > 0)
             {
-               return wc_get_checkout_url()."?add-to-cart=".$wcprods[0]->get_id()."&quantity=1";
+               //return wc_get_checkout_url()."?add-to-cart=".$wcprods[0]->get_id()."&quantity=1";
+               return wc_get_checkout_url()."?shm_direct_checkout=".$wcprods[0]->get_id();
             }
             return $url; //home_url('/payment-info');
          }

@@ -21,10 +21,12 @@
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit;
-
 $plans = wp_SexHackMe\sh_get_subscription_plans();
 
 ?>
+   <style>
+      .cozmolabs-banner { display:none; }
+   </style>
    <div class="wrap">
          <?php do_settings_sections( 'sexhackme-wcpms-settings' ); ?>
          <form method="post" action="/wp-admin/options.php">

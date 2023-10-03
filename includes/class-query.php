@@ -192,6 +192,9 @@ if(!class_exists('SH_Query')) {
          $sqlarr[] = "DELETE FROM {$wpdb->prefix}".SH_PREFIX."videocategory_assoc WHERE video_id IN (
                          SELECT id FROM {$wpdb->prefix}".SH_PREFIX."videos
                             WHERE {$idtype}=".intval($id)." );";
+         $sqlarr[] = "DELETE FROM {$wpdb->prefix}".SH_PREFIX."jobs WHERE jobtype='video' AND obj_id IN (
+                         SELECT id FROM {$wpdb->prefix}".SH_PREFIX."videos
+                            WHERE {$idtype}=".intval($id)." );";
          $sqlarr[] = "DELETE FROM {$wpdb->prefix}".SH_PREFIX."videos WHERE {$idtype}=".intval($id);
          foreach($sqlarr as $sql)
          {
@@ -322,6 +325,47 @@ if(!class_exists('SH_Query')) {
          return $results;
 
 
+      }
+
+
+      public static function get_Video_Jobs($vid=false)
+      {
+         global $wpdb;
+         $sql = "SELECT * FROM {$wpdb->prefix}".SH_PREFIX."jobs WHERE jobtype='video'";
+         if($vid && is_numeric($vid))
+            $sql .= " AND obj_id='".intval($vid)."'";
+         $dbres = $wpdb->get_results( $sql );
+         return $dbres;
+      }
+
+
+      public static function add_Video_job($vid, $command, $args)
+      {
+         global $wpdb;
+         if(is_array($args)) $arg="JSON_QUOTE($args)";
+         else $arg="'$args'";
+         $sql = "INSERT IGNORE INTO {$wpdb->prefix}".SH_PREFIX."jobs (jobtype, obj_id, command, arguments) VALUES ('video','$vid','$command',$arg)";
+         sexhack_log($sql);
+         $wpdb->query($sql);
+         return;
+      }
+
+      public static function del_Video_job($vid, $command=false)
+      {
+         global $wpdb;
+         $sql = "DELETE FROM {$wpdb->prefix}".SH_PREFIX."jobs WHERE obj_id='$vid'";
+         if($command) $sql.= " AND command='$command'";
+         $wpdb->query($sql);
+         return;
+         
+      }
+
+      public static function del_job($id)
+      {
+         global $wpdb;
+         $sql = "DELETE FROM {$wpdb->prefix}".SH_PREFIX."jobs WHERE id='$id'";
+         $wpdb->query($sql);
+         return;
       }
 
 

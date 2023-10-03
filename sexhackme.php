@@ -273,6 +273,17 @@ if(!class_exists('SexHackMe_Plugin')) {
              PRIMARY KEY  (id),
              KEY video_id (video_id),
              KEY tag_id (tag_id)
+         ) {$charset_collate};
+         CREATE TABLE {$wpdb->prefix}{$this->prefix}jobs (
+             id bigint(20) AUTO_INCREMENT NOT NULL,
+             jobtype ENUM('video', 'photo') NOT NULL DEFAULT 'video',
+             obj_id bigint(20) NOT NULL,
+				 command VARCHAR(255) NOT NULL,
+				 arguments TEXT NOT NULL,
+             PRIMARY KEY  (id),
+             KEY jobtype (jobtype),
+             KEY command (command),
+             KEY obj_id (obj_id)
          ) {$charset_collate};";
 
          require_once( ABSPATH . '/wp-admin/includes/upgrade.php' );
@@ -577,6 +588,7 @@ if(!class_exists('SexHackMe_Plugin')) {
 
          // Sexhack Video Gallery
          wp_enqueue_style ('sexhackme_gallery', SH_PLUGIN_DIR_URL.'css/sexhackme_gallery.css', array(),  SH_VERSION);
+         wp_enqueue_script('sexgallery', SH_PLUGIN_DIR_URL.'js/sexhackme_gallery.js', array(), SH_VERSION);
 
          // Sexhack Fix Header
          wp_enqueue_style ('sexhackme_header', SH_PLUGIN_DIR_URL.'css/sexhackme_header.css', array(), SH_VERSION);

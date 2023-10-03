@@ -165,5 +165,26 @@ function sh_delete_categories_from_video($v)
    return false;
 }
 
+function sh_add_video_job($v, $command, $args)
+{
+   if(is_numeric($v) and $v > 0) return SH_Query::add_Video_job($v, $command, $args);
+   else if(is_object($v)) return SH_Query::add_Video_job($v->id, $command, $args);
+   return false;
+}
+
+function sh_del_video_job($v, $command=false)
+{
+   if(is_numeric($v) and $v > 0) return SH_Query::del_Video_job($v, $command);
+   else if(is_object($v)) return SH_Query::del_Video_job($v->id, $command);
+   return false;
+}
+
+function sh_get_video_jobs($v=false) 
+{
+   if(is_numeric($v) and $v > 0) return SH_Query::get_Video_Jobs($v);
+   else if(is_object($v)) return SH_Query::get_Video_Jobs($v->id);
+   else return SH_Query::get_Video_Jobs(false);
+}
+
 
 ?>

@@ -111,7 +111,7 @@ if(!class_exists('SexhackAddUnlockLogin')) {
       }
 
       public function add_to_checkout(){
-         echo $this->unlock_button('', $args, get_proto().wp_parse_url( home_url(), PHP_URL_HOST )."/checkout");
+         echo $this->unlock_button('', '', get_proto().wp_parse_url( home_url(), PHP_URL_HOST )."/checkout");
       }
    }
 

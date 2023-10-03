@@ -127,7 +127,7 @@ if(!class_exists('SH_VideoGallery')) {
          $gif = $video->gif;
 
          if(!$gif_preview) $gif_preview = $gif;
-         if($gif_preview) $image .= "<img src='$gif_preview' class='alignleft sexhack_thumb_hover' loading='lazy' />";
+         if($gif_preview) $image .= "<img src='".plugin_dir_url(__DIR__)."/img/loading.gif' onmouseover='shmChangeGif(this)' data-src='$gif_preview' class='alignleft sexhack_thumb_hover' loading='lazy' />";
 
          $html = '<li class="product type-product sexhack_thumbli">';
          

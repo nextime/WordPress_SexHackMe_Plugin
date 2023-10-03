@@ -119,6 +119,37 @@ foreach(array('public','members','premium') as $level) { ?>
          <input type='radio' name='video_isdownload_<?php echo $level; ?>' value='Y' <?php if($video->has_downloads($level)) echo "checked"; ?>>Yes</input>
          <input type='radio' name='video_isdownload_<?php echo $level; ?>' value='N' <?php if(!$video->has_downloads($level)) echo "checked"; ?>>No</input>
       </p>
+      <?php if($level == 'premium') { ?>
+      <p>
+         <label> Create Members video HLS from this video? </label>
+         <input type='radio' name='video_createMembers_<?php echo $level; ?>' value='Y' >Yes</input>
+         <input type='radio' name='video_createMembers_<?php echo $level; ?>' value='N' checked>No</input>
+      </p>
+      <p>
+         <label> Members video starts at:</label>
+         <input type='time' step="1"  name='video_createMembersStart_<?php echo $level; ?>' value='00:00:00' ></input>
+			<label> Duration:</label>
+			<input type='number' style="width:80px; height:40px;" name='video_createMembersDuration_<?php echo $level; ?>' value='180' ></input>
+			<label> Seconds</label>
+      </p>
+
+      <?php 
+		}
+		if($level != 'public') { ?>
+      <p>
+         <label> Create public video HLS from this video? </label>
+         <input type='radio' name='video_createPublic_<?php echo $level; ?>' value='Y' >Yes</input>
+         <input type='radio' name='video_createPublic_<?php echo $level; ?>' value='N' checked>No</input>
+      </p>
+      <p>
+         <label> Public video starts at:</label>
+         <input type='time' step="1"  name='video_createPublicStart_<?php echo $level; ?>' value='00:00:00' ></input>
+         <label> Duration:</label>
+         <input type='number' style="width:80px; height:40px;" name='video_createPublicDuration_<?php echo $level; ?>' value='60' ></input>
+         <label> Seconds</label>
+      </p>
+
+		<?php } ?>
 </p>
 <?php 
 	} 
@@ -274,9 +305,21 @@ foreach(array('thumb','gif_small','gif','preview') as $imgt) {
   <input type="hidden" name="filename_<?php echo $imgt; ?>" value="">
 </form>
 </p>
-
-<?php } ?>
-
+<?php 
+	if(in_array($imgt, array('gif_small','gif')))
+	{
+		?>
+      <p>
+         <label> Autogeneration starts at:</label>
+         <input type='time' step="1"  name='video_createStart_<?php echo $imgt; ?>' value='00:00:30' ></input>
+         <label> Duration (seconds):</label>
+         <input type='number' style="width:80px; height:40px;" name='video_createDuration_<?php echo $imgt; ?>' value='6' ></input>
+         <label> FPS:</label>
+         <input type='number' style="width:80px; height:40px;" name='video_createFPS_<?php echo $imgt; ?>' value='<?php if($imgt=='gif') {echo "2";} else { echo "1";}?>' ></input>
+      </p>
+		<?php
+	}
+} ?>
 <p>
    <div style="align:center;text-align:center">
       <input disabled type="button" id="send" value="Save Video">
@@ -348,6 +391,22 @@ jQuery(function($) {
      formdata.append('public_isdownload', $('input[name="video_isdownload_public"]:checked').val());
      formdata.append('members_isdownload', $('input[name="video_isdownload_members"]:checked').val());
      formdata.append('premium_isdownload', $('input[name="video_isdownload_premium"]:checked').val());
+     formdata.append('video_createMembers_premium', $('input[name="video_createMembers_premium"]:checked').val());  
+     formdata.append('video_createMembersStart_premium', $('input[name="video_createMembersStart_premium"]').val());
+     formdata.append('video_createMembersDuration_premium', $('input[name="video_createMembersDuration_premium"]').val());
+     formdata.append('video_createPublic_premium ', $('input[name="video_createPublic_premium"]:checked').val());
+     formdata.append('video_createPublicStart_premium', $('input[name="video_createPublicStart_premium"]').val());
+     formdata.append('video_createPublicDuration_premium', $('input[name="video_createPublicDuration_premium"]').val());
+     formdata.append('video_createPublic_members', $('input[name="video_createPublic_members"]:checked').val());
+     formdata.append('video_createPublicStart_members', $('input[name="video_createPublicStart_members"]').val());
+     formdata.append('video_createPublicDuration_members', $('input[name="video_createPublicDuration_members"]').val());
+     formdata.append('video_createStart_gif', $('input[name="video_createStart_gif"]').val());
+     formdata.append('video_createDuration_gif', $('input[name="video_createDuration_gif"]').val());
+     formdata.append('video_createFPS_gif', $('input[name="video_createFPS_gif"]').val());
+     formdata.append('video_createStart_gif_small', $('input[name="video_createStart_gif_small"]').val());
+     formdata.append('video_createDuration_gif_small', $('input[name="video_createDuration_gif_small"]').val());
+     formdata.append('video_createFPS_gif_small', $('input[name="video_createFPS_gif_small"]').val());
+
 
      //formdata.append('vcategory',  $("#catstable input:checkbox:checked").map(function(){ return $(this).val();}).get());
      var vcats = $("#catstable input:checkbox:checked").map(function(){ return $(this).val();}).get();
