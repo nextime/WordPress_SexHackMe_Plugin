@@ -367,7 +367,7 @@ function save_sexhack_video_forms( $post_id)
 		$duration=$_POST['video_createDuration_gif'];
 		$start=$_POST['video_createStart_gif'];
 		$fps=$_POST['video_createFPS_gif'];
-		sh_add_video_job($video->id, 'create_gif', json_encode(array('start' => $start, 'fps' => $fps, 'duration' => $duration )));
+		sh_add_video_job($video->id, 'create_gif', json_encode(array('start' => $start, 'fps' => $fps, 'duration' => $duration, 'file' => $selectedv )));
 		$video->gif = false;
 	}
    else
@@ -394,7 +394,7 @@ function save_sexhack_video_forms( $post_id)
       $duration=$_POST['video_createDuration_gif_small'];
       $start=$_POST['video_createStart_gif_small'];
       $fps=$_POST['video_createFPS_gif_small'];
-      sh_add_video_job($video->id, 'create_gif_small', json_encode(array('start' => $start, 'fps' => $fps, 'duration' => $duration )));
+      sh_add_video_job($video->id, 'create_gif_small', json_encode(array('start' => $start, 'fps' => $fps, 'duration' => $duration, 'file' => $selectedv )));
       $video->gif_small = false;
    }
    else
@@ -412,7 +412,13 @@ function save_sexhack_video_forms( $post_id)
    else
       $video->preview = false;
 
+   // Socialpost
+   if(!$admin)
+   {
 
+      //sh_add_video_job($video->id, 'socialpost_text'); // Not needed. shmproc will give you the text to do if it doesn't exists already
+      sh_add_video_job($video->id, 'socialpost_media', $selectedv);
+   }
 
 
    // Save the video data in the database.

@@ -25,7 +25,7 @@ $plans = wp_SexHackMe\sh_get_subscription_plans();
 
 ?>
    <style>
-      .cozmolabs-banner { display:none; }
+      .cozmoslabs-banner { display:none; }
    </style>
    <div class="wrap">
          <?php do_settings_sections( 'sexhackme-wcpms-settings' ); ?>

@@ -26,10 +26,6 @@ namespace wp_SexHackMe;
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 
-sexhack_log("PORCALAPUPAZZA");
-
-sexhack_log(get_query_var('sh_video', 'NONEEEEEEEEEEEEEE!!!'));
-
 $sh_video = get_query_var('sh_video', false);
 if(!$sh_video) {
    wp_redirect(get_permalink(get_option('sexhack_video404_page', '0')));
