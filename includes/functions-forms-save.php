@@ -271,14 +271,14 @@ function save_sexhack_video_forms( $post_id)
                array_key_exists('video_createMembersStart_'.$vt, $_POST) && 
                \DateTime::createFromFormat('H:i:s',$_POST['video_createMembersStart_'.$vt]) &&
                array_key_exists('video_createMembersDuration_'.$vt, $_POST) &&
-               is_numeric($_POST['video_createMembersDuration_'.$vt]) && intval($_POST['video_createPublicDuration_'.$vt]) > 0 &&
-               in_array($_POST['video_createMembers_'.$vt], array('Y','N')) && !$public_exists)
+               is_numeric($_POST['video_createMembersDuration_'.$vt]) && intval($_POST['video_createMembersDuration_'.$vt]) > 0 &&
+               in_array($_POST['video_createMembers_'.$vt], array('Y','N')) && !$members_exists)
             {
                $file=get_option('sexhack_video_tmp_path', '/tmp')."/".sanitize_text_field($_POST['video_'.$vt]);
                $start=$_POST['video_createMembersStart_'.$vt];
                $duration=$_POST['video_createMembersDuration_'.$vt];
                sh_add_video_job($video->id, 'create_hls_members', json_encode(array('file' => $file, 'start' => $start, 'duration' => $duration )));
-               $public_exists=true;
+               $members_exists=true;
             }  
 
 			}

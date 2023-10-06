@@ -102,6 +102,8 @@ ul.products li.sexhack_thumbli {
 .sexhack-video-container {
    border: solid 1px white;
    border-top: solid 0px;
+   border-right: solid 0px;
+   border-left: solid 0px;
 	border-radius: 0px 0px 8px 8px;
 
 }
@@ -116,6 +118,7 @@ ul.products li.sexhack_thumbli {
 
 .sexhack_tab_button {
 	border-radius: 0 0 4px 4px;
+   padding: 0.2em 0.4em;
 }
 
 .sexhack_toggled_button {
@@ -125,6 +128,14 @@ ul.products li.sexhack_thumbli {
 	border-left: 1px solid white;
 	border-right: 1px solid white;
 	outline: 2px solid black;
+}
+
+@media screen and (max-width: 568px) {
+   .col-full {
+      margin-left: 0.41em;
+      margin-right: 0.41em;
+   }
+
 }
 
 @media screen and (max-width: 767px) {
@@ -140,6 +151,18 @@ ul.products li.sexhack_thumbli {
 	.sexhack-video-container {
 		min-height: 100px;
 	}
+
+   .sexhack_video_title {
+      font-size: 0.9em;
+      color: #e0e0e0;
+      font-weight: 400;
+
+   }
+
+   .col-full {
+      margin-left: 0.41em;
+      margin-right: 0.41em;
+   }
 
    .sexhack_vtag {
       padding: 0 10px 0 10px;

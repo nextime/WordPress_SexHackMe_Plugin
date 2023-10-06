@@ -132,11 +132,6 @@ get_header(); ?>
             }
             ?>
              <article id="post-<?php echo get_the_ID();?>" class="post-<?php echo get_the_ID();?> product type-product">
-               <header class="entry-header">
-                  <h2 class="alpha entry-title sexhack_video_title"> 
-                     <?php echo $video->get_title(); echo " (".$tabtext[$tab]." version)"; ?> 
-                  </h2>   
-               </header><!-- .entry-header -->
                <div class="sexhack-video-container">
             <?php
             $filterurl=false;
@@ -239,6 +234,12 @@ get_header(); ?>
             }
          ?>
          </div>
+               <header class="entry-header">
+                  <h2 class="sexhack_video_title"> 
+                     <?php echo $video->get_title(); echo " (".$tabtext[$tab]." version)"; ?> 
+                  </h2>
+               </header><!-- .entry-header -->
+
          <br><hr>
          <?php 
          echo $htmltags;
@@ -253,7 +254,7 @@ get_header(); ?>
 
 
          <?php if($video->has_downloads()) { ?>
-            <h3><a href="<?php echo get_permalink($video->product_id); ?>">Download the full lenght hi-res version of this video</a><h3>
+            <h3><a href="<?php echo get_permalink($video->product_id); ?>">Download the full lenght hi-res version of this video</a></h3>
          <?php } ?>
 			<?php
 				if(!is_user_logged_in())

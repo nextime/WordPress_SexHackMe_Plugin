@@ -71,7 +71,7 @@ if(!class_exists('SexhackAddUnlockLogin')) {
       }
 
       public function unlock_get_login_url($redirect_url=false) {
-          $UNLOCK_BASE_URL = 'https://app.unlock-protocol.com/checkout';
+          $UNLOCK_BASE_= 'https://app.unlock-protocol.com/checkout';
          $rurl=apply_filters( 'unlock_protocol_get_redirect_uri', wp_login_url());
          if($redirect_url) {
             $rurl=$redirect_url;
@@ -91,8 +91,8 @@ if(!class_exists('SexhackAddUnlockLogin')) {
       {
          $html="";
          if(!is_user_logged_in()) {
-            $html="<hr><div style='text-align: center; width:100%;'><p>OR</p></div><hr>";
-            $html.="<br><div style='text-align:left;width:100%;'<p><button onclick=\"window.location.href='".$this->unlock_get_login_url($redirect_url);
+            $html=" OR ";
+            $html.="<div style='text-align:left;width:100%;'<p><button onclick=\"window.location.href='".$this->unlock_get_login_url($redirect_url);
             $html.="'\" type='button'>Login with Crypto Wallet</button></p></div>";
          }
          return $string.$html;

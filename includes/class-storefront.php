@@ -57,6 +57,12 @@ if(!class_exists('SH_StoreFront')) {
          // Remove breadcrumb
          remove_action( 'storefront_before_content', 'woocommerce_breadcrumb', 10 );
 
+         // Change handheld menu button text
+         add_filter( 'storefront_menu_toggle_text', 'wp_SexHackMe\SH_StoreFront::storefront_menu_toggle_text' );
+
+         // Add account button to handheld menu
+         add_action( 'storefront_header', 'wp_SexHackMe\SH_StoreFront::add_handheld_account', 49); // storefront uses 50 priority for primary_navigation
+
          // Replace 404 page if /404.php exists
          if (is_readable($_SERVER['DOCUMENT_ROOT'].'/404.php')) {
             add_action( 'template_redirect', 'wp_SexHackMe\SH_StoreFront::page404' );
@@ -71,6 +77,23 @@ if(!class_exists('SH_StoreFront')) {
             wp_redirect( home_url( '/404.php' ) );
             die;
          }
+      }
+
+      public static function add_handheld_account()
+      {
+         // XXX set an option for the account and login page?
+         if(is_user_logged_in()) $url="/account";
+         else $url="/login";
+         ?>
+            <a href="<?php echo $url; ?>"><i class="fa fa-user fa-3x" style="position:relative;display:block;float:left;color:white;" aria-hidden="true"></i></a>
+         <?php
+      }
+
+      // XXX Make it configurable?
+      public static function storefront_menu_toggle_text( $text ) 
+      {
+         $text = '';
+         return $text;
       }
 
       public static function footer_menu()

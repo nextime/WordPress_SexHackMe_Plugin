@@ -18,6 +18,69 @@
  * along with SexHackMe Wordpress Plugin. If not, see <https://www.gnu.org/licenses/>.
  */
 
+.focus {
+   outline:0px !important;
+   -webkit-appearance:none;
+   --swiper-theme-color:#000000 !important;
+}
+
+.storefront-handheld-footer-bar {
+	display: none;
+}
+
+
+.handheld-navigation {
+   background-color: #1f1e1e;
+   border-radius: 10px;
+
+}
+
+.handheld-navigation li a {
+   padding-left: 10px !important;
+   padding-right: 10px !important;
+   margin-bottom: 2px;
+   margin-right: 0px;
+   border-radius: 5px;
+   background-color: #080808;
+   margin-left: 0px;
+}
+
+li.sh_signupmenu a {
+   background-color: #801939;
+   border-radius: 20px 20px 20px 20px;
+}
+
+li.sh_signupmenu a:after {
+	content: " Free!";
+	background-color: yellow;
+	color: red;
+	font-weight: bold;
+	font-size: 0.7em;
+	padding: 2px;
+	border-radius: 10px;
+}
+
+li.sh_freememberacc a {
+	background-color: #801939;
+	border-radius: 20px 20px 20px 20px;
+}
+
+li.sh_freememberacc a:after {
+	content: " Subscribe!";
+   background-color: yellow;
+   color: red;
+   font-weight: bold;
+   font-size: 0.5em;
+   padding: 2px;
+   border-radius: 10px;
+
+}
+
+
+li.current_page_item {
+	border-bottom: 2px solid #ffffff !important;
+}
+
 .shm-side-by-side {
 	display: inline-block;
 	margin-left: 10px;
@@ -29,6 +92,13 @@
 	text-align:center;
 }
 
+.sh_adv_hide {
+   line-height: 0.8;
+   margin: 0 0 0 0 ;
+   font-size: 12px;
+   color:#a8a8a8;
+   padding-bottom: 6px;
+}
 
 .home.page:not(.page-template-template-homepage) .site-header {
    margin-bottom: 0em;
@@ -43,6 +113,11 @@
 }
 
 @media screen and (min-width: 768px) {
+
+    .site-header .secondary-navigation {
+      margin-right: 0 !important;
+      margin: 0 0 0 0 !important;
+    }
 
     .site-header-cart .cart-contents {
       padding: 1px;
@@ -71,7 +146,7 @@
 	 }
 
     .secondary-navigation a {
-       padding: 1em 0.2em !important;
+       padding: 0.6em 0.2em !important;
     }
 
     .secondary-navigation .menu {
@@ -131,4 +206,47 @@
 		padding-top: 0.2em;
       padding-bottom: 0.2em;
    }
+    button.menu-toggle {
+      padding-top: 35px;
+		border-radius: 8px 8px 8px 8px;
+		margin-top: 1px;
+		margin-right: 2px;
+   }  
+	
+	.handheld-navigation ul.menu li {
+		font-size: 1.5em;
+		line-height: 0.3em;
+	}
+
+	li.sh_signupmenu a {
+		border-radius: 10px 10px 10px 10px;
+	}
+
+   button.menu-toggle::before {
+      transform: translateY(-8px);
+   }
+
+   button.menu-toggle::after {
+      transform: translateY(8px);
+   }
+
+   h1.entry-title {
+      font-size:1.8em;
+      font-weight: 400;
+   }
+
+   button.menu-toggle::before, 
+   button.menu-toggle::after, 
+   button.menu-toggle span::before {
+      width: 23px;
+      height: 4px;
+   }
+
+   .handheld-navigation ul.menu li.current-menu-item > a {
+      font-weight:500;
+      color:#ad8a8a !important;
+      text-shadow: 3px -3px #c0545496;
+   }
+
+
 }
