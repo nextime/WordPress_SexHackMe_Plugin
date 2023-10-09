@@ -230,7 +230,7 @@ function save_sexhack_video_forms( $post_id)
 			$video->__set('hls_'.$vt, sanitize_text_field($_POST['video_hls_'.$vt]));
       }
       else if(!$admin &&  array_key_exists('video_'.$vt, $_POST) && 
-         sanitize_text_field($_POST['video_'.$vt])) 
+         check_url_or_path(sanitize_text_field($_POST['video_'.$vt]))) 
       {
          //$video->__set('hls_'.$vt, get_option('sexhack_video_tmp_path', '/tmp')."/".sanitize_text_field($_POST['video_'.$vt]));
 			sh_add_video_job($video->id, 'process_hls_'.$vt, get_option('sexhack_video_tmp_path', '/tmp')."/".sanitize_text_field($_POST['video_'.$vt]));
