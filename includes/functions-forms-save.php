@@ -224,13 +224,13 @@ function save_sexhack_video_forms( $post_id)
 
 		// HLS playlist 
 		if($admin &&array_key_exists('video_hls_'.$vt, $_POST) && 
-			check_url_or_path(sanitize_text_field($_POST['video_hls_'.$vt])) &&
+			sanitize_text_field($_POST['video_hls_'.$vt]) &&
 			(strncasecmp(strrev(sanitize_text_field($_POST['video_hls_'.$vt])), '8u3m', 4) === 0)) 
 		{
 			$video->__set('hls_'.$vt, sanitize_text_field($_POST['video_hls_'.$vt]));
       }
       else if(!$admin &&  array_key_exists('video_'.$vt, $_POST) && 
-         check_url_or_path(sanitize_text_field($_POST['video_'.$vt]))) 
+         sanitize_text_field($_POST['video_'.$vt])) 
       {
          //$video->__set('hls_'.$vt, get_option('sexhack_video_tmp_path', '/tmp')."/".sanitize_text_field($_POST['video_'.$vt]));
 			sh_add_video_job($video->id, 'process_hls_'.$vt, get_option('sexhack_video_tmp_path', '/tmp')."/".sanitize_text_field($_POST['video_'.$vt]));
@@ -288,7 +288,7 @@ function save_sexhack_video_forms( $post_id)
 	
       // Download 
       if($admin && array_key_exists('video_download_'.$vt, $_POST) &&
-         check_url_or_path(sanitize_text_field($_POST['video_download_'.$vt])))
+         sanitize_text_field($_POST['video_download_'.$vt]))
       {  
          $video->__set('download_'.$vt, sanitize_text_field($_POST['video_download_'.$vt]));
       }
@@ -347,7 +347,7 @@ function save_sexhack_video_forms( $post_id)
 
 
    // Animated gif path
-   if($admin &&  array_key_exists('video_gif', $_POST) && check_url_or_path(sanitize_text_field($_POST['video_gif'])))
+   if($admin &&  array_key_exists('video_gif', $_POST) && sanitize_text_field($_POST['video_gif']))
       $video->gif = sanitize_text_field($_POST['video_gif']);
    elseif(!$admin &&  array_key_exists('video_gif', $_POST) &&
       sanitize_text_field($_POST['video_gif'])) 
@@ -374,7 +374,7 @@ function save_sexhack_video_forms( $post_id)
       $video->gif = false;
 
    // Small Animated gif path
-   if($admin && array_key_exists('video_gif_small', $_POST) && check_url_or_path(sanitize_text_field($_POST['video_gif_small'])))
+   if($admin && array_key_exists('video_gif_small', $_POST) && sanitize_text_field($_POST['video_gif_small']))
       $video->gif_small = sanitize_text_field($_POST['video_gif_small']);
    elseif(!$admin && array_key_exists('video_gif_small', $_POST) &&
       sanitize_text_field($_POST['video_gif_small']))
@@ -401,7 +401,7 @@ function save_sexhack_video_forms( $post_id)
       $video->gif_small = false;
 
    // Preview video
-   if($admin && array_key_exists('video_preview', $_POST) && check_url_or_path(sanitize_text_field($_POST['video_preview'])))
+   if($admin && array_key_exists('video_preview', $_POST) && sanitize_text_field($_POST['video_preview']))
       $video->preview = sanitize_text_field($_POST['video_preview']);
    elseif(!$admin && array_key_exists('video_preview', $_POST) &&
       sanitize_text_field($_POST['video_preview']))
