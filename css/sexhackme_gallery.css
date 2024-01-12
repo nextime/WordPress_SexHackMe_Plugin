@@ -185,8 +185,8 @@ ul.products li.sexhack_thumbli {
 @media screen and (min-width: 768px) {
 	
    .videogallery-home {
-      width: 75%;
-      margin-left: 12.5%;
+      width: 100%;
+      margin-left: 0;
    }  
 
 

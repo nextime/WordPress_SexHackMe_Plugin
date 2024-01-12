@@ -18,6 +18,28 @@
  * along with SexHackMe Wordpress Plugin. If not, see <https://www.gnu.org/licenses/>.
  */
 
+p+h2 {
+   margin-top: 10px !important;
+}
+
+div.etn-single-event-media img.wp-post-image {
+   display:none;
+}
+
+.etn-es-events-page-container {
+   padding-top: 0px;
+}
+
+
+.wpbc_structure_form .form-group {
+   margin: 2px 0 !important;
+}
+
+
+.etn-event-item {
+   background-color: #cbcdd7;
+}
+
 .focus {
    outline:0px !important;
    -webkit-appearance:none;

@@ -71,7 +71,7 @@ if(!class_exists('SexhackAddUnlockLogin')) {
       }
 
       public function unlock_get_login_url($redirect_url=false) {
-          $UNLOCK_BASE_= 'https://app.unlock-protocol.com/checkout';
+         $UNLOCK_BASE_URL= 'https://app.unlock-protocol.com/checkout';
          $rurl=apply_filters( 'unlock_protocol_get_redirect_uri', wp_login_url());
          if($redirect_url) {
             $rurl=$redirect_url;

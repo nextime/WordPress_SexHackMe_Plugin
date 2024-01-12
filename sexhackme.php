@@ -475,8 +475,8 @@ if(!class_exists('SexHackMe_Plugin')) {
 
 
          // Check if we need to flush rewrite rules
-         add_action('init', array($this, 'register_flush'), 10 );
-         add_action('init', array($this, 'flush_rewrite'), 11);
+         add_action('init', array($this, 'register_flush'), 5 );
+         add_action('init', array($this, 'flush_rewrite'), 6);
 
          // Enqueue scripts on the front end side. Priority 200 because of WooCommerce.
          add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_front_end_scripts' ), 200 );
