@@ -489,7 +489,9 @@ if(!class_exists('SexHackMe_Plugin')) {
 
          // Initialize Custom post_types 
          add_action( 'init', array( 'wp_SexHackMe\SH_PostTypes', 'init'));
-         add_action( 'sh_rewrite_flushed', array( 'wp_SexHackMe\SH_PostTypes', 'add_rewrites') );
+         //add_action( 'sh_rewrite_flushed', array( 'wp_SexHackMe\SH_PostTypes', 'add_rewrites') );
+         //add_action( 'sh_before_rewrite_flush_rules', array( 'wp_SexHackMe\SH_PostTypes', 'add_rewrites') );
+         add_action( 'init', array( 'wp_SexHackMe\SH_PostTypes', 'add_rewrites'));
 
          // Initialize shortcodes
          add_action( 'init', array( 'wp_SexHackMe\SH_Shortcodes', 'init' ) );
@@ -552,6 +554,7 @@ if(!class_exists('SexHackMe_Plugin')) {
          if( get_option('need_rewrite_flush'))
          {
              sexhack_log("FLUSHING REWRITE RULES");
+             do_action('sh_before_rewrite_flush_rules');
              //flush_rewrite_rules(false);
              flush_rewrite_rules();
              update_option('need_rewrite_flush', 0);

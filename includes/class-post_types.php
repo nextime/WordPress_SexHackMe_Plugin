@@ -119,7 +119,11 @@ if(!class_exists('SH_PostTypes')) {
          if(!array_key_exists($DEFAULTSLUG.'/([^/]+)/?$', $rules)) {
 				update_option('need_rewrite_flush', 1);
 				sexhack_log("REWRITE: Need to add and flush our rules!");
-			}
+         } else {
+            sexhack_log("WE DON'T NEED REWRITE!!!!!!!!!!!!!!!!!!!!!!");
+            //sexhack_log($rules);
+         }
+
 		}
 
 		public static function add_rewrites()
@@ -154,7 +158,7 @@ if(!class_exists('SH_PostTypes')) {
 
 
             //update_option('need_rewrite_flush', 1);
-            sexhack_log($wp_rewrite->wp_rewrite_rules());
+            //sexhack_log($wp_rewrite->wp_rewrite_rules());
 
       }
 	
