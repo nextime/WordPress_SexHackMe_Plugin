@@ -642,18 +642,26 @@ if(!class_exists('SH_WooCommerce_Chaturbate_Payments')) {
 
       		// Customer Emails.
       		add_action( 'woocommerce_email_before_order_table', array( $this, 'email_instructions' ), 10, 3 );
+            //add_action( 'woocommerce_order_status_pending', array( $this, 'email_instructions' ), 9000, 2 );
 
 
          }
 
-         public function webhook() {
+         public function usd2tokens($usd) {
+            $tot = $usd/$this->cb_change;
+            $rem = $usr % $this->cb_change;
+            if($rem > 0) $tot=$tot+1;
+            return $tot;
+         }
+
+         public function webhook_cb() {
             if($_GET['key'] == $this->api_passkey) {
                $msg=$_GET['msg'];
                $tkns=intval($_GET['tkns']);
                if(str_starts_with($msg, $this->uuid_prefix)) {
                   $order_id = intval(str_replace($this->uuid_prefix, '', $msg));
                   $order = wc_get_order( $order_id );
-                  $tktotal = $order->get_total()/$this->cb_change;
+                  $tktotal = $this->usd2tokens($order->get_total());
                   if($tkns >= $tktotal) {
                      $order->payment_complete();
                   }
@@ -734,7 +742,7 @@ if(!class_exists('SH_WooCommerce_Chaturbate_Payments')) {
 					$order = wc_get_order( $order_id );
 					$totalusd = $order->get_total();
 				}
-				$instr = str_replace('{TOTAL}', intval($totalusd/$this->cb_change), $instr);
+				$instr = str_replace('{TOTAL}', intval($this->usd2tokens($totalusd), $instr);
 				return $instr;
 			}
 
@@ -745,18 +753,23 @@ if(!class_exists('SH_WooCommerce_Chaturbate_Payments')) {
       		if ( $this->instructions ) {
 				    //$order = wc_get_order( $order_id );
 					 if($order->get_payment_method() == 'shchaturbate')
-						return wp_kses_post( wpautop( wptexturize( $this->print_instructions($order_id, $order->get_total()) ) ) );
+						return "Thank you, we received your order!\n".wp_kses_post( wpautop( wptexturize( $this->print_instructions($order_id, $order->get_total()) ) ) );
         			 	//echo wp_kses_post( wpautop( wptexturize( $this->print_instructions($order_id, $order->get_total()) ) ) );
       		}
 				return $msg;
    		}
 
-
+         
+         
    		public function email_instructions( $order, $sent_to_admin, $plain_text = false ) {
-      		if ( $this->instructions && ! $sent_to_admin && 'shchaturbate' === $order->get_payment_method() && $order->has_status( apply_filters( 'woocommerce_shchaturbate_email_instructions_order_status', 'on-hold', $order ) ) ) {
-         		echo wp_kses_post( wpautop( wptexturize( $this->print_instructions($order->get_id(), $order->get_total())  ) ) . PHP_EOL );
+            if ( $this->instructions && ! $sent_to_admin && 
+               'shchaturbate' === $order->get_payment_method() && 
+               $order->has_status( apply_filters( 'woocommerce_shchaturbate_email_instructions_order_status', 'on-hold', $order ) ) ) {
+                  $note=wp_kses_post( wpautop( wptexturize( $this->print_instructions($order->get_id(), $order->get_total())  ) ) . PHP_EOL );
+         		   echo $note;
+                  $order->update_status('pending', $note);
       		}
-   		}
+         } 
 
 
          // Process payment
@@ -766,21 +779,18 @@ if(!class_exists('SH_WooCommerce_Chaturbate_Payments')) {
 				$total = $order->get_total();		
 
 
-            //
-            /*
       		if ( $total > 0 ) {
          		// Mark as on-hold (we're awaiting the shchaturbate).
          		$order->update_status( 
 						apply_filters( 'woocommerce_shchaturbate_process_payment_order_status', 'on-hold', $order ), 
-						'Waiting for '.intval($total/$this->cb_change).' tokens to https://chaturbate.com/'.$this->cb_model.' with message '.$this->uuid_prefix.$order_id
+						'Waiting for '.intval($this->usd2tokens($total).' tokens to https://chaturbate.com/'.$this->cb_model.' with message '.$this->uuid_prefix.$order_id
 					);
       		} else {
          		$order->payment_complete();
       		}
-             */
 
-            if($total<-0) 
-               $order->payment_complete();
+            // if($total<-0) 
+            //   $order->payment_complete();
 				//$order->update_status('on-hold', __( 'Pay by sending '.intval($total/0.05).' tokens to https://chaturbate.com/sexhackme', 'woocommerce' ));
 
 				/*
