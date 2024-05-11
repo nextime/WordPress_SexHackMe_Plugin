@@ -70,8 +70,13 @@ if(!class_exists('SH_Shortcodes')) {
          extract( shortcode_atts(array(
             "url" => '',
             "posters" => '',
+            "autoplay" => false
          ), $attr));
-         return "<div class='sexhls_video'>" . sh_hls_player($url, $posters) . "</div>";
+         ob_start();
+         sh_hls_player($url, $posters, $autoplay);
+         $player = ob_get_contents();
+         ob_end_clean();
+         return "<div class='sexhls_video'>" . $player . "</div>";
       }
 
       public static function video_xr($attr, $cont)
@@ -80,7 +85,11 @@ if(!class_exists('SH_Shortcodes')) {
             "url" => '',
             "posters" => '',
          ), $attr));
-         return "<div class='sexvideo_videojs'>" . sh_xr_player($url, $posters) . "</div>";
+         ob_start();
+         sh_xr_player($url, $posters);
+         $player = ob_get_contents();
+         ob_end_clean();
+         return "<div class='sexvideo_videojs'>" . $player . "</div>";
       }
 
       public static function xframe_bypass($attr, $cont)

@@ -27,7 +27,7 @@ $uid = uniqid('sexhls_');
    <video id="<?php echo $uid; ?>" style="width: 100%; height: 100%;" controls poster="<?php echo $posters; ?>"></video>
 <script language="javascript">
 	$(window).on('load', function() {
-            SexHLSPlayer('<?php echo $vurl; ?>', '<?php echo $uid; ?>');
+            SexHLSPlayer('<?php echo $vurl; ?>', '<?php echo $uid; ?>', <?php echo $autoplay; ?>);
             $('#<?php echo $uid; ?>').on('click', function(){this.paused?this.play():this.pause();});
             Mousetrap(document.getElementById('<?php echo $uid; ?>')).bind('space', function(e, combo) { SexHLSplayPause('<?php echo $uid; ?>'); });
             Mousetrap(document.getElementById('<?php echo $uid; ?>')).bind('up', function(e, combo) { SexHLSvolumeUp('<?php echo $uid; ?>'); });

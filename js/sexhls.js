@@ -20,7 +20,7 @@
 
 //var vtag = document.getElementById('vtag');
 
-function SexHLSPlayer(url, vuid){
+function SexHLSPlayer(url, vuid, autoplay=false){
   var vtag = document.getElementById(vuid);
   if(Hls.isSupported()) {
       vtag.volume = 0.3;
@@ -28,10 +28,14 @@ function SexHLSPlayer(url, vuid){
       var m3u8Url = decodeURIComponent(url)
       hls.loadSource(m3u8Url);
       hls.attachMedia(vtag);
-      hls.on(Hls.Events.MANIFEST_PARSED,function() {
+      hls.on(Hls.Events.MANIFEST_PARSED,function(autoplay) {
         hls.autoLevelEnabled = true;
         //hls.loadLevel = 4;
         hls.startLoad();
+        if(autoplay==true) {
+           vtag.mute = true;
+
+        }
         vtag.play(); // XXX Autoplay doesn't work apparently atm
       });
       //document.title = url

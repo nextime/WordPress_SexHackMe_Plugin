@@ -29,13 +29,13 @@ if(!class_exists('SH_VideoPlayer')) {
    class SH_VideoPlayer
    {
 
-      public static function addPlayer($player_type='hls', $vurl='', $posters="", $projection='180_LR')
+      public static function addPlayer($player_type='hls', $vurl='', $posters="", $projection='180_LR', $autoplay=false)
       {
          $html = false;
          switch($player_type)
          {
             case 'hls':
-                 $html = sh_get_template("videoplayer/hls.php", array('vurl' => $vurl, 'posters' => $posters ));
+                 $html = sh_get_template("videoplayer/hls.php", array('vurl' => $vurl, 'posters' => $posters, 'autoplay' => strval($autoplay) ));
                break;
 
             case 'xr':

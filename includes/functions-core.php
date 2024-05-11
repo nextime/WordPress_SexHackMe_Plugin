@@ -28,7 +28,9 @@ function sh_get_template($tmpl, $args=array())
 {  
    foreach($args as $var => $data) $$var = $data; 
    if(file_exists(SH_PLUGIN_DIR_PATH . 'templates/' . $tmpl)) 
-      return include_once SH_PLUGIN_DIR_PATH . 'templates/' . $tmpl;
+   {
+      return include SH_PLUGIN_DIR_PATH . 'templates/' . $tmpl;
+   }
    return false;
 }
 
@@ -75,9 +77,9 @@ function sh_genpass_register_form()
 
 }
 
-function sh_hls_player($video_url, $posters='')
+function sh_hls_player($video_url, $posters='', $autoplay=false)
 {
-    SH_VideoPlayer::addPlayer('hls', $video_url, $posters);
+    SH_VideoPlayer::addPlayer('hls', $video_url, $posters, '', $autoplay);
 }
 
 function sh_xr_player($video_url, $posters='', $projection='180_LR')

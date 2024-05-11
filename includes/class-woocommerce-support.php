@@ -220,7 +220,8 @@ if(!class_exists('SexhackWoocommerceCheckout')) {
          //add_action( 'woocommerce_before_checkout_form', array($this, 'empty_cart'), 1);
 			add_action( 'woocommerce_add_to_cart_validation', array($this, 'empty_cart'), 1);
 
-
+         add_filter( 'woocommerce_add_to_cart_redirect', array($this, 'redirect_checkout_add_cart' ));
+ 
          add_action( 'woocommerce_simple_add_to_cart', array($this, 'oneclick_checkout'));
          add_action( 'woocommerce_after_shop_loop_item', array($this, 'product_loop_oneclick'), 9);
 
@@ -235,7 +236,14 @@ if(!class_exists('SexhackWoocommerceCheckout')) {
             $woocommerce->cart->empty_cart();
 				//WC()->session->set('cart', array());
             $woocommerce->cart->add_to_cart(intval($_GET['shm_direct_checkout']), 1);
-         }
+         } else {
+            //$woocommerce->cart->empty_cart();
+            return true;
+         } 
+      }
+
+      public function redirect_checkout_add_cart() {
+         return wc_get_checkout_url();
       }
 
       public function header_buffer_start() { ob_start(array($this, "header_buffer_callback")); }
@@ -250,17 +258,19 @@ if(!class_exists('SexhackWoocommerceCheckout')) {
 
       public function product_loop_oneclick() {
    		global $product;
-      	echo '<div class="custom-add-to-cart">';
-			remove_action( 'woocommerce_after_shop_loop_item', 'woocommerce_template_loop_add_to_cart');
-      	//woocommerce_template_loop_add_to_cart();
-			echo '<a class="button" href="'.wc_get_checkout_url()."?add-to-cart=".$product->get_id()."&shm_direct_checkout=".$product->get_id().'">Buy now!</a>';
-      	echo '</div>';
+         remove_action( 'woocommerce_after_shop_loop_item', 'woocommerce_template_loop_add_to_cart');
+         if(!$product->is_type('variable')) {
+            echo '<div class="custom-add-to-cart">';
+      	   //woocommerce_template_loop_add_to_cart();
+			   echo '<a class="button" href="'.wc_get_checkout_url()."?add-to-cart=".$product->get_id()."&shm_direct_checkout=".$product->get_id().'">Buy now!</a>';
+            echo '</div>';
+         }
       }
 
       public function oneclick_checkout() {
          global $product;
-
-			echo '<a class="button" href="'.wc_get_checkout_url()."?add-to-cart=".$product->get_id()."&shm_direct_checkout=".$product->get_id().'">Buy now!</a>';
+         
+		   echo '<a class="button" href="'.wc_get_checkout_url()."?add-to-cart=".$product->get_id()."&shm_direct_checkout=".$product->get_id().'">Buy now!</a>';
 
          remove_action('woocommerce_'.$product->get_type().'_add_to_cart', 'woocommerce_'.$product->get_type().'_add_to_cart', 30);
       }
@@ -402,9 +412,10 @@ if(!class_exists('WoocommerceEmailCheckout')) {
     
          foreach( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
             // Check if there are non-virtual products
-            if ( ! $cart_item['data']->is_virtual() ) $only_virtual = false;   
+            if ( (! $cart_item['data']->is_virtual()) && ($cart_item['data']->get_attribute('virtual') != 'y') ) $only_virtual = false;   
          }
-     
+
+
           if( $only_virtual ) {
              unset($fields['billing']['billing_company']);
              unset($fields['billing']['billing_address_1']);
@@ -414,7 +425,7 @@ if(!class_exists('WoocommerceEmailCheckout')) {
              unset($fields['billing']['billing_country']);
              unset($fields['billing']['billing_state']);
              unset($fields['billing']['billing_phone']);
-            unset($fields['billing']['billing_first_name']);
+             unset($fields['billing']['billing_first_name']);
              unset($fields['billing']['billing_last_name']);                
              add_filter( 'woocommerce_enable_order_notes_field', '__return_false' );
          }
@@ -585,5 +596,225 @@ if(!class_exists('SH_WooCommerce_Registration_Integration')) {
 
 }
 
+
+
+if(!class_exists('SH_WooCommerce_Chaturbate_Payments')) {
+
+
+	add_filter( 'woocommerce_payment_gateways', 'wp_SexHackMe\sh_add_payment_gateway_class' );
+	function sh_add_payment_gateway_class( $gateways ) {
+		$gateways[] = 'wp_SexHackMe\SH_WooCommerce_Chaturbate_Payments'; // your class name is here
+		return $gateways;
+	}
+
+   add_action( 'plugins_loaded', 'wp_SexHackMe\chaturbate_payment_init' );
+   function chaturbate_payment_init() {
+
+      class SH_WooCommerce_Chaturbate_Payments extends \WC_Payment_Gateway {
+         // Constructor for initializing the payment gateway
+         public function __construct() {
+            $this->id = 'shchaturbate';
+            $this->method_title = 'Chaturbate Payment Gateway (SexHackMe)';
+            $this->method_description = 'Receive payments in chaturbate.com tokens';
+				$this->icon = SH_PLUGIN_DIR_URL.'/img/chaturbate_ico.png'; // URL to the icon
+
+            $this->has_fields = true;
+            $this->init_form_fields();
+            $this->init_settings();
+
+				$this->supports = array(
+					'products'
+				);
+
+				$this->enabled = $this->get_option( 'enabled' );
+            $this->title = $this->get_option('title');
+            $this->description = $this->get_option('description');
+				$this->uuid_prefix = $this->get_option('uuid_prefix');
+				$this->cb_model = $this->get_option('cb_model');
+				$this->cb_change = $this->get_option('cb_change');
+				$this->instructions = $this->get_option('instructions');
+            $this->api_passkey = $this->get_option('api_passkey');
+
+            add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'process_admin_options'));
+				add_action( 'woocommerce_api_shchaturbate', array( $this, 'webhook_cb' ) );
+      		//add_action( 'woocommerce_before_thankyou', array( $this, 'thankyou_page' ));
+				add_filter('woocommerce_thankyou_order_received_text', array( $this, 'thankyou_page' ), 90, 2);
+
+      		// Customer Emails.
+      		add_action( 'woocommerce_email_before_order_table', array( $this, 'email_instructions' ), 10, 3 );
+
+
+         }
+
+         public function webhook() {
+            if($_GET['key'] == $this->api_passkey) {
+               $msg=$_GET['msg'];
+               $tkns=intval($_GET['tkns']);
+               if(str_starts_with($msg, $this->uuid_prefix)) {
+                  $order_id = intval(str_replace($this->uuid_prefix, '', $msg));
+                  $order = wc_get_order( $order_id );
+                  $tktotal = $order->get_total()/$this->cb_change;
+                  if($tkns >= $tktotal) {
+                     $order->payment_complete();
+                  }
+               }
+            }
+	         //$order->reduce_order_stock();
+         }
+
+         // Initialize settings fields
+         public function init_form_fields() {
+            $this->form_fields = array(
+					'enabled' => array(
+						'title'       => 'Enable/Disable',
+						'label'       => 'Enable Chaturbate Gateway',
+						'type'        => 'checkbox',
+						'description' => '',
+						'default'     => 'no'
+					),
+               'title' => array(
+                  'title' => __('Title', 'woocommerce'),
+                  'type' => 'text',
+                  'description' => __('This controls the title displayed during checkout.', 'woocommerce'),
+                  'default' => __('Chaturbate Tokens', 'woocommerce'),
+                  'desc_tip' => true,
+               ),
+               'description' => array(
+                  'title' => __('Description', 'woocommerce'),
+                  'type' => 'textarea',
+                  'description' => __('This controls the description displayed during checkout.', 'woocommerce'),
+                  'default' => __('Pay using Chaturbate tokens', 'woocommerce'),
+                  'desc_tip' => true,
+               ),
+					'cb_change' => array(
+						'title' => 'CB Tokens USD conversion',
+						'type' => 'number',
+						'custom_attributes' => array( 'step' => 'any', 'min' => '0' ),
+						'description' => 'Value of 1 chaturbate token in USD',
+						'desc_tip' => true,
+						'default' => 0.05,
+					),
+               'instructions' => array(
+		            'title'       => __( 'Instructions', 'woocommerce' ),
+      		      'type'        => 'textarea',
+            		'description' => __( 'Instructions that will be added to the thank you page and emails.', 'woocommerce' ),
+            		'default'     => 'Send {TOTAL} chaturbate tokens to https://chaturbate.com/{CB_MODEL} with the message {ORDER_UUID}',
+            		'desc_tip'    => true,
+         		),
+					'uuid_prefix' => array(
+						'title' => 'Order ID Prefix',
+						'type' => 'text',
+						'description' => 'order ID prefix for messages included in tokens sent',
+						'desc_tip' => true,
+						'default' => 'SHMPAY-',
+					),
+					'cb_model' => array(
+						'title' => 'Model name',
+						'type' => 'text',
+						'description' => 'Model name on chaturbate that will receive tokens',
+						'desc_tip' => true,
+						'default' => 'sexhackme',
+               ),
+               'api_passkey' => array(
+                  'title' => 'API Passkey',
+                  'type' => 'text',
+                  'description' => 'API Key password for chaturbate bot API',
+                  'desc_tip' => true,
+                  'default' => 'sexhackme_key_changeme',
+               ),
+
+            );
+         }
+
+			private function print_instructions($order_id, $totalusd=-1)
+			{
+				$instr = str_replace('{CB_MODEL}', $this->cb_model, $this->instructions );
+				$instr = str_replace('{ORDER_UUID}', $this->uuid_prefix.strval($order_id), $instr);
+				if($totalusd < 0) {
+					$order = wc_get_order( $order_id );
+					$totalusd = $order->get_total();
+				}
+				$instr = str_replace('{TOTAL}', intval($totalusd/$this->cb_change), $instr);
+				return $instr;
+			}
+
+
+   		//public function thankyou_page($order_id) {
+			public function thankyou_page($msg, $order) {
+				$order_id=$order->get_id();
+      		if ( $this->instructions ) {
+				    //$order = wc_get_order( $order_id );
+					 if($order->get_payment_method() == 'shchaturbate')
+						return wp_kses_post( wpautop( wptexturize( $this->print_instructions($order_id, $order->get_total()) ) ) );
+        			 	//echo wp_kses_post( wpautop( wptexturize( $this->print_instructions($order_id, $order->get_total()) ) ) );
+      		}
+				return $msg;
+   		}
+
+
+   		public function email_instructions( $order, $sent_to_admin, $plain_text = false ) {
+      		if ( $this->instructions && ! $sent_to_admin && 'shchaturbate' === $order->get_payment_method() && $order->has_status( apply_filters( 'woocommerce_shchaturbate_email_instructions_order_status', 'on-hold', $order ) ) ) {
+         		echo wp_kses_post( wpautop( wptexturize( $this->print_instructions($order->get_id(), $order->get_total())  ) ) . PHP_EOL );
+      		}
+   		}
+
+
+         // Process payment
+         public function process_payment($order_id) {
+				$order = wc_get_order( $order_id );
+				
+				$total = $order->get_total();		
+
+
+            //
+            /*
+      		if ( $total > 0 ) {
+         		// Mark as on-hold (we're awaiting the shchaturbate).
+         		$order->update_status( 
+						apply_filters( 'woocommerce_shchaturbate_process_payment_order_status', 'on-hold', $order ), 
+						'Waiting for '.intval($total/$this->cb_change).' tokens to https://chaturbate.com/'.$this->cb_model.' with message '.$this->uuid_prefix.$order_id
+					);
+      		} else {
+         		$order->payment_complete();
+      		}
+             */
+
+            if($total<-0) 
+               $order->payment_complete();
+				//$order->update_status('on-hold', __( 'Pay by sending '.intval($total/0.05).' tokens to https://chaturbate.com/sexhackme', 'woocommerce' ));
+
+				/*
+				$order->add_order_note( 
+					'Please go on https://chaturbate.com/sexhackme and tip '.intval($total/0.05).' tokens with the message SHM-'.strval($order_id), 
+					true );
+				*/				
+
+				// Empty cart
+				WC()->cart->empty_cart();
+			
+
+				return array(
+					'result' => 'success',
+					'redirect' => $this->get_return_url( $order ),
+				);
+         }
+
+			/*
+			// XXX We don't use anything special here.
+
+         // Display payment fields during checkout
+         public function payment_fields() {
+            // Display payment fields such as credit card info or other required info
+            // ...
+         }
+         // Validate payment fields
+         public function validate_fields() {
+            // Validate payment fields submitted by the customer
+            // ...
+         } */
+      }
+   }
+
+}
 
 ?>
