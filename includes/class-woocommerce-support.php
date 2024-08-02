@@ -649,12 +649,15 @@ if(!class_exists('SH_WooCommerce_Chaturbate_Payments')) {
 
          public function usd2tokens($usd) {
             $tot = $usd/$this->cb_change;
-            $rem = $usr % $this->cb_change;
+            //$rem = fmod($usd, $this->cb_change);
+            bcscale(2);
+            $rem = bcmod($usd, $this->cb_change);
             if($rem > 0) $tot=$tot+1;
             return $tot;
          }
 
          public function webhook_cb() {
+            header( 'HTTP/1.1 200 OK' );
             if($_GET['key'] == $this->api_passkey) {
                $msg=$_GET['msg'];
                $tkns=intval($_GET['tkns']);
@@ -662,11 +665,14 @@ if(!class_exists('SH_WooCommerce_Chaturbate_Payments')) {
                   $order_id = intval(str_replace($this->uuid_prefix, '', $msg));
                   $order = wc_get_order( $order_id );
                   $tktotal = $this->usd2tokens($order->get_total());
+                  echo "$tktotal $tkns ".$order->get_total();
                   if($tkns >= $tktotal) {
                      $order->payment_complete();
+                     echo "OK";
                   }
                }
             }
+            die();
 	         //$order->reduce_order_stock();
          }
 
@@ -742,7 +748,7 @@ if(!class_exists('SH_WooCommerce_Chaturbate_Payments')) {
 					$order = wc_get_order( $order_id );
 					$totalusd = $order->get_total();
 				}
-				$instr = str_replace('{TOTAL}', intval($this->usd2tokens($totalusd), $instr);
+				$instr = str_replace('{TOTAL}', intval($this->usd2tokens($totalusd)), $instr);
 				return $instr;
 			}
 
@@ -783,7 +789,7 @@ if(!class_exists('SH_WooCommerce_Chaturbate_Payments')) {
          		// Mark as on-hold (we're awaiting the shchaturbate).
          		$order->update_status( 
 						apply_filters( 'woocommerce_shchaturbate_process_payment_order_status', 'on-hold', $order ), 
-						'Waiting for '.intval($this->usd2tokens($total).' tokens to https://chaturbate.com/'.$this->cb_model.' with message '.$this->uuid_prefix.$order_id
+						'Waiting for '.intval($this->usd2tokens($total)).' tokens to https://chaturbate.com/'.$this->cb_model.' with message '.$this->uuid_prefix.$order_id
 					);
       		} else {
          		$order->payment_complete();

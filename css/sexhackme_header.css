@@ -67,28 +67,82 @@ div.etn-single-event-media img.wp-post-image {
    margin-left: 0px;
 }
 
-li.sh_signupmenu a {
+.site-header-shmlogin > li.shmlogin > div {
+   display: inline;
+   margin-right: 10px;
+}
+
+.site-header-shmlogin {
+   list-style-type:none;
+   margin-left:0px;
+   padding:0px;
+   margin-bottom:0px;
+   width:21.7391304348%;
+   float:right !important;
+   position:relative;
+}
+
+.site-header-shmlogin > li.shmlogin > a, .site-header-shmlogin > li.shmlogin > div {
+   border:1px solid white;
+   padding-left:10px;
+   padding-right:10px;
+   border-top-left-radius:10px;
+   border-top-right-radius:10px;
+   border-bottom-left-radius:10px;
+   border-bottom-right-radius:10px;
+  
+}
+
+.site-header-shmlogin:hover > li.shmlogin > a {
+   color:#d8d8d8;
+}
+
+.site-header-shmlogin > li.shmlogin > a:hover, .site-header-shmlogin > li.shmlogin > div > a:hover {
+   color:#ffffff;
+}
+
+
+.sh_loginbutton:hover .sh_loginpopup, .sh_loginpopup:hover, .sh_loginbutton:active .sh_loginpopup, .sh_loginpopup:focus-within  {
+   display:block;
+}
+
+.sh_loginbutton:hover {
+   background-color:#111111;
+}
+
+.sh_loginpopup {
+   display: none;
+   background-color: #000000;
+   position: absolute;
+   padding: 10px;
+   z-index: 999;
+   margin-top:-4px;
+   border: grey 1px solid;
+}
+
+li.sh_signupmenu a, li a.sh_signupmenu {
    background-color: #801939;
    border-radius: 20px 20px 20px 20px;
 }
 
-li.sh_signupmenu a:after {
+li.sh_signupmenu a:after, li a.sh_signupmenu:after {
 	content: " Free!";
 	background-color: yellow;
 	color: red;
 	font-weight: bold;
 	font-size: 0.7em;
 	padding: 2px;
+   margin-left: 6px;
 	border-radius: 10px;
 }
 
-li.sh_freememberacc a {
+li.sh_freememberacc a, li a.sh_freememberacc {
 	background-color: #801939;
 	border-radius: 20px 20px 20px 20px;
 }
 
-li.sh_freememberacc a:after {
-	content: " Subscribe!";
+li.sh_freememberacc a:after, li a.sh_freememberacc:after {
+	content: " Upgrade!";
    background-color: yellow;
    color: red;
    font-weight: bold;
@@ -143,7 +197,7 @@ li.current_page_item {
 
     .site-header-cart .cart-contents {
       padding: 1px;
-      padding-top: 10px;
+      padding-top: 1px;
     }
 
     .page h1.entry-title {
@@ -228,6 +282,14 @@ li.current_page_item {
 		padding-top: 0.2em;
       padding-bottom: 0.2em;
    }
+
+   .site-header-shmlogin {
+      display:none;
+   }
+
+   .site-branding {
+      width:calc(100% - 150px);
+   }
     button.menu-toggle {
       padding-top: 35px;
 		border-radius: 8px 8px 8px 8px;
@@ -236,8 +298,8 @@ li.current_page_item {
    }  
 	
 	.handheld-navigation ul.menu li {
-		font-size: 1.5em;
-		line-height: 0.3em;
+		font-size: 1.2em;
+		line-height: 1.0em;
 	}
 
 	li.sh_signupmenu a {

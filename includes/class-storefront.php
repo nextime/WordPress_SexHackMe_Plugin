@@ -50,9 +50,12 @@ if(!class_exists('SH_StoreFront')) {
          register_nav_menu('shm-footer-menu',__( 'Sexhackme Footer Menu' ));
          add_action( 'storefront_footer', 'wp_SexHackMe\SH_StoreFront::footer_menu', 15);
 
+         // Add menu location for card widget
+         register_nav_menu( 'shm-cartmenu', __( 'Cart widget Menu' ));
 
          // Re add the cart in the right position
-         add_action( 'storefront_header', 'storefront_header_cart', 40);
+         //add_action( 'storefront_header', 'storefront_header_cart', 40);
+         add_action( 'storefront_header', 'wp_SexHackMe\SH_StoreFront::sexhackme_header_cart', 40);
 
          // Remove breadcrumb
          remove_action( 'storefront_before_content', 'woocommerce_breadcrumb', 10 );
@@ -61,7 +64,9 @@ if(!class_exists('SH_StoreFront')) {
          add_filter( 'storefront_menu_toggle_text', 'wp_SexHackMe\SH_StoreFront::storefront_menu_toggle_text' );
 
          // Add account button to handheld menu
-         add_action( 'storefront_header', 'wp_SexHackMe\SH_StoreFront::add_handheld_account', 49); // storefront uses 50 priority for primary_navigation
+         add_action( 'storefront_header', 'wp_SexHackMe\SH_StoreFront::add_handheld_account', 48); // storefront uses 50 priority for primary_navigation
+         add_action( 'storefront_header', 'wp_SexHackMe\SH_StoreFront::add_handheld_cart', 49);
+
 
          // Replace 404 page if /404.php exists
          if (is_readable($_SERVER['DOCUMENT_ROOT'].'/404.php')) {
@@ -79,13 +84,75 @@ if(!class_exists('SH_StoreFront')) {
          }
       }
 
+      // Sobstitute the function storefront_header_cart()
+      public static function sexhackme_header_cart()
+      {
+         //storefront_header_cart();
+         //echo "<ul><li/>antani</li></ul>";
+         if ( storefront_is_woocommerce_activated() ) {
+         	if ( is_cart() ) {
+            	$class = 'current-menu-item';
+         	} else {
+            	$class = '';
+         	}
+            ?>
+				<ul class="site-header-shmlogin menu">
+					<li class="shmlogin">
+            <?php
+				if(!is_user_logged_in()) {
+            ?>
+                  <div class="sh_loginbutton">
+                     <a href="/login">Login</a>
+                     <div class="sh_loginpopup">
+                     <?php
+                        echo do_shortcode('[shincludepage page="login"]' );
+                     ?>
+                     </div>
+                  </div>
+                  <a class="sh_signupmenu" href="/register">Signup</a>
+            <?php
+				} else if(is_user_logged_in() && !user_is_premium()) {
+            ?>
+						 <a href="/account/">My Account</a>
+						 <a class="sh_freememberacc" href="/product-category/subscriptions/">Premium</a>
+            <?php
+				} else if(is_user_logged_in() && user_is_premium()) {
+            ?>
+						<a href="/account/">My Account</a>
+            <?php
+				}
+            ?>
+						<i class="fa fa-user " style="position:relative;display:block;float:right;color:white;" aria-hidden="true"></i>
+					</li>
+				</ul>
+      		<ul id="site-header-cart" class="site-header-cart menu"> 
+               <li class="<?php echo esc_attr( $class ); ?>">
+            		<?php storefront_cart_link(); ?>
+         		</li>
+         		<li>
+            		<?php the_widget( 'WC_Widget_Cart', 'title=' ); ?>
+         		</li>
+      		</ul>
+         <?php
+      	}
+      }
+
       public static function add_handheld_account()
       {
          // XXX set an option for the account and login page?
          if(is_user_logged_in()) $url="/account";
          else $url="/login";
          ?>
-            <a href="<?php echo $url; ?>"><i class="fa fa-user fa-3x" style="position:relative;display:block;float:left;color:white;" aria-hidden="true"></i></a>
+            <a href="<?php echo $url; ?>"><i class="fa fa-user fa-2x" style="margin-left:10px;position:relative;display:block;float:left;color:white;" aria-hidden="true"></i></a>
+         <?php
+      }
+
+      public static function add_handheld_cart()
+      {
+         // XXX set an option for the account and login page?
+         $url=WC()->cart->get_cart_url();
+         ?>
+            <a href="<?php echo $url; ?>"><i class="fa fa-shopping-cart fa-2x" style="margin-left:10px;position:relative;display:block;float:left;color:white;" aria-hidden="true"></i></a>
          <?php
       }
 

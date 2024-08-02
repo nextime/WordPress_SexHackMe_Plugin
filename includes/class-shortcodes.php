@@ -161,7 +161,7 @@ if(!class_exists('SH_Shortcodes')) {
 
          foreach($videos as $video)
          {
-            if(in_array(strval($vcount), $adv)) // && !user_is_premium() && $advid && is_numeric($advid) && intval($advid)>0)
+            if(in_array(strval($vcount), $adv) && is_numeric($advid) && intval($advid) >= 0) // && !user_is_premium() && $advid && is_numeric($advid) && intval($advid)>0)
             {
                $html .= '<li class="product type-product sexhack_thumbli">';
                $html .= do_shortcode("[sexadv adv=$advid]");
@@ -225,10 +225,22 @@ if(!class_exists('SH_Shortcodes')) {
          ), $attr));
          if(!array_key_exists('level', $attr)) $attr['level'] = 'public';
 			if(($attr['level'] == 'guestonly' && !is_user_logged_in()) || ($attr['level'] == 'public' or !$attr['level']) || (is_user_logged_in() && ($attr['level']=='members' || ($attr['level']=='premium' && user_is_premium()))))
-			{
-				$ipost = get_post($attr['page']);
-				if($ipost) {
-            	return $ipost->post_content;
+         {
+            if(is_numeric($attr['page'])) {
+				   $ipost = get_post($attr['page']);
+			   	if($ipost)
+            	   return apply_filters('the_content', $ipost->post_content);
+            } else {
+               $args = array(
+                  'name' => $attr['page'],
+                  'post_type' => 'page',
+                  'post_status' => 'publish',
+                  'posts_per_page' => 1
+               );
+               $res = get_posts($args);
+               if($res) {
+                  return apply_filters('the_content', $res[0]->post_content);
+               }
 				}	
 			}
 			return;
