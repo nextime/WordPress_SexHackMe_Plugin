@@ -116,6 +116,7 @@ if(!class_exists('SH_VideoGallery')) {
          $hls_premium = $video->hls_premium;
          $video_preview = $video->preview;
          $gif_preview = $video->gif_small;
+         $premium_is_ppv = $video->premium_is_ppv;
 
          //sexhack_log($video);
 
@@ -140,7 +141,10 @@ if(!class_exists('SH_VideoGallery')) {
          if($hls_public) $vtags[] = '<label class="sexhack_vtag sexhack_public" style="*LEFT*">public</label>';
          elseif($video_preview) $vtags[] = '<label class="sexhack_vtag sexhack_preview" style="*LEFT*">preview</label>';
          if($hls_member)$vtags[] = '<label class="sexhack_vtag sexhack_members" style="*LEFT*">members</label>';
-         if($hls_premium)$vtags[] = '<label class="sexhack_vtag sexhack_premium" style="*LEFT*">premium</label>';
+         if($hls_premium) {
+            if($video->ppv_is_ppv) $vtags[] = '<label class="sexhack_vtag sexhack_premium" style="*LEFT*">PPV</label>';
+            else $vtags[] = '<label class="sexhack_vtag sexhack_premium" style="*LEFT*">premium</label>';
+         }
 
          if($video->has_downloads()) $html .= '<label class="sexhack_vtag sexhack_download"">download</label>';
          if($video->video_type == 'VR') $html .= '<label class="sexhack_vtag sexhack_VR"">VR/3D</label>';

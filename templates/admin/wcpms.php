@@ -62,6 +62,18 @@ $plans = wp_SexHackMe\sh_get_subscription_plans();
             }  
             ?>
          </table>
+
+         <table class="form-table">
+            <tr align="top">
+               <td>
+                  <label><b>Premium member discount on PPVs</b></label><br>
+                  <input type='number' name='sexhack_wcpms_premium_discount' value="<?php echo get_option('sexhack_wcpms_premium_discount', '0'); ?>" />
+                  <p class="description">insert a percentage of discount all premium members will have on PPV videos</p>
+               </td>
+            </tr>
+          </table>
+
+
          <?php do_settings_sections( 'sexhackme-wcpms-settings-email' ); ?>
          <table class="form-table">
             <tr align="top">

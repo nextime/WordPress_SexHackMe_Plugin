@@ -120,6 +120,13 @@ foreach(array('public','members','premium') as $level) { ?>
          <input type='radio' name='video_isdownload_<?php echo $level; ?>' value='N' <?php if(!$video->has_downloads($level)) echo "checked"; ?>>No</input>
       </p>
       <?php if($level == 'premium') { ?>
+
+      <p>
+         <label>Is premium video a PPV?</label>
+         <input type='radio' name='premium_is_ppv' value='Y' <?php if($video->premium_is_ppv=='Y') echo "checked"; ?>>Yes</input>
+         <input type='radio' name='premium_is_ppv' value='N' <?php if($video->premium_is_ppv=='N') echo "checked"; ?>>No</input>
+      </p>
+
       <p>
          <label> Create Members video HLS from this video? </label>
          <input type='radio' name='video_createMembers_<?php echo $level; ?>' value='Y' >Yes</input>

@@ -47,7 +47,7 @@ if(!class_exists('SexHackMe_Plugin')) {
       public function __construct()
       {
 
-          define( 'SH_VERSION', '0.0.2' );
+          define( 'SH_VERSION', '0.0.3' );
           define( 'SH_PLUGIN_DIR_PATH', plugin_dir_path( __FILE__ ) );
           define( 'SH_PLUGIN_DIR_URL', plugin_dir_url( __FILE__ ) );
           define( 'SH_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
@@ -190,6 +190,7 @@ if(!class_exists('SexHackMe_Plugin')) {
              download_public varchar(1024) DEFAULT NULL,
              download_members varchar(1024) DEFAULT NULL,
              download_premium varchar(1024) DEFAULT NULL,
+             premium_is_ppv ENUM('Y', 'N') NOT NULL DEFAULT 'N',
              size_public varchar(256) DEFAULT NULL,
              size_members varchar(256) DEFAULT NULL,
              size_premium varchar(256) DEFAULT NULL,
@@ -218,6 +219,7 @@ if(!class_exists('SexHackMe_Plugin')) {
              KEY post_id (post_id),
              KEY slug (slug),
              KEY price (price),
+             KEY premium_is_ppv (premium_is_ppc),
              KEY video_type (video_type),
              KEY product_id (product_id)
          ) {$charset_collate};

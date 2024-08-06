@@ -84,6 +84,7 @@ get_header(); ?>
             $video_preview = $video->preview;
             $gif_preview = $video->gif_small;
             $gif = $video->gif;
+            $premium_is_ppv = $video->premium_is_ppv;
 
 
             $categories = $video->get_categories(true);
@@ -116,7 +117,7 @@ get_header(); ?>
             else 
             {
                  if(user_has_premium_access() || $video->user_bought_video()) {
-                    if($hls_premium) $tab = 'subscribers';
+                    if($hls_premium && ((!$premium_is_ppv) || $video->user_bought_video() )) $tab = 'subscribers';
                     elseif($hls_members) $tab = 'members';
                     else $tab = 'public';
                  }
@@ -162,7 +163,7 @@ get_header(); ?>
                      break;
 
                   case "subscribers":
-                     if(user_has_premium_access() || $video->user_bought_video())
+                     if((user_has_premium_access() && !$premium_is_ppv) || $video->user_bought_video())
                      {
                         if($filterurl && $hls_premium && $video->video_type=="VR")
                            echo do_shortcode( "[sexvideo url=\"".wp_nonce_url($filterurl.$sh_video."/premium/".basename($hls_premium), 'shm_premium_video-'.$video->id)."\" posters=\"".$thumb."\"]" );
@@ -252,6 +253,9 @@ get_header(); ?>
                   </div>
          <?php } ?>
 
+         <?php if(!$video->user_bought_video() && $hls_premium && $premium_is_ppv) { ?>
+            <h3><a href="<?php echo get_permalink($video->product_id); ?>">Buy unlimited full access to this video</a></h3>
+         <?php } ?>
 
          <?php if($video->has_downloads()) { ?>
             <h3><a href="<?php echo get_permalink($video->product_id); ?>">Download the full lenght hi-res version of this video</a></h3>

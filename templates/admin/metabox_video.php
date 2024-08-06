@@ -109,6 +109,12 @@ if($video->product_id > 0)
       <input type='text' name="video_price" value='<?php  echo esc_attr( $video->price ); ?>' />
    </p>
    <p>
+      <h4>is premium a PPV?</h4>
+      <input type='radio' name='premium_is_ppv' value='Y' <?php if($video->premium_is_ppv=='Y') echo "checked"; ?>>Yes</input>
+      <input type='radio' name='premium_is_ppv' value='N' <?php if($video->premium_is_ppv=='N') echo "checked"; ?>>No</input>
+   </p>
+
+   <p>
 		<?php 
 			$vaccess=array('public','members','premium');
 		?>

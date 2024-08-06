@@ -30,9 +30,16 @@ function wcpms_adminpage()
    sh_get_template('admin/wcpms.php');
 }
 
+
 function settings_wcpms_section()
 {
    echo "<h2>SexHackMe PMS - WooCommerce integration Settings</h2>";
+}
+
+
+function settings_wcpms_section_premium_discount()
+{
+   echo "<h2>Premium users discount on Videos</h2>";
 }
 
 function settings_wcpms_section_email()

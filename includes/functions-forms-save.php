@@ -135,6 +135,11 @@ function save_sexhack_video_forms( $post_id)
    if(array_key_exists('video_private', $_POST) && in_array($_POST['video_private'], array('Y','N')))
       $video->private = $_POST['video_private'];
 
+   // Premium Video is PPV?
+   if(array_key_exists('premium_is_ppv', $_POST) && in_array($_POST['premium_is_ppv'], array('Y','N')))
+      $video->premium_is_ppv = $_POST['premium_is_ppv'];
+
+
    // Video visible
    if(array_key_exists('video_visible', $_POST) && in_array($_POST['video_visible'], array('Y','N')))
       $video->visible = $_POST['video_visible'];
@@ -147,6 +152,7 @@ function save_sexhack_video_forms( $post_id)
 	// Video type
 	if(array_key_exists('video_type', $_POST) && in_array($_POST['video_type'], array('VR', 'FLAT')))
 		$video->video_type = $_POST['video_type'];
+
 
 	// VR Projection
 	if(array_key_exists('video_vr_projection', $_POST) && in_array($_POST['video_vr_projection'], array('VR180_LR','VR360_LR')))

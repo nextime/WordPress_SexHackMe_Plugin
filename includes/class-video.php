@@ -51,6 +51,7 @@ if(!class_exists('SH_Video')) {
          'hls_public' => false,
          'hls_members' =>  false,
          'hls_premium' =>  false,
+         'premium_is_ppv' => 'N',
          'thumbnail' => false,
          'gif' => false,
          'gif_small' => false,
