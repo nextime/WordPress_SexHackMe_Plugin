@@ -1,7 +1,7 @@
 
 function shmChangeGif(o){
    //console.log(o);
-   o.src = o.getAttribute('data-src');
+   o.src = o.getAttribute('data-gsrc');
    console.log("loading "+o.src);
 }
 

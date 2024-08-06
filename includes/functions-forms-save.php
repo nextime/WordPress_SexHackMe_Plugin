@@ -211,7 +211,7 @@ function save_sexhack_video_forms( $post_id)
 	// **** HLS AND DOWNLOAD VIDEO PROCESSING **** //
 
 	// Differenciated content for access levels
-	$public_exist=false;
+	$public_exists=false;
    $members_exists=false;
    $selectedv=false;
 	foreach(array('public','members','premium') as $vt)
@@ -236,14 +236,14 @@ function save_sexhack_video_forms( $post_id)
 			sh_add_video_job($video->id, 'process_hls_'.$vt, get_option('sexhack_video_tmp_path', '/tmp')."/".sanitize_text_field($_POST['video_'.$vt]));
 			if($vt=='public') $public_exists=true;
 			if($vt=='members') 
-			{
+         {
 				$members_exists=true;
 				if(array_key_exists('video_createPublic_'.$vt, $_POST) && 
 					array_key_exists('video_createPublicStart_'.$vt, $_POST) &&
 					\DateTime::createFromFormat('H:i:s',$_POST['video_createPublicStart_'.$vt]) &&
 					array_key_exists('video_createPublicDuration_'.$vt, $_POST) &&
 					is_numeric($_POST['video_createPublicDuration_'.$vt]) && intval($_POST['video_createPublicDuration_'.$vt]) > 0 &&
-					in_array($_POST['video_createPublic_'.$vt], array('Y','N')) && !$public_exists)
+					in_array($_POST['video_createPublic_'.$vt], array('Y')) && !$public_exists)
 				{
 					$file=get_option('sexhack_video_tmp_path', '/tmp')."/".sanitize_text_field($_POST['video_'.$vt]);
 					$start=$_POST['video_createPublicStart_'.$vt];
@@ -253,14 +253,15 @@ function save_sexhack_video_forms( $post_id)
 				}
 			}
 			if($vt=='premium') 
-			{
+         {
             if(array_key_exists('video_createPublic_'.$vt, $_POST) &&
                array_key_exists('video_createPublicStart_'.$vt, $_POST) && 
                \DateTime::createFromFormat('H:i:s',$_POST['video_createPublicStart_'.$vt]) &&
                array_key_exists('video_createPublicDuration_'.$vt, $_POST) &&
                is_numeric($_POST['video_createPublicDuration_'.$vt]) && intval($_POST['video_createPublicDuration_'.$vt]) > 0 &&
-               in_array($_POST['video_createPublic_'.$vt], array('Y','N')) && !$public_exists)
+               in_array($_POST['video_createPublic_'.$vt], array('Y')) && !$public_exists)
             {
+
                $file=get_option('sexhack_video_tmp_path', '/tmp')."/".sanitize_text_field($_POST['video_'.$vt]);
                $start=$_POST['video_createPublicStart_'.$vt];
                $duration=$_POST['video_createPublicDuration_'.$vt];
@@ -272,7 +273,7 @@ function save_sexhack_video_forms( $post_id)
                \DateTime::createFromFormat('H:i:s',$_POST['video_createMembersStart_'.$vt]) &&
                array_key_exists('video_createMembersDuration_'.$vt, $_POST) &&
                is_numeric($_POST['video_createMembersDuration_'.$vt]) && intval($_POST['video_createMembersDuration_'.$vt]) > 0 &&
-               in_array($_POST['video_createMembers_'.$vt], array('Y','N')) && !$members_exists)
+               in_array($_POST['video_createMembers_'.$vt], array('Y')) && !$members_exists)
             {
                $file=get_option('sexhack_video_tmp_path', '/tmp')."/".sanitize_text_field($_POST['video_'.$vt]);
                $start=$_POST['video_createMembersStart_'.$vt];
@@ -293,7 +294,7 @@ function save_sexhack_video_forms( $post_id)
          $video->__set('download_'.$vt, sanitize_text_field($_POST['video_download_'.$vt]));
       }
       else if(!$admin && array_key_exists($vt.'_isdownload', $_POST) &&  
-         in_array($_POST[$vt.'_isdownload'], array('Y','N')) && array_key_exists('video_'.$vt, $_POST) && 
+         in_array($_POST[$vt.'_isdownload'], array('Y')) && array_key_exists('video_'.$vt, $_POST) && 
          sanitize_text_field($_POST['video_'.$vt])) 
 		{
             //$video->__set('download_'.$vt, get_option('sexhack_video_tmp_path', '/tmp')."/".sanitize_text_field($_POST['video_'.$vt]));

@@ -184,6 +184,37 @@ if(!class_exists('SH_Shortcodes')) {
          }
          wp_reset_postdata();
          $html .= "</ul></div>";
+         /*
+         $html .= "<script>
+            window.SHM_stoplazy = false;
+            //$('body').on('click', function(event){
+            //   // event.preventDefault();
+            //   console.log('STOP CALLED');
+            //   window.stop();
+            //});
+            
+            //$(window).on('beforeunload', function() {
+            //   console.log('BEFOREUNLOAD CALLED');
+            //   //setInterval(window.stop, 200);
+            //   window.stop();
+            //   window.SHM_stoplazy = true;
+            //});
+
+            //$(window).on('lazybeforeunveil', function(event){
+              //console.log(event);
+              //if(window.SHM_stoplazy===true) {
+              //   event.preventDefault();
+              //   console.log('Event prevented');
+             // }
+
+            //});
+
+            //$(window).on('lazybeforesizes', function(event){
+            //console.log(event);
+            //});
+
+         </script>";
+          */    
          return $html;
       }
 

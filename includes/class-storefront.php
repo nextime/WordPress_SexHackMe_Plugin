@@ -113,7 +113,7 @@ if(!class_exists('SH_StoreFront')) {
             <?php
 				} else if(is_user_logged_in() && !user_is_premium()) {
             ?>
-						 <a href="/account/">My Account</a>
+                   <a href="/account/">My Account</a>
 						 <a class="sh_freememberacc" href="/product-category/subscriptions/">Premium</a>
             <?php
 				} else if(is_user_logged_in() && user_is_premium()) {

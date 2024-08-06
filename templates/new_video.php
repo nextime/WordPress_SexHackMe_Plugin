@@ -394,7 +394,7 @@ jQuery(function($) {
      formdata.append('video_createMembers_premium', $('input[name="video_createMembers_premium"]:checked').val());  
      formdata.append('video_createMembersStart_premium', $('input[name="video_createMembersStart_premium"]').val());
      formdata.append('video_createMembersDuration_premium', $('input[name="video_createMembersDuration_premium"]').val());
-     formdata.append('video_createPublic_premium ', $('input[name="video_createPublic_premium"]:checked').val());
+     formdata.append('video_createPublic_premium', $('input[name="video_createPublic_premium"]:checked').val());
      formdata.append('video_createPublicStart_premium', $('input[name="video_createPublicStart_premium"]').val());
      formdata.append('video_createPublicDuration_premium', $('input[name="video_createPublicDuration_premium"]').val());
      formdata.append('video_createPublic_members', $('input[name="video_createPublic_members"]:checked').val());

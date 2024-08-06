@@ -102,7 +102,8 @@ div.etn-single-event-media img.wp-post-image {
 }
 
 
-.sh_loginbutton:hover .sh_loginpopup, .sh_loginpopup:hover, .sh_loginbutton:active .sh_loginpopup, .sh_loginpopup:focus-within  {
+.sh_loginbutton:hover .sh_loginpopup, .sh_loginpopup:hover, .sh_loginbutton:active .sh_loginpopup, .sh_loginpopup:focus-within,
+.sh_freememberacc:hover .sh_upgradepopup, .sh_upgradepopup:hover, .sh_freememberacc:active .sh_upgradepopup, .sh_upgradepopup:focus-within {
    display:block;
 }
 
@@ -120,6 +121,7 @@ div.etn-single-event-media img.wp-post-image {
    border: grey 1px solid;
 }
 
+
 li.sh_signupmenu a, li a.sh_signupmenu {
    background-color: #801939;
    border-radius: 20px 20px 20px 20px;
@@ -136,17 +138,33 @@ li.sh_signupmenu a:after, li a.sh_signupmenu:after {
 	border-radius: 10px;
 }
 
+.sh_freememberacc {
+   background-color: #801939;
+   border-radius: 20px 20px 20px 20px;
+}
+
+.sh_upgradepopup {
+   display: none;
+   background-color: #000000;
+   position: absolute;
+   padding: 10px;
+   z-index: 999;
+   margin-top:-4px;
+   border: grey 1px solid;
+}
+
+
 li.sh_freememberacc a, li a.sh_freememberacc {
 	background-color: #801939;
 	border-radius: 20px 20px 20px 20px;
 }
 
-li.sh_freememberacc a:after, li a.sh_freememberacc:after {
+.sh_freememberacc a:after, li a.sh_freememberacc:after {
 	content: " Upgrade!";
    background-color: yellow;
    color: red;
    font-weight: bold;
-   font-size: 0.5em;
+   font-size: 0.6em;
    padding: 2px;
    border-radius: 10px;
 
