@@ -114,7 +114,8 @@ function save_sexhack_video_forms( $post_id)
    }
 
    // Video description
- 	$video->description = sanitize_text_field( $_POST['video_description'] );
+ 	//$video->description = sanitize_text_field( $_POST['video_description'] );
+   $video->description = $_POST['video_description'];
 
 
 	

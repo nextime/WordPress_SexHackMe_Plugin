@@ -142,7 +142,7 @@ if(!class_exists('SH_VideoGallery')) {
          elseif($video_preview) $vtags[] = '<label class="sexhack_vtag sexhack_preview" style="*LEFT*">preview</label>';
          if($hls_member)$vtags[] = '<label class="sexhack_vtag sexhack_members" style="*LEFT*">members</label>';
          if($hls_premium) {
-            if($video->ppv_is_ppv) $vtags[] = '<label class="sexhack_vtag sexhack_premium" style="*LEFT*">PPV</label>';
+            if($premium_is_ppv=='Y') $vtags[] = '<label class="sexhack_vtag sexhack_premium" style="*LEFT*">PPV</label>';
             else $vtags[] = '<label class="sexhack_vtag sexhack_premium" style="*LEFT*">premium</label>';
          }
 

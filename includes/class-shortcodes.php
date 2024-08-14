@@ -252,27 +252,110 @@ if(!class_exists('SH_Shortcodes')) {
       {
          extract( shortcode_atts(array(
             "page" => '',
-				'level' => 'public',
+            'level' => 'public',
+            'random' => 'false',
+            'popup' => 'false',
+            'class' => 'shmpopup',
+            'campaign' => '',
+            'expire' => false,
+            'expiredays' => false,
+            'delay' => '0',
+            'before' => '',
+            'after' => ''
          ), $attr));
+         if(!array_key_exists('page', $attr)) return;
+         if($attr['page']=='') return;
+         $before='';
+         $after='';
+         $content='';
+         $random=false;
+         $popup=false;
+         $shmclass='shmpopup';
+         $delay='0';
+         $campaign='';
+         $expiredays=false;
+         $expire=false;
+         if(array_key_exists('expire', $attr) && is_numeric($attr['expire'])) $expire=$attr['expire'];
+         if(array_key_exists('expiredays', $attr) && is_numeric($attr['expiredays'])) $expiredays=$attr['expiredays'];
+         if(array_key_exists('campaign', $attr) && $attr['campaign'] != '') $campaign=$attr['campaign'];
+         if(array_key_exists('delay', $attr) && is_numeric($attr['delay']) && intval($attr['delay']) > 0) $delay=$attr['delay'];
+         if(array_key_exists('class', $attr) && $attr['class'] != '' ) $shmclass=$attr['class'];
+         if(array_key_exists('popup', $attr) && $attr['popup']=='true') $popup=true;
+         if(array_key_exists('before', $attr) && $attr['before'] != '') $before=$attr['before'];
+         if(array_key_exists('after', $attr) && $attr['after'] != '') $after=$attr['after'];
          if(!array_key_exists('level', $attr)) $attr['level'] = 'public';
+
+         if(!$expire && !$expiredays) $expiredays="1";
+
+
 			if(($attr['level'] == 'guestonly' && !is_user_logged_in()) || ($attr['level'] == 'public' or !$attr['level']) || (is_user_logged_in() && ($attr['level']=='members' || ($attr['level']=='premium' && user_is_premium()))))
          {
-            if(is_numeric($attr['page'])) {
-				   $ipost = get_post($attr['page']);
-			   	if($ipost)
-            	   return apply_filters('the_content', $ipost->post_content);
+
+            if($pos = strpos($attr['page'], ',')) { 
+               $pages=explode(',', $attr['page']);
             } else {
-               $args = array(
-                  'name' => $attr['page'],
-                  'post_type' => 'page',
-                  'post_status' => 'publish',
-                  'posts_per_page' => 1
-               );
-               $res = get_posts($args);
-               if($res) {
-                  return apply_filters('the_content', $res[0]->post_content);
+               $pages=array($attr['page']);
+            }
+            if($campaign!='') $cookie=$campaign;
+            else $cookie=md5($attr['page']);
+
+            if(count($pages) > 1 && array_key_exists('random', $attr) && $attr['random']=='true') $random=true;
+            if($random || $popup) {
+               $class=str_replace('.', '_', uniqid('shinclude_', true));
+               $script="<script language='javascript'>\n";
+               if($expiredays || $expire) $script.="var strcookie = readCookie('shmpopup_".$cookie."'); if (strcookie === null) {";
+               $script.="$(window).on('load', function() {\n";
+            }
+            if($random) {
+               $script.="   shinc=$($('.".$class."')[Math.floor(Math.random()*$('.".$class."').length)]);\n";
+            } else if($popup) {
+               $script.="   shinc=$('.".$class."');";
+            }
+            if($popup) { 
+               $script.="   shinc.addClass('".$shmclass."');";
+               if($campaign!='') $script.="   shinc.find('form').submit(function(){\$.post('/content/plugins/matomo/app/matomo.php', {'idsite':1, 'rec': '1','mtm_campaign': '".$campaign."','mtm_kwd': shinc.attr('data-shmname') })});";
+            }
+
+            if($random || $popup) {
+               $script.="   setTimeout(function() { shinc.show();";
+               if($expiredays) $script.="  createCookie('shmpopup_".$cookie."','opened',$expiredays);";
+               elseif($expire) $script.="  createCookieSeconds('shmpopup_".$cookie."','opened',$expire);";
+               $script.="  }, $delay);\n";
+               $script.="});\n";
+               if($expiredays || $expire) $script.="}\n";
+               $script.="</script>";
+               $before=$script.$before;
+            }
+            foreach($pages as $page) {
+               $popheader="<div style='float:right;width:10%;margin-left:90%;border:1px solid white;border-radius:10px;padding:5px;cursor:pointer;min-width:60px;' onClick='$(\".".$class."\").hide();'>Close X</div>";
+               $randheader="<div data-shmname='".$page."' class='".$class."' style='display:none;'>";
+               if(is_numeric($page)) {
+				      $ipost = get_post($page);
+                  if($ipost) {
+                     if($random || $popup) $content.=$randheader;
+                     if($popup) $content.=$popheader;
+                     $content=$content.$ipost->post_content;
+                     if($random || $popup) $content.="</div>";
+                  }
+               } else {
+                  $args = array(
+                     'name' => $page,
+                     'post_type' => 'page',
+                     'post_status' => 'publish',
+                     'posts_per_page' => 1
+                  );
+                  $res = get_posts($args);
+                  if($res) {
+                     if($random || $popup) $content.=$randheader;
+                     if($popup) $content.=$popheader;
+                     $content=$content.$res[0]->post_content;
+                     if($random || $popup) $content.="</div>";
+                  }
                }
-				}	
+            }
+
+            if($content && $content!='')
+               return apply_filters('the_content', $before.$content.$after);   
 			}
 			return;
       }

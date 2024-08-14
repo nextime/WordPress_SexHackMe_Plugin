@@ -119,7 +119,7 @@ if(!class_exists('SH_Video')) {
          if(!is_array($attr)) return false;
 			foreach($attr as $k => $v)
 			{
-				if(array_key_exists($k, $this->attributes)) $this->attributes[$k] = $v;
+				if(array_key_exists($k, $this->attributes)) $this->attributes[$k] = stripslashes($v);
 			}
          
          if($post && is_object($post))  $this->__set('post', $post);

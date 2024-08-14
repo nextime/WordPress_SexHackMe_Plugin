@@ -84,7 +84,8 @@ get_header(); ?>
             $video_preview = $video->preview;
             $gif_preview = $video->gif_small;
             $gif = $video->gif;
-            $premium_is_ppv = $video->premium_is_ppv;
+            $premium_is_ppv = false;
+            if($video->premium_is_ppv=='Y') $premium_is_ppv=true;
 
 
             $categories = $video->get_categories(true);
@@ -104,10 +105,12 @@ get_header(); ?>
             $tabtext = array('subscribers' => 'Subscribers',
                'members' => 'Members',
                'public' => 'Public');
+            if($premium_is_ppv) $tabtext['subscribers'] = 'PPV';
 
             if($hls_public || $video_preview ) $avail[] = 'public';
             if($hls_members) $avail[] = 'members';
             if($hls_premium) $avail[] = 'subscribers';
+            
 
             $videoaccess = get_query_var('videoaccess', false);
             if($videoaccess && in_array($videoaccess, $avail))
@@ -240,29 +243,42 @@ get_header(); ?>
                      <?php echo $video->get_title(); echo " (".$tabtext[$tab]." version)"; ?> 
                   </h2>
                </header><!-- .entry-header -->
-
-         <br><hr>
+               <p><?php echo do_shortcode($video->description); ?></p>
+               <?php
+               $pcontent = do_shortcode(get_post()->post_content);
+               if($pcontent!='') {  ?>
+               <p><?php echo $pcontent; ?></p>
+               <?php } ?>
+         <hr>
          <?php 
          echo $htmltags;
          ?>
+         <?php if(!$video->user_bought_video() && $hls_premium && ($premium_is_ppv && user_is_premium() || !user_is_premium())) { ?>
+            <h3><a href="<?php echo \wc_get_checkout_url()."?add-to-cart=".strval($video->product_id)."&shm_direct_checkout=".strval($video->product_id); ?>"><button>Buy unlimited access to this video</button></a></h3>
+         <?php } ?>
+         
+         <?php if(!$video->user_bought_video() && $hls_premium && !$premium_is_ppv && !user_is_premium() && user_is_member()) { ?>
+           <h3><a href="/product-category/subscriptions/"><button>Upgrade to access premium versions</button></a></h3>
+         <?php } ?>
+
+         <?php if($video->has_downloads()) { // XXX IS already bought this should redirect to the video ?>
+            <?php if(!$video->user_bought_video()) { ?>
+            <h3><a href="<?php echo \wc_get_checkout_url()."?add-to-cart=".strval($video->product_id)."&shm_direct_checkout=".strval($video->product_id); ?>"><button>Download full version</button></a></h3>
+            <?php } else { ?>
+            <h3><a href="<?php echo  get_permalink($video->product_id);?>"><button>Download</button></a></h3>
+            <?php } ?>
+         <?php } ?>
          <?php if(!user_has_member_access()) { ?>
-                 <div class='sexhack-videonotify' style="padding:1px; margin: 0 auto;">
+                 <div class='sexhack-videonotify' style="padding:1px; margin: 0 auto; margin-left: 10%;">
                      <a href="/register/">
                      <img src="<?php echo plugin_dir_url(__FILE__)."/img/cropped-sexhack_members-300x99.jpg";?>"  alt="Register for free and watch members version!" />
                      </a>
                   </div>
          <?php } ?>
-
-         <?php if(!$video->user_bought_video() && $hls_premium && $premium_is_ppv) { ?>
-            <h3><a href="<?php echo get_permalink($video->product_id); ?>">Buy unlimited full access to this video</a></h3>
-         <?php } ?>
-
-         <?php if($video->has_downloads()) { ?>
-            <h3><a href="<?php echo get_permalink($video->product_id); ?>">Download the full lenght hi-res version of this video</a></h3>
-         <?php } ?>
 			<?php
 				if(!is_user_logged_in())
-				 echo "<div style='width: 80%; margin-left: 10%;' >".do_shortcode('[pms-login redirect_url="/account" ]')."</div>";
+				 echo "<div class='shm_video_login' style='max-width: 300px; width: 80%; margin-left: 10%;' ><h4>Already a member? Login:</h4></div>";
+				 echo "<div class='shm_video_login' style='max-width: 300px; width: 80%; margin-left: 10%;' >".do_shortcode('[pms-login redirect_url="/account" ]')."</div>";
 			?>
          <hr>
 

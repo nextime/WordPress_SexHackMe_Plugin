@@ -93,6 +93,20 @@ div.etn-single-event-media img.wp-post-image {
   
 }
 
+.shmpopup {
+   position:fixed;
+   background-color:black;
+   z-index:999;
+   border: 1px solid white;
+   padding: 15px;
+   box-shadow: 5px 10px #888888;
+   top: 50%;
+   left: 50%;
+   transform: translate(-50%, -50%);
+   border-radius: 15px;
+   min-width:400px;
+}
+
 .site-header-shmlogin:hover > li.shmlogin > a {
    color:#d8d8d8;
 }
@@ -184,6 +198,14 @@ li.current_page_item {
 
 #shm-socials-centered {
 	text-align:center;
+}
+
+.shm_video_login #pms_login p {
+   margin-bottom: 3px;
+}
+
+.shm_video_login #pms_login p input, .shm_video_login #pms_login div button {
+   padding: .118047em;
 }
 
 .sh_adv_hide {

@@ -49,7 +49,6 @@ if(!class_exists('SH_Query')) {
       {
          global $wpdb;
 
-
          if($source) sexhack_log("save_Video called from $source");
          if(is_object($video))
          {
