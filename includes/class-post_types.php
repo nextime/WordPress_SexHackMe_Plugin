@@ -24,15 +24,6 @@ namespace wp_SexHackMe;
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-/*
-function replace__permalink( $post_link, $post, $leavename, $sample ) {
-    if ( 'custom_post_type' === $post->post_type ) {
-        $slug = 'custom-post-type';
-        $post_link = str_replace( '%' . $post->post_type . '%', $slug, $post_link );
-    }
-    return $post_link;
-}
-*/
 
 if(!class_exists('SH_PostTypes')) {
    class SH_PostTypes
@@ -67,6 +58,9 @@ if(!class_exists('SH_PostTypes')) {
 
          // Fix the permalink for video pages
          add_filter( 'post_type_link', __CLASS__."::replace_permalink", 10, 4 );
+
+         // if the post get called instead of the video page, redirect!
+         add_action( 'template_redirect', __CLASS__."::post_to_video" );
 
          // SexHack Videos 
          // TODO: the idea is to have custom post type for models profiles and for videos.
@@ -144,6 +138,15 @@ if(!class_exists('SH_PostTypes')) {
 				 $post_link=get_site_url()."/".get_option('sexhack_gallery_slug', 'v')."/".$video->slug;
           }
           return $post_link;
+      }
+
+      public static function post_to_video()
+      {
+         $vpslug=get_query_var('sexhack_video', false);
+         if($vpslug) {
+            $video = sh_get_video_from_post(get_post());
+            wp_redirect(get_site_url()."/".get_option('sexhack_gallery_slug', 'v')."/".$video->slug);
+         }
       }
 
 
