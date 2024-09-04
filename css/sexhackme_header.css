@@ -104,7 +104,9 @@ div.etn-single-event-media img.wp-post-image {
    left: 50%;
    transform: translate(-50%, -50%);
    border-radius: 15px;
-   min-width:400px;
+   min-width:300px;
+   max-height:83%;
+   overflow-y:auto;
 }
 
 .site-header-shmlogin:hover > li.shmlogin > a {

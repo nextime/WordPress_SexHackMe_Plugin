@@ -313,7 +313,9 @@ if(!class_exists('SH_Shortcodes')) {
             }
             if($popup) { 
                $script.="   shinc.addClass('".$shmclass."');";
-               if($campaign!='') $script.="   shinc.find('form').submit(function(){\$.post('/content/plugins/matomo/app/matomo.php', {'idsite':1, 'rec': '1','mtm_campaign': '".$campaign."','mtm_kwd': shinc.attr('data-shmname') })});";
+               if($campaign!='') $action="function(){\$.post('/content/plugins/matomo/app/matomo.php', {'idsite':1, 'rec': '1','mtm_campaign': '".$campaign."','mtm_kwd': shinc.attr('data-shmname') })}";
+               if($campaign!='') $script.="   shinc.find('form').submit(".$action.");";
+               if($campaign!='') $script.="   shinc.find('a').click(".$action.");";
             }
 
             if($random || $popup) {
