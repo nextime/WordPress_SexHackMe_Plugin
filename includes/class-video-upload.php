@@ -52,7 +52,7 @@ if(!class_exists('SH_VideoUpload')) {
          else $uniqid = uniqid();
 
          $uploadFolder = get_option('sexhack_video_tmp_path', '/tmp');
-			$uploadFileName = $uniqid . "_" . sanitize_text_field($request->getFileName());
+			$uploadFileName = $uniqid . "_" . str_replace(" ", "_", sanitize_text_field($request->getFileName()));
          $uploadPath = $uploadFolder."/".$uploadFileName;
 
 			if (\Flow\Basic::save($uploadPath, $config, $request)) {

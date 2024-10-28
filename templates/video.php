@@ -211,7 +211,7 @@ get_header(); ?>
                else if($gif_preview) echo '<img class="sexhack_videopreview" src="'.$gif_preview.'" loading="lazy"></img>';
                else echo '<img class="sexhack_videopreview" src="'.$thumb.'" loading="lazy"></img>';
                ?>
-                  <h2 class='sexhack-videonotify' style="padding:5%;"><b>PUBLIC VIDEO NOT AVAILABLE</b></h2>
+                  <h2 class='sexhack-videonotify' style="padding:5%;"><b>LOGIN TO WATCH THIS VIDEO</b></h2>
                   
                <?php
             }
