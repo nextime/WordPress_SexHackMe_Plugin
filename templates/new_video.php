@@ -395,6 +395,7 @@ jQuery(function($) {
      formdata.append('video_type', $('input[name="video_type"]:checked').val());
      formdata.append('video_vr_projection', $('#video_vr_projection').find(":selected").val());
      formdata.append('video_price', $('input[name="video_price"]').val());
+     formdata.append('premium_is_ppv', $('input[name="premium_is_ppv"]:checked').val());
      formdata.append('public_isdownload', $('input[name="video_isdownload_public"]:checked').val());
      formdata.append('members_isdownload', $('input[name="video_isdownload_members"]:checked').val());
      formdata.append('premium_isdownload', $('input[name="video_isdownload_premium"]:checked').val());
