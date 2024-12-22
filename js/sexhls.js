@@ -18,7 +18,7 @@
  * along with SexHackMe Wordpress Plugin. If not, see <https://www.gnu.org/licenses/>.
  */
 
-//var vtag = document.getElementById('vtag');
+
 
 function SexHLSPlayer(url, vuid, autoplay=false){
   var vtag = document.getElementById(vuid);

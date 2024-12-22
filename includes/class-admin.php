@@ -86,6 +86,8 @@ if(!class_exists('SH_Admin')) {
              register_setting('sexhackme-gallery-settings', 'sexhack_video404_page');
              register_setting('sexhackme-gallery-settings', 'sexhack_shmdown');
              register_setting('sexhackme-gallery-settings', 'sexhack_shmdown_uri');
+             register_setting('sexhackme-gallery-settings', 'sexhack_random_video');
+             register_setting('sexhackme-gallery-settings', 'sexhack_random_video_uri');
              register_setting('sexhackme-gallery-settings', 'sexhack_video_tmp_path');
              register_setting('sexhackme-gallery-settings', 'sexhack_video_flat_path');
              register_setting('sexhackme-gallery-settings', 'sexhack_video_vr_path');

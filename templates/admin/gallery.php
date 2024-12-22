@@ -85,6 +85,18 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                </tr>
                <tr>
                   <td>
+                     <label>Randomize HLS URL?</label>
+                     <input type="checkbox" name="sexhack_random_video" value='1' <?php if(get_option('sexhack_random_video', false)) echo "checked"; ?>>
+                  </td>
+
+                  <td>
+                     <label>base URL for randomize</label>
+                     <input type='text' name='sexhack_random_video_uri' value='<?php echo get_option('sexhack_random_video_uri', ''); ?>'>
+                  </td>
+               </tr>
+
+               <tr>
+                  <td>
                      <label>Video Upload TMP path</label>
                      <input type='text' name='sexhack_video_tmp_path' value='<?php echo get_option('sexhack_video_tmp_path', '/tmp'); ?>'>
                   </td>

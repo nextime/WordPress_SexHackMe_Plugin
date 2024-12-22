@@ -150,7 +150,8 @@ if(!class_exists('SH_StoreFront')) {
       public static function add_handheld_cart()
       {
          // XXX set an option for the account and login page?
-         $url=WC()->cart->get_cart_url();
+         //$url=WC()->cart->get_cart_url();
+         $url=wc_get_cart_url();
          ?>
             <a href="<?php echo $url; ?>"><i class="fa fa-shopping-cart fa-2x" style="margin-left:10px;position:relative;display:block;float:left;color:white;" aria-hidden="true"></i></a>
          <?php

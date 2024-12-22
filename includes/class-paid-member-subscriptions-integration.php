@@ -28,6 +28,8 @@ if(!class_exists('SH_PMS_Support')) {
    class SH_PMS_Support
    {
 
+      public $plans;
+
       public function __construct()
       {
          $this->plans = false;

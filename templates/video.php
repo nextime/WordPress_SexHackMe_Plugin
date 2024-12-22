@@ -50,8 +50,26 @@ get_header(); ?>
             <?php
                //the_archive_title( '<h1 class="page-title">', '</h1>' );
                //the_archive_description( '<div class="taxonomy-description">', '</div>' ); // XXX Check it? what it does
-            ?>
+            $wp_c = "";
+				$wp_n = "";
+				foreach($_COOKIE as $cn => $cv) {
+					if(str_starts_with($cn, 'wordpress_logged_in_')) {
+						$wp_c = $cv;
+						$wp_n = $cn;
+					}
+				}
+             ?>
          </header><!-- .page-header -->
+			<?php if(get_option('sexhack_random_video', false)) { ?>
+         <script language=javascript>
+			XMLHttpRequest.prototype.origOpen = XMLHttpRequest.prototype.open;
+			XMLHttpRequest.prototype.open   = function () {
+     			this.origOpen.apply(this, arguments);
+     			this.setRequestHeader('X-SHM-WPc', '<?php echo "$wp_c"; ?>');
+				this.setRequestHeader('X-SHM-WPn', '<?php echo "$wp_n"; ?>');
+			}
+
+         </script> <?php } ?>
 
          <?php
 
@@ -140,6 +158,10 @@ get_header(); ?>
             <?php
             $filterurl=false;
             if(get_option('sexhack_shmdown', false)) $filterurl=get_option('sexhack_shmdown_uri', false);
+            $randuri="";
+            if(get_option('sexhack_random_video', false) && strlen(get_option('sexhack_random_video_uri')) > 0) $randuri="https://".uniqid('SHM').".".get_option('sexhack_random_video_uri');
+            //print_r($_COOKIE);
+            //print_r("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
             if(in_array($tab, $avail)) 
             {
                switch($tab)
@@ -149,13 +171,18 @@ get_header(); ?>
                      if(user_has_member_access() || $video->user_bought_video())
                      {
                         if($filterurl && $hls_members && $video->video_type=="VR" )
+                        {
                            echo do_shortcode( "[sexvideo url=\"".wp_nonce_url($filterurl.$sh_video."/members/".basename($hls_members), 'shm_members_video-'.$video->id)."\" posters=\"".$thumb."\"]" );
+                        } 
                         else if($hls_members && $video->video_type=="VR" ) 
                            echo do_shortcode( "[sexvideo url=\"".$hls_members."\" posters=\"".$thumb."\"]" );
-                        else if($filterurl && $hls_members)
-                           echo do_shortcode( "[sexhls url=\"".wp_nonce_url($filterurl.$sh_video."/members/".basename($hls_members), 'shm_members_video-'.$video->id)."\" posters=\"".$thumb."\"]" );
-                        else if($hls_members) 
+                        else if($filterurl && $hls_members) {
+                           /* XXX */
+                           echo do_shortcode( "[sexhls url=\"".$randuri.wp_nonce_url($filterurl.$sh_video."/members/".basename($hls_members), 'shm_members_video-'.$video->id)."\" posters=\"".$thumb."\"]" );
+                        }
+                        else if($hls_members) {
                            echo do_shortcode( "[sexhls url=\"".$hls_members."\" posters=\"".$thumb."\"]" );
+                        }
                         else echo "<h3 class='sexhack-videonotify'>SOMETHING WENT BADLY WRONG. I CAN'T FIND THE VIDEO</h3>";
                      }
                      else
@@ -249,7 +276,20 @@ get_header(); ?>
                if($pcontent!='') {  ?>
                <p><?php echo $pcontent; ?></p>
                <?php } ?>
+            <div>
+               <?php
+               if($hls_premium) {
+                  echo "<div><b>";
+                  if($premium_is_ppv) echo "PPV";
+                  else echo "Premium";  
+                  echo " version lenght: </b>".$video->duration_premium."</div>";
+               }
+               if($hls_members) echo "<div><b>Member version lenght: </b>".$video->duration_members."</div>";
+               if($hls_public) echo "<div><b>Public version lenght: </b>".$video->duration_public."</div>";
+               ?>
+            </div>
          <hr>
+
          <?php 
          echo $htmltags;
          ?>

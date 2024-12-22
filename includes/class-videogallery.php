@@ -31,6 +31,7 @@ if(!class_exists('SH_VideoGallery')) {
    class SH_VideoGallery
    {
 
+      public $videolist;
 
       public function __construct()
       {
@@ -146,12 +147,22 @@ if(!class_exists('SH_VideoGallery')) {
             else $vtags[] = '<label class="sexhack_vtag sexhack_premium" style="*LEFT*">premium</label>';
          }
 
-         if($video->has_downloads()) $html .= '<label class="sexhack_vtag sexhack_download"">download</label>';
+         //if($video->has_downloads()) $html .= '<label class="sexhack_vtag sexhack_download"">download and PPV $'.$video->price.'</label>';
          if($video->video_type == 'VR') $html .= '<label class="sexhack_vtag sexhack_VR"">VR/3D</label>';
 
+         $duration = false;
+         if($hls_premium) $duration = $video->duration_premium;
+         else if($hls_member) $duration = $video->duration_members;
+         else if($hls_public) $duration = $video->duration_public;
+      
+         if($duration) {
+            $vtags[] = '<label class="sexhack_vtag sexhack_vtag_duration">'.$duration.'</label>';  
+         }
          $html .= "<a href=\"$vurl\" class=\"woocommerce-LoopProduct-link woocommerce-loop-product__link\">";
+         if($video->has_downloads()) $html .= '<label class="sexhack_vtag sexhack_download"">download and PPV $'.$video->price.'</label>';
+
          $html .= "<div class='sexhack_thumb_cont'>".$image."</div>";
-         
+
          foreach($vtags as $vid => $vtag)
          {
             $left = intval($vid)*12;

@@ -40,6 +40,8 @@ ul.products li.sexhack_thumbli {
 }
 
 
+
+
 .sexhack_vtag {
   position:relative;
   float:left;
@@ -53,13 +55,27 @@ ul.products li.sexhack_thumbli {
 .sexhack_vtag:hover {
    z-index:100;
 }
+
+.sexhack_vtag_duration {
+   background-color:#141a1f;
+   opacity: 0.8;
+   float: right;
+   top:-25px;
+   right: 12px;
+   font-size: 12px;
+}
+
 .sexhack_download {
    position: absolute;
-   top:1px;
+   top:-14px;
    left:-1px;
    z-index:100;
    border-bottom:-20px;
    background-color:#4a235a;
+}
+
+.sexhack_gallery { 
+   margin-top: 15px;
 }
 
 .sexhack_VR {
@@ -110,6 +126,11 @@ ul.products li.sexhack_thumbli {
 
 .sexhack_videopreview {
    width: 100%;
+}
+
+.sexhack_video_title {
+   font-weight: 600;
+   font-size: 1.2em;
 }
 
 .sexhack-tabs {

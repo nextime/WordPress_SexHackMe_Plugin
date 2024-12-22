@@ -715,6 +715,13 @@ if(!class_exists('SH_WooCommerce_Chaturbate_Payments')) {
    function chaturbate_payment_init() {
 
       class SH_WooCommerce_Chaturbate_Payments extends \WC_Payment_Gateway {
+
+         public $uuid_prefix;
+         public $cb_model;
+         public $cb_change;
+         public $instructions;
+         public $api_passkey;
+
          // Constructor for initializing the payment gateway
          public function __construct() {
             $this->id = 'shchaturbate';
